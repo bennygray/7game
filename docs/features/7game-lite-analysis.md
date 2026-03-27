@@ -67,8 +67,15 @@
 - **Git 分支**：`feature/7game-lite-phase-a`
 - **实施顺序**：4 Sprints × 5 天（Data→Engine→AI→UI）
 
-### Step 8: 验证脚本指引 — [/]
-### Phase III Self-Review — [⬜]
+### Step 8: 验证脚本指引 — [✅]
+- **脚本 1**：`scripts/lite-timeline-sim.ts` — 挂机时间线（炼气1→筑基圆满，通过标准 ≤2h+30h）
+- **脚本 2**：`scripts/lite-tribulation-sim.ts` — 天劫存活率（10000 次蒙特卡罗，上品丹 60~70%）
+- **脚本 3**：`scripts/lite-ai-latency-test.ts` — AI 推理延迟（P95 ≤ 5s）
+- **免验证项**：灵气速率公式（7waygame vitest 72 tests 已覆盖）
+
+### Phase III Self-Review — [✅]
+- Spec 覆盖度：✅ Step 7 的 3 个 docs 文件覆盖了 5 条 Story 的全部 spec 需求
+- 数值验证覆盖度：✅ 3 个验证脚本覆盖了所有需 lite 独立验证的数值
 
 ## Phase IV: 验证交付
 
