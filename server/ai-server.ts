@@ -81,28 +81,33 @@ const BEHAVIOR_LABELS: Record<string, string> = {
   idle: '发呆',
 };
 
-// ===== 性格描述生成 =====
+// ===== 性格专属说话风格 + few-shot 示例 =====
 
-function describePersonality(personality: Record<string, number>, personalityName: string): string {
-  const traits: string[] = [];
-  if (personality.aggressive >= 0.7) traits.push('好斗');
-  if (personality.persistent >= 0.7) traits.push('坚毅');
-  if (personality.kind >= 0.7) traits.push('善良温和');
-  if (personality.lazy >= 0.7) traits.push('懒散');
-  if (personality.smart >= 0.7) traits.push('聪慧');
-  if (traits.length === 0) traits.push(personalityName);
-  return traits.join('、');
-}
-
-// ===== 行为示例 =====
-
-const BEHAVIOR_EXAMPLES: Record<string, string> = {
-  meditate: '示例：今天灵气格外充沛，修炼事半功倍',
-  explore: '示例：前面那座山看起来有点意思',
-  rest: '示例：好困，让我眯一会儿',
-  alchemy: '示例：火候差不多了，别急',
-  farm: '示例：这些灵草长势不错嘛',
-  bounty: '示例：这任务不算难，交给我吧',
+const PERSONALITY_PROFILES: Record<string, { style: string; examples: string[] }> = {
+  '刚烈': {
+    style: '说话直来直去，语气冲，喜欢用命令句和感叹号，像个火爆脾气的武夫',
+    examples: ['哼，谁敢拦老子修炼？', '这破丹炉再炸一次试试！', '废话少说，干就完了！'],
+  },
+  '温和': {
+    style: '说话轻声细语，语气温柔关切，经常用"呢""呀""吧"等语气词，像一个善良的邻家姐姐',
+    examples: ['大家都辛苦了呢，一起加油吧', '今天天气真好呀，适合修炼', '别着急，慢慢来就好啦'],
+  },
+  '机敏': {
+    style: '说话带分析和观察，喜欢用"有意思""看来""我觉得"，像一个好奇心旺盛的书生',
+    examples: ['有意思，这灵气流动规律真奇怪', '看来今日丹炉火候偏了三成', '让我研究研究，这里面别有玄机'],
+  },
+  '沉稳': {
+    style: '说话沉着简短，不废话不感叹，像一个深沉的老修士',
+    examples: ['继续', '心静自然成', '火候到了，收功'],
+  },
+  '散漫': {
+    style: '说话慵懒随意，喜欢拖长尾音，经常抱怨嫌麻烦，像一个总想偷懒的少年',
+    examples: ['啊——好累，能不能不练了', '随便吧，反正也没啥区别', '我再躺五分钟……就五分钟……'],
+  },
+  '狡黠': {
+    style: '说话带小心思，语气狡猾暧昧，喜欢用"嘿嘿""嘻嘻"，像一个满肚子坏水的小狐狸',
+    examples: ['嘿嘿，这东西我先藏起来再说', '别告诉其他人，这可是我的小秘密', '嘻嘻，又让我占到便宜了'],
+  },
 };
 
 // ===== 通过 llama-server HTTP API 推理 =====
@@ -116,10 +121,10 @@ function callLlamaServer(systemPrompt: string, userPrompt: string): Promise<stri
         { role: 'user', content: userPrompt },
       ],
       max_tokens: 100,
-      temperature: 0.7,
-      top_k: 20,
-      top_p: 0.95,
-      presence_penalty: 1.5,
+      temperature: 0.85,
+      top_k: 50,
+      top_p: 0.9,
+      presence_penalty: 1.8,
       chat_template_kwargs: { enable_thinking: false },
     });
 
@@ -168,18 +173,16 @@ async function generateWithModel(body: {
     return generatePlaceholder(body.behavior);
   }
 
-  const personalityDesc = describePersonality(body.personality, body.personalityName);
+  const profile = PERSONALITY_PROFILES[body.personalityName] ?? PERSONALITY_PROFILES['温和'];
   const behaviorDesc = BEHAVIOR_LABELS[body.behavior] ?? body.behavior;
-  const example = BEHAVIOR_EXAMPLES[body.behavior] ?? '示例：今天天气不错';
 
   const systemPrompt =
-    `你是修仙世界弟子${body.discipleName}，性格${personalityDesc}。` +
+    `你是修仙世界弟子${body.discipleName}。\n` +
+    `你的说话风格：${profile.style}\n` +
     `你正在${behaviorDesc}。\n` +
-    `请用口语化的第一人称说一句简短的话（10-20字）。\n` +
-    `只输出角色嘴里说出的话。禁止：动作描写、情绪描写、引号、旁白。\n` +
-    `好：哎，今天也不想动啊\n` +
-    `坏：懒洋洋地说道\n` +
-    `${example}`;
+    `参考你的语气：${profile.examples.join('｜')}\n` +
+    `要求：用口语第一人称说一句短话，最多25字，只输出台词本身。\n` +
+    `禁止：超过25字、拼接多句、动作描写、心理描写、引号、旁白、叙述语气。`;
 
   const userPrompt = `说一句话：`;
 
@@ -193,11 +196,18 @@ async function generateWithModel(body: {
       .replace(/\n/g, '')
       .trim();
 
-    // 截断过长输出
-    if (line.length > 50) {
-      const idx = line.lastIndexOf('。', 50);
-      if (idx > 5) line = line.substring(0, idx + 1);
-      else line = line.substring(0, 50);
+    // 截断过长输出（硬线30字）
+    if (line.length > 30) {
+      // 先尝试在句号/感叹号/问号处截断
+      const cutIdx = line.search(/[。！？!?]/);
+      if (cutIdx > 5 && cutIdx <= 30) {
+        line = line.substring(0, cutIdx + 1);
+      } else {
+        // 否则在逗号处截断
+        const commaIdx = line.lastIndexOf('，', 30);
+        if (commaIdx > 5) line = line.substring(0, commaIdx);
+        else line = line.substring(0, 30);
+      }
     }
 
     if (!line) return generatePlaceholder(body.behavior);
@@ -230,7 +240,7 @@ async function startLlamaServer(): Promise<boolean> {
       '-m', getModelPath(),
       '--port', String(LLAMA_PORT),
       '-c', '2048',
-      '-ngl', '0',
+      '-ngl', '99',
       '--jinja',
       '-np', '1',             // 单并发（节省内存）
       '--no-warmup',
