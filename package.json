@@ -8,12 +8,16 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "ai": "npx tsx server/ai-server.ts"
+    "ai": "npx tsx server/ai-server.ts",
+    "download-model": "npx tsx server/download-model.ts"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
     "tsx": "^4.19.0",
     "typescript": "~5.9.3",
     "vite": "^8.0.1"
+  },
+  "dependencies": {
+    "node-llama-cpp": "^3.18.1"
   }
 }
