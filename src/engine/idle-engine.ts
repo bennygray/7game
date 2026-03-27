@@ -7,14 +7,13 @@
  * @see Story #2 ACs
  */
 
-import type { LiteGameState } from '../shared/types/game-state';
+import type { LiteGameState, Realm } from '../shared/types/game-state';
 import {
   calculateAuraRate,
   calculateComprehensionRate,
   calculateSpiritStoneRate,
 } from '../shared/formulas/idle-formulas';
 import {
-  canBreakthrough,
   calculateBreakthroughResult,
 } from '../shared/formulas/realm-formulas';
 
@@ -125,26 +124,21 @@ export class IdleEngine {
    * @returns 突破是否成功（或需要天劫）
    */
   tryBreakthrough(): { success: boolean; message: string } {
-    if (!canBreakthrough(this.state.realm, this.state.subRealm, this.state.aura)) {
-      return { success: false, message: '灵气不足，无法突破' };
-    }
-
     const result = calculateBreakthroughResult(
       this.state.realm, this.state.subRealm, this.state.aura
     );
 
     if (result.requiresTribulation) {
-      // AC4: 炼气圆满需天劫，阻断
       return { success: false, message: '突破需进入天劫（天劫系统待实现）' };
     }
 
     if (!result.success) {
-      return { success: false, message: '突破失败' };
+      return { success: false, message: '灵气不足，无法突破' };
     }
 
     // 执行突破
     this.state.aura -= result.auraCost;
-    this.state.realm = result.newRealm;
+    this.state.realm = result.newRealm as Realm;
     this.state.subRealm = result.newSubRealm;
     this.state.lifetimeStats.breakthroughTotal++;
 

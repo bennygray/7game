@@ -45,20 +45,13 @@ export function getMaxSubRealm(realm: number): number {
   return 4;
 }
 
-/** 检查是否可以进行小境界突破 */
+/**
+ * 检查是否可以进行突破（简易版，用于 UI 显示）
+ * 内部直接委托给 calculateBreakthroughResult 避免逻辑重复（CR-05）
+ */
 export function canBreakthrough(realm: number, subRealm: number, aura: number): boolean {
-  const maxSub = getMaxSubRealm(realm);
-
-  if (subRealm >= maxSub) {
-    // 大境界突破条件
-    if (realm === 1) {
-      return aura >= LIANQI_TO_ZHUJI_COST;
-    }
-    return false; // 筑基圆满 = lite 终点
-  }
-
-  const nextCost = getRealmAuraCost(realm, subRealm + 1);
-  return aura >= nextCost;
+  const result = calculateBreakthroughResult(realm, subRealm, aura);
+  return result.success || result.requiresTribulation;
 }
 
 /** 突破结果 */

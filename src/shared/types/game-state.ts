@@ -9,23 +9,28 @@
  */
 
 import type { AISoulContext } from './ai-soul';
+import { generateInitialDisciples, generateInitialRelationships } from '../../engine/disciple-generator';
 
-// ===== 枚举 =====
+// ===== 常量 =====
 
-/** 大境界枚举 */
-export enum Realm {
-  LIANQI = 1,   // 炼气
-  ZHUJI  = 2,   // 筑基
-}
+/** 大境界 */
+export const Realm = {
+  LIANQI: 1,
+  ZHUJI:  2,
+} as const;
+export type Realm = (typeof Realm)[keyof typeof Realm];
 
 /** 道基品质 */
-export enum DaoFoundation {
-  NONE    = 0,  // 未突破（炼气期）
-  FANPIN  = 1,  // 凡品 ×1.5
-  DIDAO   = 2,  // 地道 ×2.5
-  TIANDAO = 3,  // 天道 ×4.0
-  WUXIA   = 4,  // 无暇 ×8.0
-}
+export const DaoFoundation = {
+  NONE:    0,  // 未突破（炼气期）
+  FANPIN:  1,  // 凡品 ×1.5
+  DIDAO:   2,  // 地道 ×2.5
+  TIANDAO: 3,  // 天道 ×4.0
+  WUXIA:   4,  // 无暇 ×8.0
+} as const;
+export type DaoFoundation = (typeof DaoFoundation)[keyof typeof DaoFoundation];
+
+
 
 /** 炼丹品质 */
 export type AlchemyQuality = 'waste' | 'low' | 'mid' | 'high' | 'perfect';
@@ -56,16 +61,17 @@ export interface AlchemyState {
   active: boolean;
 }
 
-/** 弟子行为枚举 */
-export enum DiscipleBehavior {
-  IDLE      = 'idle',
-  MEDITATE  = 'meditate',
-  ALCHEMY   = 'alchemy',
-  FARM      = 'farm',
-  EXPLORE   = 'explore',
-  REST      = 'rest',
-  BOUNTY    = 'bounty',
-}
+/** 弟子行为 */
+export const DiscipleBehavior = {
+  IDLE:      'idle',
+  MEDITATE:  'meditate',
+  ALCHEMY:   'alchemy',
+  FARM:      'farm',
+  EXPLORE:   'explore',
+  REST:      'rest',
+  BOUNTY:    'bounty',
+} as const;
+export type DiscipleBehavior = (typeof DiscipleBehavior)[keyof typeof DiscipleBehavior];
 
 /** 五维性格特质 */
 export interface PersonalityTraits {
@@ -175,9 +181,9 @@ export interface LiteGameState {
   spiritStones: number;
 
   // === 境界 ===
-  realm: number;
+  realm: Realm;
   subRealm: number;
-  daoFoundation: number;
+  daoFoundation: DaoFoundation;
 
   // === 悟性 ===
   comprehension: number;
@@ -241,84 +247,4 @@ export function createDefaultLiteGameState(): LiteGameState {
       totalAuraEarned: 0, breakthroughTotal: 0,
     },
   };
-}
-
-// ===== 弟子生成 =====
-
-const SURNAMES = ['林', '陈', '张', '李', '王', '赵', '周', '吴', '孙', '刘'];
-const GIVEN_NAMES = ['清风', '明月', '星河', '云烟', '紫霞', '青莲', '玄冰', '碧落', '天华', '灵犀'];
-const SPIRITUAL_ROOTS = ['金', '木', '水', '火', '土'];
-
-const PERSONALITY_TEMPLATES: { name: string; traits: PersonalityTraits }[] = [
-  { name: '刚烈', traits: { aggressive: 0.8, persistent: 0.7, kind: 0.2, lazy: 0.1, smart: 0.5 } },
-  { name: '温和', traits: { aggressive: 0.2, persistent: 0.5, kind: 0.8, lazy: 0.3, smart: 0.6 } },
-  { name: '机敏', traits: { aggressive: 0.4, persistent: 0.6, kind: 0.5, lazy: 0.2, smart: 0.9 } },
-];
-
-let _idCounter = 0;
-
-function clamp(val: number, min: number, max: number): number {
-  return Math.min(max, Math.max(min, val));
-}
-
-function rollStarRating(): StarRating {
-  const roll = Math.random() * 100;
-  if (roll < 30) return 1;
-  if (roll < 60) return 2;
-  if (roll < 85) return 3;
-  if (roll < 97) return 4;
-  return 5;
-}
-
-/** 随机生成一名弟子 */
-export function generateRandomDisciple(): LiteDiscipleState {
-  const surname = SURNAMES[Math.floor(Math.random() * SURNAMES.length)];
-  const givenName = GIVEN_NAMES[Math.floor(Math.random() * GIVEN_NAMES.length)];
-  const starRating = rollStarRating();
-  const rootCount = 1 + Math.floor(Math.random() * 3);
-  const shuffled = [...SPIRITUAL_ROOTS].sort(() => Math.random() - 0.5);
-  const spiritualRoots = shuffled.slice(0, rootCount);
-  const template = PERSONALITY_TEMPLATES[Math.floor(Math.random() * PERSONALITY_TEMPLATES.length)];
-  const personality: PersonalityTraits = {
-    aggressive: clamp(template.traits.aggressive + (Math.random() - 0.5) * 0.2, 0, 1),
-    persistent: clamp(template.traits.persistent + (Math.random() - 0.5) * 0.2, 0, 1),
-    kind: clamp(template.traits.kind + (Math.random() - 0.5) * 0.2, 0, 1),
-    lazy: clamp(template.traits.lazy + (Math.random() - 0.5) * 0.2, 0, 1),
-    smart: clamp(template.traits.smart + (Math.random() - 0.5) * 0.2, 0, 1),
-  };
-  const subRealm = 1 + Math.floor(Math.random() * 3);
-
-  _idCounter++;
-  return {
-    id: `disciple_${Date.now()}_${_idCounter}`,
-    name: `${surname}${givenName}`,
-    starRating,
-    realm: 1,
-    subRealm,
-    aura: 0,
-    personality,
-    personalityName: template.name,
-    spiritualRoots,
-    behavior: DiscipleBehavior.IDLE,
-    lastDecisionTime: Date.now(),
-    behaviorTimer: 0,
-    stamina: 100,
-  };
-}
-
-/** 生成 4 名初始弟子 */
-function generateInitialDisciples(): LiteDiscipleState[] {
-  return Array.from({ length: 4 }, () => generateRandomDisciple());
-}
-
-/** 生成初始关系矩阵 */
-function generateInitialRelationships(disciples: LiteDiscipleState[]): RelationshipEdge[] {
-  const edges: RelationshipEdge[] = [];
-  for (let i = 0; i < disciples.length; i++) {
-    for (let j = 0; j < disciples.length; j++) {
-      if (i === j) continue;
-      edges.push({ sourceId: disciples[i].id, targetId: disciples[j].id, value: 0 });
-    }
-  }
-  return edges;
 }
