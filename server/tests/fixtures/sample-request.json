@@ -1,0 +1,7 @@
+{
+  "discipleName": "周星河",
+  "personalityName": "散漫",
+  "personality": { "lazy": 0.8, "kind": 0.3, "smart": 0.5 },
+  "behavior": "rest",
+  "shortTermMemory": ["刚刚结束了一场修炼"]
+}

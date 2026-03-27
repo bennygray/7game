@@ -4,6 +4,8 @@
  * 每秒执行一次 tick，更新灵气/悟性/灵石。
  * 管理仙历时间推进和弟子行为树。
  *
+ * Phase B-α: 新增 step 6.5 灵田每 tick 生长推进
+ *
  * @see Story #2, Story #4 ACs
  */
 
@@ -17,6 +19,7 @@ import {
   calculateBreakthroughResult,
 } from '../shared/formulas/realm-formulas';
 import { tickDisciple, type DiscipleBehaviorEvent } from './behavior-tree';
+import { tickFarm } from './farm-engine';
 
 /** Tick 回调：引擎每次 tick 后通知上层 */
 export type TickCallback = (state: LiteGameState, deltaS: number) => void;
@@ -30,6 +33,9 @@ export type BreakthroughCallback = (
 /** 弟子行为变更回调 */
 export type DiscipleBehaviorChangeCallback = (events: DiscipleBehaviorEvent[]) => void;
 
+/** 灵田/炼丹 tick 日志回调 */
+export type FarmTickLogCallback = (logs: string[]) => void;
+
 export class IdleEngine {
   private state: LiteGameState;
   private intervalId: ReturnType<typeof setInterval> | null = null;
@@ -37,6 +43,7 @@ export class IdleEngine {
   private onTick: TickCallback | null = null;
   private onBreakthrough: BreakthroughCallback | null = null;
   private onDiscipleBehaviorChange: DiscipleBehaviorChangeCallback | null = null;
+  private onFarmTickLog: FarmTickLogCallback | null = null;
 
   /** Tick 间隔（毫秒） */
   static readonly TICK_INTERVAL_MS = 1000;
@@ -62,6 +69,11 @@ export class IdleEngine {
   /** 注册弟子行为变更回调 */
   setOnDiscipleBehaviorChange(cb: DiscipleBehaviorChangeCallback): void {
     this.onDiscipleBehaviorChange = cb;
+  }
+
+  /** 注册灵田 tick 日志回调 */
+  setOnFarmTickLog(cb: FarmTickLogCallback): void {
+    this.onFarmTickLog = cb;
   }
 
   /** 启动引擎 */
@@ -124,10 +136,20 @@ export class IdleEngine {
     // 6. 更新在线时间
     this.state.lastOnlineTime = now;
 
+    // 6.5 灵田生长推进 (Phase B-α)
+    const farmLogs: string[] = [];
+    for (const disciple of this.state.disciples) {
+      const logs = tickFarm(disciple, this.state);
+      farmLogs.push(...logs);
+    }
+    if (farmLogs.length > 0) {
+      this.onFarmTickLog?.(farmLogs);
+    }
+
     // 7. 弟子行为树 tick
     const allEvents: DiscipleBehaviorEvent[] = [];
     for (const disciple of this.state.disciples) {
-      const events = tickDisciple(disciple, deltaS);
+      const events = tickDisciple(disciple, deltaS, this.state);
       allEvents.push(...events);
     }
     if (allEvents.length > 0) {
@@ -140,8 +162,6 @@ export class IdleEngine {
 
   /**
    * 尝试突破（玩家主动触发）
-   *
-   * @returns 突破是否成功（或需要天劫）
    */
   tryBreakthrough(): { success: boolean; message: string } {
     const result = calculateBreakthroughResult(

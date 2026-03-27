@@ -9,7 +9,8 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "ai": "npx tsx server/ai-server.ts",
-    "download-model": "npx tsx server/download-model.ts"
+    "download-model": "npx tsx server/download-model.ts",
+    "test:ai-stress": "npx tsx server/tests/ai-stress-test.ts"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

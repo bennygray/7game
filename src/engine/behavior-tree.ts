@@ -1,13 +1,23 @@
 /**
  * 弟子行为树 — 性格权重决策系统
  *
- * 纯函数设计，无副作用。由 IdleEngine.tick() 驱动。
+ * 由 IdleEngine.tick() 驱动。
+ * ⚠️ tickDisciple 有副作用：通过 farm/alchemy engine 修改 state。
  *
- * @see Story #4 ACs
+ * @deprecated-pattern Phase D 启动时需重构为 Intent 模式：
+ *   tickDisciple() → BehaviorIntent[]（纯函数）
+ *   IdleEngine.tick() → 统一执行 intents + 协调多弟子对话触发
+ *   理由：弟子间对话需引擎层看到全部弟子意图后才能协调，
+ *   当前副作用模式无法实现 A 炼丹成功 → B 旁观评论的交互。
+ *
+ * @see Story #4 ACs (Phase A)
+ * @see Story #2/#3 ACs (Phase B-α)
  */
 
-import type { LiteDiscipleState, PersonalityTraits, DiscipleBehavior } from '../shared/types/game-state';
+import type { LiteDiscipleState, LiteGameState, PersonalityTraits, DiscipleBehavior } from '../shared/types/game-state';
 import { DiscipleBehavior as DB } from '../shared/types/game-state';
+import { tryPlant, harvestAll, plantResultToLog } from './farm-engine';
+import { startAlchemy, settleAlchemy } from './alchemy-engine';
 
 // ===== 行为配置 =====
 
@@ -52,15 +62,6 @@ const ACTIVE_STAMINA_DRAIN = 0.3;
 
 /**
  * 根据五维性格和体力生成 7 行为权重向量
- *
- * 权重映射：
- *  MEDITATE: persistent×3 + smart×1
- *  EXPLORE:  aggressive×2 + smart×1
- *  REST:     lazy×3 + (1 - stamina/100)×2
- *  ALCHEMY:  smart×2 + persistent×1
- *  FARM:     kind×2 + persistent×1
- *  BOUNTY:   aggressive×3 + persistent×1
- *  IDLE:     lazy×1 (兜底)
  */
 export function getPersonalityWeights(
   p: PersonalityTraits,
@@ -110,7 +111,6 @@ export function getBehaviorDuration(behavior: DiscipleBehavior): number {
  */
 export function getBehaviorAuraReward(behavior: DiscipleBehavior, starRating: number): number {
   const base = BEHAVIOR_BASE_AURA[behavior] ?? 0;
-  // 星级越高，奖励越多：1★ ×1, 3★ ×1.5, 5★ ×2
   return base * (1 + (starRating - 1) * 0.25);
 }
 
@@ -130,14 +130,25 @@ export interface DiscipleBehaviorEvent {
   newBehavior: DiscipleBehavior;
   /** 行为结束时获得的灵气（仅 oldBehavior 结束时有值） */
   auraReward: number;
+  /** FARM/ALCHEMY 引擎产生的 MUD 日志（可选） */
+  farmAlchemyLogs?: string[];
 }
 
 /**
  * 单弟子 tick 处理
  *
- * @returns 行为变更事件数组（可能为空、1 条结束事件 + 1 条开始事件）
+ * Phase B-α: 行为开始/结束时触发 farm/alchemy engine
+ *
+ * @param d 弟子状态（会被修改）
+ * @param deltaS 距上次 tick 秒数
+ * @param state 游戏全局状态（farm/alchemy 需要）
+ * @returns 行为变更事件数组
  */
-export function tickDisciple(d: LiteDiscipleState, deltaS: number): DiscipleBehaviorEvent[] {
+export function tickDisciple(
+  d: LiteDiscipleState,
+  deltaS: number,
+  state: LiteGameState,
+): DiscipleBehaviorEvent[] {
   const events: DiscipleBehaviorEvent[] = [];
 
   if (d.behavior !== DB.IDLE && d.behavior !== DB.REST) {
@@ -155,15 +166,24 @@ export function tickDisciple(d: LiteDiscipleState, deltaS: number): DiscipleBeha
     d.behaviorTimer -= deltaS;
 
     if (d.behaviorTimer <= 0) {
-      // 行为结束 → 结算奖励
+      // 行为结束 → 结算
       const reward = getBehaviorAuraReward(d.behavior, d.starRating);
       d.aura += reward;
+
+      // Phase B-α: FARM/ALCHEMY 行为结束时触发引擎
+      const farmAlchemyLogs: string[] = [];
+      if (d.behavior === DB.FARM) {
+        farmAlchemyLogs.push(...harvestAll(d, state));
+      } else if (d.behavior === DB.ALCHEMY) {
+        farmAlchemyLogs.push(...settleAlchemy(d, state));
+      }
 
       events.push({
         disciple: d,
         oldBehavior: d.behavior,
         newBehavior: DB.IDLE,
         auraReward: reward,
+        farmAlchemyLogs: farmAlchemyLogs.length > 0 ? farmAlchemyLogs : undefined,
       });
 
       d.behavior = DB.IDLE;
@@ -183,11 +203,24 @@ export function tickDisciple(d: LiteDiscipleState, deltaS: number): DiscipleBeha
       d.behaviorTimer = duration;
       d.lastDecisionTime = Date.now();
 
+      // Phase B-α: FARM/ALCHEMY 行为开始时触发引擎
+      const farmAlchemyLogs: string[] = [];
+      if (chosen === DB.FARM) {
+        const result = tryPlant(d, state);
+        const log = plantResultToLog(d, result);
+        if (log) farmAlchemyLogs.push(log);
+      } else if (chosen === DB.ALCHEMY) {
+        const log = startAlchemy(d, state);
+        farmAlchemyLogs.push(log);
+        // startAlchemy 会覆盖 behaviorTimer = craftTimeSec
+      }
+
       events.push({
         disciple: d,
         oldBehavior,
         newBehavior: chosen,
         auraReward: 0,
+        farmAlchemyLogs: farmAlchemyLogs.length > 0 ? farmAlchemyLogs : undefined,
       });
     }
   }

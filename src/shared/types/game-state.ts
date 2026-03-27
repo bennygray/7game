@@ -1,11 +1,11 @@
 /**
- * 7game-lite 精简游戏状态
+ * 7game-lite 精简游戏状态 — v2
  *
- * 从 7waygame GameState 精简而来。仅保留骨架集 6 系统所需字段。
- * 止步筑基圆满，无功法/装备/薪俸/丹毒。
+ * Phase B-α: 删除 FieldSlot/AlchemyState，新增 FarmPlot/PillItem，
+ * 弟子级 farmPlots + currentRecipeId。
  *
  * @see AGENTS.md §3.5 版本边界
- * @see 7game-lite-analysis.md Step 2
+ * @see 7game-lite-phaseB-analysis.md Step 2 + Fix 1~7
  */
 
 import type { AISoulContext } from './ai-soul';
@@ -30,35 +30,36 @@ export const DaoFoundation = {
 } as const;
 export type DaoFoundation = (typeof DaoFoundation)[keyof typeof DaoFoundation];
 
-
-
 /** 炼丹品质 */
 export type AlchemyQuality = 'waste' | 'low' | 'mid' | 'high' | 'perfect';
 
 // ===== 子结构 =====
 
-/** 灵田格子 */
-export interface FieldSlot {
-  /** 种子 ID，null = 空地 */
-  seedId: string | null;
-  /** 生长进度 0~1，1 = 成熟 */
-  progress: number;
-  /** 种下时的现实时间戳 */
-  plantedAt: number;
+/**
+ * 弟子种植记录（替代旧 FieldSlot）
+ *
+ * 使用 elapsedTicks 累计模式，解决 Date.now() 关机瞬间成熟问题 (Fix 1)
+ * FARM 行为 ×2 加速 (Fix 7)
+ */
+export interface FarmPlot {
+  /** 种子 ID */
+  seedId: string;
+  /** 种子固有生长时间（秒） */
+  growthTimeSec: number;
+  /** 已累计的生长 tick（受 FARM ×2 加速） */
+  elapsedTicks: number;
   /** 是否已成熟 */
   mature: boolean;
 }
 
-/** 炼丹状态 */
-export interface AlchemyState {
-  /** 当前炼制的丹方 ID，null = 未在炼丹 */
-  recipeId: string | null;
-  /** 炼丹开始的现实时间戳 */
-  startTime: number;
-  /** 炼丹结束的现实时间戳（预计） */
-  endTime: number;
-  /** 是否正在炼丹 */
-  active: boolean;
+/** 背包丹药 */
+export interface PillItem {
+  /** 丹方定义 ID */
+  defId: string;
+  /** 品质 */
+  quality: AlchemyQuality;
+  /** 数量 */
+  count: number;
 }
 
 /** 弟子行为 */
@@ -113,6 +114,13 @@ export interface LiteDiscipleState {
   behaviorTimer: number;
   /** 体力 (0~100) */
   stamina: number;
+
+  // === Phase B-α 新增 ===
+
+  /** 灵田种植记录，最多 3 块 */
+  farmPlots: FarmPlot[];
+  /** 当前炼制的丹方 ID（null = 未在炼丹） */
+  currentRecipeId: string | null;
 }
 
 /** 弟子关系边 */
@@ -135,6 +143,8 @@ export interface SectState {
   auraDensity: number;
   /** 灵石滴漏累积器 */
   stoneDripAccumulator: number;
+  /** 弟子上缴丹药总数 */
+  tributePills: number;
 }
 
 /** 悬赏任务状态 */
@@ -171,7 +181,7 @@ export interface LifetimeStats {
 
 // ===== 主状态 =====
 
-/** 7game-lite 精简游戏状态 */
+/** 7game-lite 精简游戏状态 — v2 */
 export interface LiteGameState {
   /** 存档版本号 */
   version: number;
@@ -188,11 +198,8 @@ export interface LiteGameState {
   // === 悟性 ===
   comprehension: number;
 
-  // === 灵田 ===
-  fields: FieldSlot[];
-
-  // === 炼丹 ===
-  alchemy: AlchemyState;
+  // === 丹药背包 (Phase B-α) ===
+  pills: PillItem[];
 
   // === 宗门 ===
   sect: SectState;
@@ -216,24 +223,23 @@ export interface LiteGameState {
 
 // ===== 工厂函数 =====
 
-/** 创建默认新游戏状态 */
+/** 创建默认新游戏状态 — v2 */
 export function createDefaultLiteGameState(): LiteGameState {
   const now = Date.now();
   const disciples = generateInitialDisciples();
   return {
-    version: 1,
+    version: 2,
     aura: 0,
     spiritStones: 200,
     realm: Realm.LIANQI,
     subRealm: 1,
     daoFoundation: DaoFoundation.NONE,
     comprehension: 0,
-    fields: [
-      { seedId: null, progress: 0, plantedAt: 0, mature: false },
-      { seedId: null, progress: 0, plantedAt: 0, mature: false },
-    ],
-    alchemy: { recipeId: null, startTime: 0, endTime: 0, active: false },
-    sect: { name: '无名小宗', level: 1, reputation: 0, auraDensity: 1.0, stoneDripAccumulator: 0 },
+    pills: [],
+    sect: {
+      name: '无名小宗', level: 1, reputation: 0,
+      auraDensity: 1.0, stoneDripAccumulator: 0, tributePills: 0,
+    },
     disciples,
     relationships: generateInitialRelationships(disciples),
     bountyBoard: { activeBounties: [], completedCount: 0 },

@@ -18,6 +18,8 @@ import { escapeHtml } from './engine/disciple-generator';
 import { getBehaviorLabel } from './engine/behavior-tree';
 import { createLLMAdapter, type GenerateRequest } from './ai/llm-adapter';
 import { createDefaultAISoulContext, addShortTermMemory } from './shared/types/ai-soul';
+import { SEED_BY_ID } from './shared/data/seed-table';
+import { RECIPE_BY_ID } from './shared/data/recipe-table';
 
 // ===== 初始化 =====
 
@@ -195,6 +197,17 @@ function handleCommand(cmd: string): void {
       addMudLog(`<span style="color:#c8b88b">[状态] 境界：${escapeHtml(getRealmName(state.realm, state.subRealm))}</span>`);
       addMudLog(`  灵气：${state.aura.toFixed(0)} | 灵石：${state.spiritStones.toFixed(1)} | 悟性：${state.comprehension.toFixed(1)}`);
       addMudLog(`  弟子数：${state.disciples.length} | 突破次数：${state.lifetimeStats.breakthroughTotal}`);
+      // Phase B-α: 材料 + 丹药
+      {
+        const matEntries = Object.entries(state.materialPouch).filter(([, v]) => v > 0);
+        if (matEntries.length > 0) {
+          addMudLog(`  材料：${matEntries.map(([k, v]) => `${SEED_BY_ID.get(k)?.name ?? k}×${v}`).join('、')}`);
+        }
+        if (state.pills.length > 0) {
+          addMudLog(`  丹药：${state.pills.map(p => `${RECIPE_BY_ID.get(p.defId)?.name ?? p.defId}(${p.quality})×${p.count}`).join('、')}`);
+        }
+        addMudLog(`  上缴丹药：${state.sect.tributePills}`);
+      }
       break;
 
     case 'bt':
@@ -243,9 +256,24 @@ engine.setOnBreakthrough((_s, result) => {
   addMudLog(`<span style="color:#ffd700">═══ 突破！境界提升至${escapeHtml(getRealmName(result.newRealm, result.newSubRealm))} ═══</span>`);
 });
 
+// Phase B-α: 灵田 tick 日志
+engine.setOnFarmTickLog((logs) => {
+  for (const log of logs) {
+    addMudLog(`<span style="color:#8ac88a">${escapeHtml(log)}</span>`);
+  }
+});
+
 engine.setOnDiscipleBehaviorChange((events) => {
   for (const evt of events) {
     const name = escapeHtml(evt.disciple.name);
+
+    // Phase B-α: 输出 FARM/ALCHEMY 引擎日志
+    if (evt.farmAlchemyLogs) {
+      for (const log of evt.farmAlchemyLogs) {
+        addMudLog(`<span style="color:#c8a858">${escapeHtml(log)}</span>`);
+      }
+    }
+
     if (evt.auraReward > 0) {
       // 行为结束事件
       addMudLog(`<span style="color:#8a9a8a">[${name}] 结束${getBehaviorLabel(evt.oldBehavior)}，灵气 +${evt.auraReward.toFixed(1)}</span>`);

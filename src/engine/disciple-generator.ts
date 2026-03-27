@@ -83,6 +83,8 @@ export function generateRandomDisciple(): LiteDiscipleState {
     lastDecisionTime: Date.now(),
     behaviorTimer: 0,
     stamina: 100,
+    farmPlots: [],
+    currentRecipeId: null,
   };
 }
 

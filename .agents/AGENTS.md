@@ -25,9 +25,8 @@
 ```
 
 > [!NOTE]
-> 本项目尚处于 SGPA 分析阶段。当 SGPA Step 10 交付后，将创建正式的
-> `docs/project/handoff.md` 和 `docs/project/task-tracker.md`，届时启动协议
-> 将更新为优先读取这两个文件。
+> 首次使用本项目时，应检查 `docs/project/handoff.md` 和 `docs/project/task-tracker.md`
+> 是否存在，不存在则创建空骨架。启动协议优先读取这两个文件。
 
 > [!CAUTION]
 > **禁止**未读分析进度文件就开始编码或规划。
@@ -157,6 +156,21 @@ fix/*       → 修复分支
 | **蒙特卡罗** | 涉及概率的公式必须跑 ≥ 1,000 次模拟 |
 | **回归验证** | 修改已有公式时，必须先运行既有验证脚本确认无回归 |
 
+### 3.8 测试脚本管理规范
+
+> [!IMPORTANT]
+> **所有测试脚本必须纳入项目版本管理。禁止将测试脚本遗留在 `/tmp/` 或桌面等临时位置。**
+
+| 规则 | 说明 |
+|------|------|
+| **脚本位置** | `server/tests/` — AI 后端相关测试 |
+| | `scripts/` — 数值验证脚本（§3.7 已规定） |
+| **测试数据** | `server/tests/fixtures/` — JSON payload、mock 数据等 |
+| **命名规范** | `ai-{功能名}-test.ts`（如 `ai-stress-test.ts`） |
+| **工作流** | 每个可复用的测试必须在 `.agents/workflows/` 中创建对应运行指南 |
+| **临时脚本** | 调试用的一次性脚本可写在 `/tmp/`，但**验证完毕后**必须决定：归档到项目 或 删除 |
+| **npm 脚本** | 常用测试添加到 `package.json` 的 `scripts` 中 |
+
 ---
 
 ## 四、文档更新联动规则
@@ -189,7 +203,7 @@ fix/*       → 修复分支
 d:\7game\
 ├── .agents/                        ← AI 助手规范
 │   ├── AGENTS.md                   ← 你正在读的文件
-│   ├── workflows/                  ← 工作流（Git 等）
+│   ├── workflows/                  ← 工作流（Git / AI 安装 / 测试等）
 │   └── skills/                     ← 技能扩展（SGPA 等）
 ├── src/                            ← 前端（Vite SPA）
 │   ├── shared/                     ← 跨层共享
@@ -203,7 +217,7 @@ d:\7game\
 │   │   ├── mud-log-engine.ts       ← MUD 文字流生成
 │   │   └── save-manager.ts         ← localStorage 存档
 │   ├── ai/                         ← AI 适配层
-│   │   ├── llm-adapter.ts          ← LLMAdapter 接口（HTTP / 未来 IPC）
+│   │   ├── llm-adapter.ts          ← LLMAdapter 接口（HTTP → server）
 │   │   ├── prompt-builder.ts       ← 上下文拼装
 │   │   └── prompts/                ← Prompt 模板（版本化管理）
 │   ├── ui/                         ← DOM 组件
@@ -211,11 +225,20 @@ d:\7game\
 │   │   └── CommandInput.ts         ← 命令输入框
 │   └── main.ts                     ← 应用入口
 ├── server/                         ← AI 推理后端
-│   └── index.ts                    ← Express + node-llama-cpp
+│   ├── ai-server.ts                ← API 网关 + llama-server 子进程管理
+│   ├── download-model.ts           ← ModelScope 模型下载脚本
+│   ├── models/                     ← GGUF 模型文件（.gitignore）
+│   ├── llama-server/               ← 推理引擎二进制（.gitignore）
+│   └── tests/                      ← AI 后端测试脚本
+│       ├── ai-stress-test.ts       ← 并发压力测试
+│       └── fixtures/               ← 测试数据（JSON payload 等）
 ├── scripts/                        ← 数值验证脚本
 ├── docs/                           ← 文档
+│   ├── INDEX.md                    ← 全文档索引
+│   ├── project/                    ← 项目管理（handoff / task-tracker）
 │   ├── features/                   ← SGPA 分析进度
-│   └── design/specs/               ← User Stories + 设计文档
+│   ├── design/specs/               ← User Stories + 设计文档
+│   └── verification/               ← 集成验证清单
 ├── index.html                      ← Vite 入口
 ├── package.json
 ├── tsconfig.json
@@ -248,7 +271,7 @@ d:\7game\
 
 | 规则 | 说明 |
 |------|------|
-| **模型规格** | Qwen3.5-0.8B（GGUF Q4_K_M 量化），node-llama-cpp 运行 |
+| **模型规格** | Qwen3.5-0.8B（GGUF Q4_K_M 量化），llama-server.exe 子进程运行 |
 | **推理预算** | 每次推理输出 ≤ 256 tokens，prompt ≤ 512 tokens |
 | **上下文管理** | `AISoulContext.shortTermMemory` FIFO 上限 10 条 |
 | **Fallback 策略** | 后端不可用时 fallback 到预设模板台词，**不阻塞引擎 tick** |

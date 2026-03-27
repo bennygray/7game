@@ -29,6 +29,23 @@ trigger: >
 4. **参考文件加载**：执行 Step 6 前，必须用 `view_file` 读取
    `references/user-story-template.md` 和 `references/anti-patterns.md`；
    执行 Step 9 前，必须读取 `references/verification-checklist-template.md`。
+5. **产出物归档（硬约束）**：每个 Step 的产出物必须按以下路径持久化保存。
+   **禁止**将项目文档写入 AI 助手的 conversation artifact 目录或 `/tmp/`。
+
+| Step | 产出物 | 保存方式 |
+|------|--------|--------|
+| Step 0 | 目录结构 | 自动创建缺失目录 |
+| Step 1 | 分析进度文件 | `docs/features/[Name]-analysis.md`（新建） |
+| Step 1.5 | PoC 记录 | 追加到 analysis.md Step 1.5 段落 |
+| Step 2 | interface 草案 | 追加到 analysis.md Step 2 段落（完整代码，非摘要） |
+| Step 3 | 规则/公式清单 | 追加到 analysis.md Step 3 段落（完整公式，非摘要） |
+| Step 4 | 架构拓扑图 | `docs/design/specs/[Name]-architecture.md`（新建） |
+| Step 5 | 分期路线图 | 追加到 analysis.md Step 5 段落 |
+| Step 6 | User Stories | `docs/design/specs/[Name]-user-stories-phaseX.md`（新建） |
+| Step 7 | 实施计划 | `docs/design/specs/[Name]-impl-plan.md`（新建） |
+| Step 8 | 验证脚本指引 | 追加到 analysis.md Step 8 段落 |
+| Step 9 | 验证清单 | `docs/verification/[Name]-phaseX-verification.md`（新建） |
+| Step 10 | 交接更新 | 更新 `docs/project/handoff.md` + `docs/INDEX.md` |
 
 ## 阶段总览
 
@@ -51,6 +68,19 @@ Phase III 全部完成后，才能进入 Phase IV。
 
 ---
 
+## Phase 0: 脚手架检查 (Scaffold Check)
+
+### Step 0: 目录脚手架检查
+- 首次触发本 Skill 时，检查以下目录是否存在，不存在则创建（含 `.gitkeep`）：
+  - `docs/features/` — 分析进度文件
+  - `docs/design/specs/` — User Stories 和设计文档
+  - `docs/verification/` — 验证清单
+  - `scripts/` — 数值验证脚本
+- 检查 `docs/INDEX.md` 是否存在，不存在则创建空骨架
+- 此步骤自动执行，无需 USER 确认，不计入 HARD-GATE
+
+---
+
 ## Phase I: 需求分析 (Discovery & Analysis)
 
 ### Step 1: 价值锚定与体验闭环 (Value & Loop)
@@ -61,6 +91,19 @@ Phase III 全部完成后，才能进入 Phase IV。
   和核心行为闭环（打坐、炼丹、突破）挂钩？
 - **产出格式**：结构化表格，≤ 10 行。
 - **末尾**：向 USER 抛出 2-3 个需要决策的选择题。
+
+### Step 1.5: 技术可行性验证 (Technical Feasibility PoC)
+- **何时触发**：当 Step 1 中的系统涉及**未经验证的技术方案**时必须执行。
+  如：新的第三方库、AI 模型推理、跨进程通信、新的渲染管线等。
+  如果系统仅使用项目已有的成熟技术栈，可跳过本步骤并标注"已有技术栈，跳过"。
+- **PoC 范围**：用最小代码验证核心技术假设（≤ 2 小时）。
+  例："Qwen3.5 能在 Windows CPU 上用 node-llama-cpp 稳定推理吗？" → 写一个最小脚本测试。
+- **PoC 产出**：
+  - 结论：可行 / 不可行 / 可行但需替代方案
+  - 如不可行：列出 2-3 个备选方案及各自的代价
+  - 性能基线数据（如适用）：延迟、内存、吞吐量
+- **记录位置**：追加到 `[FeatureName]-analysis.md` 的 Step 1.5 段落
+- **末尾**：向 USER 报告 PoC 结论，确认是否继续（或切换技术方案）后进入 Step 2。
 
 ### Step 2: 实体与数据基石 (Entity & State Structure)
 - **前置动作**：用 `grep_search` 搜索现有 `GameState` 接口定义，了解当前数据结构。
@@ -150,29 +193,30 @@ Phase III 全部完成后，才能进入 Phase IV。
 > 注意：执行 Step 7 前，先回顾 Step 6 的 User Story 和 Step 4 的架构分层。
 
 ### Step 7: 文档先行与代码实施 (Doc-First Implementation)
-- 按照 AGENTS.md §四 的硬约束执行：**先更新文档 → USER 确认 → 编码**。
+- **遵循 AGENTS.md §四 的硬约束**（先文档 → USER 确认 → 编码）。
 - 输出以下执行清单：
   1. 需要新建或更新的 `docs/design/specs/` 文件清单
   2. 需要更新的 `task-tracker.md` 条目
   3. 建议的 Git 分支名（`feature/[系统名]`）
   4. 编码实施顺序（按 Step 4 的四层架构，从 Data → Engine → UI 顺序）
+  5. **跨系统影响评估**：列出本次改动可能影响的已有模块及其回归验证方式
 - **Blocker 中断规则**：如遇到以下情况，必须立即停下来询问 USER，禁止猜测：
   - 发现与现有代码的接口冲突
   - 需要修改 20% 以上的现有核心代码
   - Step 6 的某条 Story 的 AC 无法在当前架构中实现
 
-### Step 8: 数值验证脚本指引 (Verification Script Guidance)
-- 按照 AGENTS.md §3.7 的硬约束，为本系统涉及数值的部分输出：
+### Step 8: 验证脚本指引 (Verification Script Guidance)
+- **遵循 AGENTS.md §3.7 数值验证脚本规范**和 **§3.8 测试脚本管理规范**。
+- 为本系统输出以下验证计划：
 
-| 字段 | 内容 |
-|------|------|
-| **脚本文件名** | `scripts/[系统名]-sim.ts` 或 `-verify.ts` |
-| **模拟方法** | 蒙特卡罗 / 确定性对比 / 挂机曲线 |
-| **模拟参数** | 运行次数 / 模拟时长 / 初始条件 |
-| **预期输出** | 表格 / 曲线图 / 概率分布 |
-| **通过标准** | 具体数值范围或阈值 |
+| 类型 | 位置 | 说明 |
+|------|------|------|
+| **数值验证脚本** | `scripts/[系统名]-sim.ts` | 遵循 AGENTS.md §3.7 |
+| **功能测试脚本** | `server/tests/ai-[功能]-test.ts` | 遵循 AGENTS.md §3.8 |
+| **测试数据** | `server/tests/fixtures/` | 可复用的 JSON payload 等 |
 
-- 如系统不涉及数值，标注"本系统无数值验证需求"并跳过。
+- 如系统不涉及数值，标注"本系统无数值验证需求"。
+- 如系统不涉及 AI，标注"本系统无 AI 功能测试需求"。
 
 ### Phase III 完成门禁：Self-Review
 
@@ -233,6 +277,38 @@ Phase III 全部完成后，才能进入 Phase IV。
 | "只改了一点点，不用跑验证脚本" | AGENTS.md §3.7 明确要求。没有验证脚本不合并。 |
 | "Phase I 和 II 可以同时进行" | HARD-GATE 禁止。Phase I 未确认不得进入 Phase II。 |
 | "Phase III/IV 可以跳过，AGENTS.md 会管" | 不可以。四个 Phase 必须严格执行，不可省略。 |
+| "技术方案看起来靠谱，不用 PoC" | 上次 node-llama-cpp 崩了就是教训。关键技术必须 PoC 验证。 |
+
+---
+
+## 变更管理协议 (Change Management)
+
+当已进入 Phase II/III 后 USER 提出需求变更时，按以下流程处理：
+
+### 变更分级
+
+| 级别 | 定义 | 处理方式 |
+|------|------|----------|
+| **微调** | 不影响实体/架构，仅改参数或文案 | 直接修改，记录在 analysis.md |
+| **中度变更** | 影响 1-2 个 Step 的产出（如新增字段、调整 Story） | 回退到受影响的 Step 重做，不需要重跑整个 Phase |
+| **重大变更** | 影响核心体验定义或架构分层 | 回退到 Phase I Step 1 重新评估 |
+
+### 变更记录
+
+每次变更必须在 `[FeatureName]-analysis.md` 中追加变更日志：
+
+```markdown
+## 变更日志
+
+| 日期 | 级别 | 变更内容 | 影响范围 | 回退到 |
+|------|------|----------|----------|--------|
+| YYYY-MM-DD | 中度 | 用户要求新增XX字段 | Step 2 实体 + Step 6 Story #3 | Step 2 |
+```
+
+### 回滚方案
+
+- Step 7 编码实施前，必须确保 Git 分支策略允许快速回滚（独立 feature 分支）
+- 如新系统上线后发现破坏核心循环：`git revert` 回退 → 重新进入 Phase I 评估
 | "这一步还不够完美，再打磨一下" | 够用即可。MECE 通过 + USER 确认 = 可以进入下一步。不要过度设计。 |
 
 ---

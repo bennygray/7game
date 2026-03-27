@@ -1,7 +1,10 @@
 /**
  * 存档管理器 — localStorage 版
  *
- * CR-06: 添加 migrateSave 字段迁移机制
+ * v2: Phase B-α 存档迁移
+ *   - 删除 fields/alchemy（旧灵田/炼丹）
+ *   - 弟子增 farmPlots/currentRecipeId
+ *   - 增 pills/sect.tributePills
  *
  * @see AGENTS.md §3.1 前端性能红线：localStorage ≤ 5MB
  */
@@ -10,7 +13,7 @@ import type { LiteGameState } from '../shared/types/game-state';
 import { createDefaultLiteGameState } from '../shared/types/game-state';
 
 const SAVE_KEY = '7game-lite-save';
-const SAVE_VERSION = 1;
+const SAVE_VERSION = 2;
 
 /** 保存游戏状态到 localStorage */
 export function saveGame(state: LiteGameState): boolean {
@@ -25,42 +28,88 @@ export function saveGame(state: LiteGameState): boolean {
 }
 
 /**
- * 迁移旧存档：逐字段填充默认值
- * 防止新增字段导致运行时 undefined crash
+ * v1 → v2 显式迁移
+ *
+ * - 删除 fields / alchemy（旧字段）
+ * - 弟子增 farmPlots / currentRecipeId
+ * - 增 pills / sect.tributePills
  */
-function migrateSave(raw: Record<string, unknown>): LiteGameState {
-  const defaults = createDefaultLiteGameState();
+function migrateV1toV2(raw: Record<string, unknown>): void {
+  // 删除旧字段
+  delete raw['fields'];
+  delete raw['alchemy'];
 
-  // 递归合并：以 defaults 为模板，raw 覆盖已有值
-  function mergeDefaults<T extends Record<string, unknown>>(target: T, source: Record<string, unknown>): T {
-    const result = { ...target };
-    for (const key of Object.keys(target)) {
-      if (key in source && source[key] !== undefined) {
-        const targetVal = target[key];
-        const sourceVal = source[key];
-        if (
-          targetVal !== null &&
-          typeof targetVal === 'object' &&
-          !Array.isArray(targetVal) &&
-          sourceVal !== null &&
-          typeof sourceVal === 'object' &&
-          !Array.isArray(sourceVal)
-        ) {
-          (result as Record<string, unknown>)[key] = mergeDefaults(
-            targetVal as Record<string, unknown>,
-            sourceVal as Record<string, unknown>,
-          );
-        } else {
-          (result as Record<string, unknown>)[key] = sourceVal;
-        }
+  // 弟子级迁移
+  const disciples = raw['disciples'] as Record<string, unknown>[] | undefined;
+  if (Array.isArray(disciples)) {
+    for (const d of disciples) {
+      if (!Array.isArray(d['farmPlots'])) {
+        d['farmPlots'] = [];
+      }
+      if (d['currentRecipeId'] === undefined) {
+        d['currentRecipeId'] = null;
       }
     }
-    return result;
   }
 
-  const migrated = mergeDefaults(defaults as unknown as Record<string, unknown>, raw) as unknown as LiteGameState;
-  migrated.version = SAVE_VERSION;
-  return migrated;
+  // 新增全局字段
+  if (!Array.isArray(raw['pills'])) {
+    raw['pills'] = [];
+  }
+
+  // sect 迁移
+  const sect = raw['sect'] as Record<string, unknown> | undefined;
+  if (sect && typeof sect === 'object') {
+    if (sect['tributePills'] === undefined) {
+      sect['tributePills'] = 0;
+    }
+  }
+
+  raw['version'] = 2;
+  console.log('[SaveManager] v1 → v2 迁移完成');
+}
+
+/**
+ * 迁移旧存档：逐版本号升级 + 默认值填充
+ */
+function migrateSave(raw: Record<string, unknown>): LiteGameState {
+  const version = (raw['version'] as number) ?? 1;
+
+  // 版本链式迁移
+  if (version < 2) {
+    migrateV1toV2(raw);
+  }
+
+  // 兜底：用 defaults 补全可能缺失的字段（安全网）
+  const defaults = createDefaultLiteGameState();
+  const result: Record<string, unknown> = {};
+  const defaultsRec = defaults as unknown as Record<string, unknown>;
+
+  for (const key of Object.keys(defaults as unknown as Record<string, unknown>)) {
+    const defaultVal = defaultsRec[key];
+    if (key in raw && raw[key] !== undefined) {
+      const rawVal = raw[key];
+
+      // 对象类型浅合并（非数组）
+      if (
+        defaultVal !== null &&
+        typeof defaultVal === 'object' &&
+        !Array.isArray(defaultVal) &&
+        rawVal !== null &&
+        typeof rawVal === 'object' &&
+        !Array.isArray(rawVal)
+      ) {
+        result[key] = { ...defaultVal as Record<string, unknown>, ...rawVal as Record<string, unknown> };
+      } else {
+        result[key] = rawVal;
+      }
+    } else {
+      result[key] = defaultVal;
+    }
+  }
+
+  result['version'] = SAVE_VERSION;
+  return result as unknown as LiteGameState;
 }
 
 /** 从 localStorage 加载游戏状态 */
@@ -73,7 +122,6 @@ export function loadGame(): LiteGameState {
     }
     const parsed = JSON.parse(raw) as Record<string, unknown>;
 
-    // CR-06: 使用 migrateSave 而非直接 as 断言
     const state = migrateSave(parsed);
     console.log('[SaveManager] 存档已加载（含迁移检查）');
     return state;
@@ -93,3 +141,4 @@ export function clearSave(): void {
 export function hasSave(): boolean {
   return localStorage.getItem(SAVE_KEY) !== null;
 }
+
