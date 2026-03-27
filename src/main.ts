@@ -3,6 +3,9 @@
  *
  * Story #1: 脚手架 + 存档
  * Story #2: 修炼引擎 Tick 循环
+ * Story #3: MUD 文字面板
+ * Story #4: 弟子行为树
+ * Story #5: AI 灵智接入
  *
  * CR-01: 分离初始化渲染与增量更新（不再每 tick 重建 DOM）
  * CR-02: 命令输入 HTML 转义（防 XSS）
@@ -12,11 +15,15 @@ import { loadGame, saveGame } from './engine/save-manager';
 import { IdleEngine } from './engine/idle-engine';
 import { getRealmAuraCost, getMaxSubRealm } from './shared/formulas/realm-formulas';
 import { escapeHtml } from './engine/disciple-generator';
+import { getBehaviorLabel } from './engine/behavior-tree';
+import { createLLMAdapter, type GenerateRequest } from './ai/llm-adapter';
+import { createDefaultAISoulContext, addShortTermMemory } from './shared/types/ai-soul';
 
 // ===== 初始化 =====
 
 const state = loadGame();
 const engine = new IdleEngine(state);
+const llmAdapter = createLLMAdapter();
 
 const AUTO_SAVE_INTERVAL = 30_000;
 
@@ -166,7 +173,10 @@ function updateLogDisplay(): void {
 // ===== 命令系统 =====
 
 function handleCommand(cmd: string): void {
-  if (!cmd) return;
+  if (!cmd) {
+    addMudLog(`<span style="color:#666">[系统] 未知指令，输入 'help' 查看可用命令</span>`);
+    return;
+  }
 
   // CR-02: HTML 转义防 XSS
   const safeCmd = escapeHtml(cmd);
@@ -221,13 +231,56 @@ engine.setOnTick(() => {
   // 每 5 秒输出一次修炼日志
   if (tickCounter % 5 === 0) {
     const rate = engine.getCurrentAuraRate();
-    addMudLog(`<span style="color:#6a8a6a">[修炼] 宗主打坐入定，灵气 +${(rate * 5).toFixed(1)}</span>`);
+    const wm = state.inGameWorldTime * 12;
+    const y = Math.floor(wm / 12);
+    const m = Math.floor(wm % 12) + 1;
+    addMudLog(`<span style="color:#6a8a6a">[仙历${y}年${m}月] 宗主打坐入定，灵气 +${(rate * 5).toFixed(1)}</span>`);
   }
   updateDisplay();
 });
 
 engine.setOnBreakthrough((_s, result) => {
   addMudLog(`<span style="color:#ffd700">═══ 突破！境界提升至${escapeHtml(getRealmName(result.newRealm, result.newSubRealm))} ═══</span>`);
+});
+
+engine.setOnDiscipleBehaviorChange((events) => {
+  for (const evt of events) {
+    const name = escapeHtml(evt.disciple.name);
+    if (evt.auraReward > 0) {
+      // 行为结束事件
+      addMudLog(`<span style="color:#8a9a8a">[${name}] 结束${getBehaviorLabel(evt.oldBehavior)}，灵气 +${evt.auraReward.toFixed(1)}</span>`);
+    }
+    if (evt.newBehavior !== 'idle' && evt.auraReward === 0) {
+      // 行为开始事件 → 输出行为日志 + 异步请求 AI 台词
+      addMudLog(`<span style="color:#7a8aba">[${name}] 开始${getBehaviorLabel(evt.newBehavior)}</span>`);
+
+      // 确保弟子有 AISoulContext
+      if (!state.aiContexts[evt.disciple.id]) {
+        state.aiContexts[evt.disciple.id] = createDefaultAISoulContext();
+      }
+      const ctx = state.aiContexts[evt.disciple.id];
+
+      // 异步 AI 台词（不阻塞引擎 tick）
+      const req: GenerateRequest = {
+        discipleId: evt.disciple.id,
+        discipleName: evt.disciple.name,
+        personality: evt.disciple.personality,
+        personalityName: evt.disciple.personalityName,
+        behavior: evt.newBehavior,
+        shortTermMemory: ctx.shortTermMemory,
+        starRating: evt.disciple.starRating,
+        realm: evt.disciple.realm,
+        subRealm: evt.disciple.subRealm,
+      };
+
+      llmAdapter.generateLine(req).then((line) => {
+        addMudLog(`<span style="color:#d4a574">[${name}] "${escapeHtml(line)}"</span>`);
+        // 记录到短期记忆 (FIFO, max 10)
+        addShortTermMemory(ctx, `${getBehaviorLabel(evt.newBehavior)}: ${line}`);
+        ctx.lastInferenceTime = Date.now();
+      });
+    }
+  }
 });
 
 // ===== 启动 =====

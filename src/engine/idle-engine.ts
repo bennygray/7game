@@ -2,9 +2,9 @@
  * 修炼引擎 — 核心 Tick 循环
  *
  * 每秒执行一次 tick，更新灵气/悟性/灵石。
- * 管理仙历时间推进。
+ * 管理仙历时间推进和弟子行为树。
  *
- * @see Story #2 ACs
+ * @see Story #2, Story #4 ACs
  */
 
 import type { LiteGameState, Realm } from '../shared/types/game-state';
@@ -16,6 +16,7 @@ import {
 import {
   calculateBreakthroughResult,
 } from '../shared/formulas/realm-formulas';
+import { tickDisciple, type DiscipleBehaviorEvent } from './behavior-tree';
 
 /** Tick 回调：引擎每次 tick 后通知上层 */
 export type TickCallback = (state: LiteGameState, deltaS: number) => void;
@@ -26,12 +27,16 @@ export type BreakthroughCallback = (
   result: { newRealm: number; newSubRealm: number; auraCost: number; requiresTribulation: boolean }
 ) => void;
 
+/** 弟子行为变更回调 */
+export type DiscipleBehaviorChangeCallback = (events: DiscipleBehaviorEvent[]) => void;
+
 export class IdleEngine {
   private state: LiteGameState;
   private intervalId: ReturnType<typeof setInterval> | null = null;
   private lastTickTime: number;
   private onTick: TickCallback | null = null;
   private onBreakthrough: BreakthroughCallback | null = null;
+  private onDiscipleBehaviorChange: DiscipleBehaviorChangeCallback | null = null;
 
   /** Tick 间隔（毫秒） */
   static readonly TICK_INTERVAL_MS = 1000;
@@ -52,6 +57,11 @@ export class IdleEngine {
   /** 注册突破回调 */
   setOnBreakthrough(cb: BreakthroughCallback): void {
     this.onBreakthrough = cb;
+  }
+
+  /** 注册弟子行为变更回调 */
+  setOnDiscipleBehaviorChange(cb: DiscipleBehaviorChangeCallback): void {
+    this.onDiscipleBehaviorChange = cb;
   }
 
   /** 启动引擎 */
@@ -114,7 +124,17 @@ export class IdleEngine {
     // 6. 更新在线时间
     this.state.lastOnlineTime = now;
 
-    // 7. 通知上层
+    // 7. 弟子行为树 tick
+    const allEvents: DiscipleBehaviorEvent[] = [];
+    for (const disciple of this.state.disciples) {
+      const events = tickDisciple(disciple, deltaS);
+      allEvents.push(...events);
+    }
+    if (allEvents.length > 0) {
+      this.onDiscipleBehaviorChange?.(allEvents);
+    }
+
+    // 8. 通知上层
     this.onTick?.(this.state, deltaS);
   }
 
