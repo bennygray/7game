@@ -36,8 +36,8 @@ export class IdleEngine {
   /** Tick 间隔（毫秒） */
   static readonly TICK_INTERVAL_MS = 1000;
 
-  /** 仙历推进速率：1 现实秒 = 0.5 仙历天 → 1 仙历月约 60 秒 */
-  static readonly WORLD_TIME_PER_SECOND = 0.5 / 30; // 0.5天/秒 → 按30天1月算
+  /** 仙历推进速率：降低 10× 以增加沉浸感（CR-08） */
+  static readonly WORLD_TIME_PER_SECOND = 0.5 / 30 / 10;
 
   constructor(state: LiteGameState) {
     this.state = state;
