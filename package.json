@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "ai": "npx tsx server/ai-server.ts",
     "download-model": "npx tsx server/download-model.ts",
-    "test:ai-stress": "npx tsx server/tests/ai-stress-test.ts"
+    "test:ai-stress": "npx tsx server/tests/ai-stress-test.ts",
+    "test:regression": "npx tsx scripts/regression-all.ts"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

@@ -7,6 +7,11 @@
  * Story #4: 弟子行为树
  * Story #5: AI 灵智接入
  *
+ * Phase C:
+ *   - bt 命令改概率模型
+ *   - status 扩展（修速丹/破镜丹/灵脉/统计）
+ *   - 系统日志回调（自动服丹/突破）
+ *
  * CR-01: 分离初始化渲染与增量更新（不再每 tick 重建 DOM）
  * CR-02: 命令输入 HTML 转义（防 XSS）
  */
@@ -20,6 +25,8 @@ import { createLLMAdapter, type GenerateRequest } from './ai/llm-adapter';
 import { createDefaultAISoulContext, addShortTermMemory } from './shared/types/ai-soul';
 import { SEED_BY_ID } from './shared/data/seed-table';
 import { RECIPE_BY_ID } from './shared/data/recipe-table';
+import { getSpiritVeinDensity } from './shared/data/realm-table';
+import { getRealmDisplayName } from './shared/formulas/realm-display';
 
 // ===== 初始化 =====
 
@@ -31,14 +38,8 @@ const AUTO_SAVE_INTERVAL = 30_000;
 
 // ===== 工具函数 =====
 
-function getRealmName(realm: number, subRealm: number): string {
-  if (realm === 1) return `炼气${subRealm}层`;
-  if (realm === 2) {
-    const names = ['初期', '中期', '后期', '圆满'];
-    return `筑基${names[subRealm - 1] ?? ''}`;
-  }
-  return '未知';
-}
+// CR-A3: getRealmDisplayName 已提取到 shared/formulas/realm-display.ts
+// main.ts 中使用 getRealmDisplayName 替代旧 getRealmName
 
 function getNextBreakthroughCost(): number {
   const maxSub = getMaxSubRealm(state.realm);
@@ -133,7 +134,7 @@ function updateDisplay(): void {
 
   setText('ui-time', `第${year}年 ${month}月`);
   setText('ui-sect', `${state.sect.name}（${state.sect.level}级）`);
-  setText('ui-realm', getRealmName(state.realm, state.subRealm));
+  setText('ui-realm', getRealmDisplayName(state.realm, state.subRealm));
   setText('ui-aura', state.aura.toFixed(0));
   setText('ui-aura-rate', `+${engine.getCurrentAuraRate().toFixed(1)}`);
   setText('ui-stones', state.spiritStones.toFixed(1));
@@ -194,7 +195,7 @@ function handleCommand(cmd: string): void {
       break;
 
     case 'status':
-      addMudLog(`<span style="color:#c8b88b">[状态] 境界：${escapeHtml(getRealmName(state.realm, state.subRealm))}</span>`);
+      addMudLog(`<span style="color:#c8b88b">[状态] 境界：${escapeHtml(getRealmDisplayName(state.realm, state.subRealm))}</span>`);
       addMudLog(`  灵气：${state.aura.toFixed(0)} | 灵石：${state.spiritStones.toFixed(1)} | 悟性：${state.comprehension.toFixed(1)}`);
       addMudLog(`  弟子数：${state.disciples.length} | 突破次数：${state.lifetimeStats.breakthroughTotal}`);
       // Phase B-α: 材料 + 丹药
@@ -208,15 +209,38 @@ function handleCommand(cmd: string): void {
         }
         addMudLog(`  上缴丹药：${state.sect.tributePills}`);
       }
+      // Phase C: 新增状态显示
+      {
+        const density = getSpiritVeinDensity(state.realm, state.subRealm);
+        addMudLog(`  灵脉密度：×${density.toFixed(1)}`);
+
+        if (state.cultivateBoostBuff) {
+          addMudLog(`  修速丹：加速中 (剩余 ${state.cultivateBoostBuff.remainingSec.toFixed(0)}s)`);
+        }
+
+        const btBuff = state.breakthroughBuff;
+        if (btBuff.pillsConsumed.length > 0) {
+          addMudLog(`  破镜丹：${btBuff.pillsConsumed.length}/3 颗，加成 +${(btBuff.totalBonus * 100).toFixed(0)}%`);
+        }
+
+        addMudLog(`  丹药消费总数：${state.lifetimeStats.pillsConsumed} | 突破失败：${state.lifetimeStats.breakthroughFailed}`);
+      }
       break;
 
     case 'bt':
     case 'breakthrough': {
-      const result = engine.tryBreakthrough();
-      if (result.success) {
-        addMudLog(`<span style="color:#ffd700">[突破] ${escapeHtml(result.message)}</span>`);
+      // Phase C: 概率突破模型
+      const btLog = engine.tryBreakthrough();
+
+      // 输出回灵丹补差额日志
+      for (const hl of btLog.healLogs) {
+        addMudLog(`<span style="color:#8ac8c8">[系统] ${escapeHtml(hl.detail)}</span>`);
+      }
+
+      if (btLog.success) {
+        addMudLog(`<span style="color:#ffd700">[突破] ${escapeHtml(btLog.message)}</span>`);
       } else {
-        addMudLog(`<span style="color:#ff6b6b">[突破] ${escapeHtml(result.message)}</span>`);
+        addMudLog(`<span style="color:#ff6b6b">[突破] ${escapeHtml(btLog.message)}</span>`);
       }
       break;
     }
@@ -252,14 +276,27 @@ engine.setOnTick(() => {
   updateDisplay();
 });
 
-engine.setOnBreakthrough((_s, result) => {
-  addMudLog(`<span style="color:#ffd700">═══ 突破！境界提升至${escapeHtml(getRealmName(result.newRealm, result.newSubRealm))} ═══</span>`);
+// Phase C: 突破回调改为接收 BreakthroughLog
+engine.setOnBreakthrough((_s, btLog) => {
+  if (btLog.success) {
+    const r = btLog.result;
+    addMudLog(`<span style="color:#ffd700">═══ 突破！境界提升至${escapeHtml(getRealmDisplayName(r.newRealm, r.newSubRealm))} ═══</span>`);
+  } else {
+    addMudLog(`<span style="color:#ff6b6b">═══ 突破失败！${escapeHtml(btLog.message)} ═══</span>`);
+  }
 });
 
 // Phase B-α: 灵田 tick 日志
 engine.setOnFarmTickLog((logs) => {
   for (const log of logs) {
     addMudLog(`<span style="color:#8ac88a">${escapeHtml(log)}</span>`);
+  }
+});
+
+// Phase C: 系统日志（自动服丹/突破自动触发）
+engine.setOnSystemLog((logs) => {
+  for (const log of logs) {
+    addMudLog(`<span style="color:#8ac8c8">${escapeHtml(log)}</span>`);
   }
 });
 
@@ -317,7 +354,7 @@ initUI();
 updateDisplay();
 engine.start();
 
-addMudLog('<span style="color:#8bc8c8">[系统] 七道修仙 MUD 灵智版 v0.1.0 已启动</span>');
+addMudLog('<span style="color:#8bc8c8">[系统] 七道修仙 MUD 灵智版 v0.2.0 已启动</span>');
 addMudLog('<span style="color:#8bc8c8">[系统] 引擎 Tick 循环已激活，修炼进行中...</span>');
 addMudLog('<span style="color:#8bc8c8">[系统] 输入 \'help\' 查看可用命令</span>');
 

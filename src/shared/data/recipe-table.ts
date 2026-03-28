@@ -78,3 +78,44 @@ export const QUALITY_MULTIPLIER: Record<AlchemyQuality, number> = {
   high: 1.5,
   perfect: 2.5,
 };
+
+// ===== 丹药 ID 常量 (CR-P2) =====
+
+/** 丹药 ID 集中管理，避免 magic string 散落 */
+export const PILL_ID = {
+  /** 回灵丹 */
+  HEAL: 'hui-ling-dan',
+  /** 修速丹 */
+  BOOST: 'xiu-su-dan',
+  /** 破镜丹 */
+  BREAKTHROUGH: 'po-jing-dan',
+} as const;
+
+// ===== 丹药效果常量 (CR-P3) =====
+
+/** 回灵丹基础恢复量（灵气） */
+export const HEAL_PILL_BASE_AMOUNT = 500;
+
+/** 修速丹基础持续秒数 */
+export const BOOST_PILL_BASE_DURATION_SEC = 60;
+
+/** 修速丹灵气速率倍率 */
+export const BOOST_PILL_AURA_MULTIPLIER = 2.0;
+
+/** 破镜丹每颗基础加成系数 */
+export const BREAKTHROUGH_PILL_BONUS_PER = 0.15;
+
+/** 破镜丹最大服用数量 */
+export const BREAKTHROUGH_PILL_MAX_COUNT = 3;
+
+/** 突破失败灵气惩罚比例 */
+export const BREAKTHROUGH_FAILURE_PENALTY_RATIO = 0.5;
+
+/** 突破成功率上限 */
+export const BREAKTHROUGH_SUCCESS_CAP = 0.99;
+
+/** 破镜丹自动服用门槛：基础成功率 ≤ 此值时才自动吃 (Fix C) */
+export const BREAKTHROUGH_PILL_AUTO_THRESHOLD = 0.85;
+
+/** 自动突破触发门槛：成功率 ≥ 此值时自动突破 (F-C1c) */
+export const AUTO_BREAKTHROUGH_THRESHOLD = 0.80;

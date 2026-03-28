@@ -1,11 +1,14 @@
 /**
- * 7game-lite 精简游戏状态 — v2
+ * 7game-lite 精简游戏状态 — v3
  *
  * Phase B-α: 删除 FieldSlot/AlchemyState，新增 FarmPlot/PillItem，
  * 弟子级 farmPlots + currentRecipeId。
  *
+ * Phase C: 新增 BreakthroughBuffState/CultivateBoostBuff，
+ * lifetimeStats +pillsConsumed/breakthroughFailed。
+ *
  * @see AGENTS.md §3.5 版本边界
- * @see 7game-lite-phaseB-analysis.md Step 2 + Fix 1~7
+ * @see 7game-lite-phaseC-analysis.md Step 2 + Fix A~F
  */
 
 import type { AISoulContext } from './ai-soul';
@@ -32,6 +35,24 @@ export type DaoFoundation = (typeof DaoFoundation)[keyof typeof DaoFoundation];
 
 /** 炼丹品质 */
 export type AlchemyQuality = 'waste' | 'low' | 'mid' | 'high' | 'perfect';
+
+// ===== Phase C: 突破 & 丹药 Buff =====
+
+/** 破镜丹 buff 状态（突破加成） */
+export interface BreakthroughBuffState {
+  /** 已服用的破镜丹品质列表（最多3颗） */
+  pillsConsumed: AlchemyQuality[];
+  /** 缓存总加成值 = Σ(0.15 × QUALITY_MULTIPLIER[q]) */
+  totalBonus: number;
+}
+
+/** 修速丹 buff 状态（修炼加速） */
+export interface CultivateBoostBuff {
+  /** 品质倍率（来自 QUALITY_MULTIPLIER） */
+  qualityMultiplier: number;
+  /** 剩余秒数 */
+  remainingSec: number;
+}
 
 // ===== 子结构 =====
 
@@ -177,11 +198,15 @@ export interface LifetimeStats {
   highestSubRealm: number;
   totalAuraEarned: number;
   breakthroughTotal: number;
+  /** Phase C: 丹药消费总数 */
+  pillsConsumed: number;
+  /** Phase C: 突破失败次数 */
+  breakthroughFailed: number;
 }
 
 // ===== 主状态 =====
 
-/** 7game-lite 精简游戏状态 — v2 */
+/** 7game-lite 精简游戏状态 — v3 */
 export interface LiteGameState {
   /** 存档版本号 */
   version: number;
@@ -219,16 +244,22 @@ export interface LiteGameState {
 
   // === 统计 ===
   lifetimeStats: LifetimeStats;
+
+  // === Phase C: Buff 状态 ===
+  /** 破镜丹 buff（突破加成累积） */
+  breakthroughBuff: BreakthroughBuffState;
+  /** 修速丹 buff（修炼加速），null = 无 */
+  cultivateBoostBuff: CultivateBoostBuff | null;
 }
 
 // ===== 工厂函数 =====
 
-/** 创建默认新游戏状态 — v2 */
+/** 创建默认新游戏状态 — v3 */
 export function createDefaultLiteGameState(): LiteGameState {
   const now = Date.now();
   const disciples = generateInitialDisciples();
   return {
-    version: 2,
+    version: 3,
     aura: 0,
     spiritStones: 200,
     realm: Realm.LIANQI,
@@ -251,6 +282,9 @@ export function createDefaultLiteGameState(): LiteGameState {
       alchemyTotal: 0, alchemyPerfect: 0,
       highestRealm: Realm.LIANQI, highestSubRealm: 1,
       totalAuraEarned: 0, breakthroughTotal: 0,
+      pillsConsumed: 0, breakthroughFailed: 0,
     },
+    breakthroughBuff: { pillsConsumed: [], totalBonus: 0 },
+    cultivateBoostBuff: null,
   };
 }

@@ -61,3 +61,66 @@ export const DAO_FOUNDATION_MULTIPLIER: Record<number, number> = {
   3: 4.0,   // 天道
   4: 8.0,   // 无暇
 };
+
+// ===== Phase C: 突破基础成功率 (F-C1) =====
+
+/**
+ * 突破基础成功率表
+ * key = `${realm}-${subRealm}→${nextSubRealm}` 的简化：用目标小层数编码
+ * 特殊值: -1 = 不可突破（需天劫或已达上限）
+ *
+ * @see 7game-lite-phaseC-analysis.md §3.1 F-C1
+ */
+export interface BreakthroughEntry {
+  /** 大境界 */
+  realm: number;
+  /** 当前小层 */
+  fromSub: number;
+  /** 目标小层 */
+  toSub: number;
+  /** 基础成功率 0~1，-1 = 不可突破 */
+  baseRate: number;
+}
+
+export const BREAKTHROUGH_TABLE: readonly BreakthroughEntry[] = [
+  // 炼气期
+  { realm: 1, fromSub: 1, toSub: 2, baseRate: 0.95 },
+  { realm: 1, fromSub: 2, toSub: 3, baseRate: 0.90 },
+  { realm: 1, fromSub: 3, toSub: 4, baseRate: 0.85 },
+  { realm: 1, fromSub: 4, toSub: 5, baseRate: 0.80 },
+  { realm: 1, fromSub: 5, toSub: 6, baseRate: 0.75 },
+  { realm: 1, fromSub: 6, toSub: 7, baseRate: 0.70 },
+  { realm: 1, fromSub: 7, toSub: 8, baseRate: 0.60 },
+  { realm: 1, fromSub: 8, toSub: 9, baseRate: 0.50 },
+  { realm: 1, fromSub: 9, toSub: -1, baseRate: -1 },  // 需天劫
+  // 筑基期
+  { realm: 2, fromSub: 1, toSub: 2, baseRate: 0.25 },
+  { realm: 2, fromSub: 2, toSub: 3, baseRate: 0.20 },
+  { realm: 2, fromSub: 3, toSub: -1, baseRate: -1 },  // 已达上限
+] as const;
+
+/** 按 `realm-fromSub` 快速查找 */
+export const BREAKTHROUGH_BY_KEY: ReadonlyMap<string, BreakthroughEntry> = new Map(
+  BREAKTHROUGH_TABLE.map(e => [`${e.realm}-${e.fromSub}`, e])
+);
+
+// ===== Phase C: 灵脉密度倍率 (F-C3) =====
+
+/**
+ * 灵脉密度表 — 境界越高灵脉越强，全局灵气加速
+ *
+ * @see 7game-lite-phaseC-analysis.md §3.3 F-C3
+ */
+export function getSpiritVeinDensity(realm: number, subRealm: number): number {
+  if (realm === 1) {
+    if (subRealm <= 3) return 1.0;
+    if (subRealm <= 6) return 1.2;
+    return 1.5;  // 7~9
+  }
+  if (realm === 2) {
+    if (subRealm === 1) return 2.0;
+    if (subRealm === 2) return 3.0;
+    return 5.0;  // 3+
+  }
+  return 1.0;
+}

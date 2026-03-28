@@ -6,14 +6,18 @@
  *   - 弟子增 farmPlots/currentRecipeId
  *   - 增 pills/sect.tributePills
  *
- * @see AGENTS.md §3.1 前端性能红线：localStorage ≤ 5MB
+ * v3: Phase C 存档迁移
+ *   - 增 breakthroughBuff/cultivateBoostBuff
+ *   - lifetimeStats +pillsConsumed/breakthroughFailed
+ *
+ * @see AGENTS.md §3.1 前端性能红线：localStorage ≤ 10MB
  */
 
 import type { LiteGameState } from '../shared/types/game-state';
 import { createDefaultLiteGameState } from '../shared/types/game-state';
 
 const SAVE_KEY = '7game-lite-save';
-const SAVE_VERSION = 2;
+const SAVE_VERSION = 3;
 
 /** 保存游戏状态到 localStorage */
 export function saveGame(state: LiteGameState): boolean {
@@ -70,6 +74,36 @@ function migrateV1toV2(raw: Record<string, unknown>): void {
 }
 
 /**
+ * v2 → v3 显式迁移 (Phase C)
+ *
+ * - 增 breakthroughBuff / cultivateBoostBuff
+ * - lifetimeStats +pillsConsumed +breakthroughFailed
+ */
+function migrateV2toV3(raw: Record<string, unknown>): void {
+  // 新增 buff 字段
+  if (!raw['breakthroughBuff']) {
+    raw['breakthroughBuff'] = { pillsConsumed: [], totalBonus: 0 };
+  }
+  if (raw['cultivateBoostBuff'] === undefined) {
+    raw['cultivateBoostBuff'] = null;
+  }
+
+  // lifetimeStats 扩展
+  const stats = raw['lifetimeStats'] as Record<string, unknown> | undefined;
+  if (stats && typeof stats === 'object') {
+    if (stats['pillsConsumed'] === undefined) {
+      stats['pillsConsumed'] = 0;
+    }
+    if (stats['breakthroughFailed'] === undefined) {
+      stats['breakthroughFailed'] = 0;
+    }
+  }
+
+  raw['version'] = 3;
+  console.log('[SaveManager] v2 → v3 迁移完成');
+}
+
+/**
  * 迁移旧存档：逐版本号升级 + 默认值填充
  */
 function migrateSave(raw: Record<string, unknown>): LiteGameState {
@@ -78,6 +112,9 @@ function migrateSave(raw: Record<string, unknown>): LiteGameState {
   // 版本链式迁移
   if (version < 2) {
     migrateV1toV2(raw);
+  }
+  if ((raw['version'] as number) < 3) {
+    migrateV2toV3(raw);
   }
 
   // 兜底：用 defaults 补全可能缺失的字段（安全网）
