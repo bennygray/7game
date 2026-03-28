@@ -1,0 +1,39 @@
+# 系统清单
+
+> **来源**：MASTER-PRD 拆分 | **维护者**：/SPM, /SGE (交接更新)
+> **索引入口**：[MASTER-PRD.md](../MASTER-PRD.md) §4
+
+---
+
+## §1 已实现系统清单
+
+| 系统 | Phase | 分析文档 | 验证状态 |
+|------|-------|---------|---------| 
+| 修炼引擎（灵气/悟性/灵石） | A | [7game-lite-analysis.md](../../features/7game-lite-analysis.md) | ✅ V1~V8 通过 |
+| 弟子行为树（7态切换） | A | [同上](../../features/7game-lite-analysis.md) | ✅ 通过 |
+| MUD 文字面板 | A | [同上](../../features/7game-lite-analysis.md) | ✅ 通过 |
+| AI 灵智弟子台词 | A | [同上](../../features/7game-lite-analysis.md) | ✅ fallback 模式通过 |
+| 灵田种植与收获 | B-α | [7game-lite-phaseB-analysis.md](../../features/7game-lite-phaseB-analysis.md) | ✅ 6 组验证通过 |
+| 弟子独立炼丹 | B-α | [同上](../../features/7game-lite-phaseB-analysis.md) | ✅ Monte Carlo 通过 |
+| 概率突破引擎 | C | [7game-lite-phaseC-analysis.md](../../features/7game-lite-phaseC-analysis.md) | ✅ 24 AC + 10 数值组 |
+| 灵脉密度系统 | C | [同上](../../features/7game-lite-phaseC-analysis.md) | ✅ 通过 |
+| 丹药自动消费 | C | [同上](../../features/7game-lite-phaseC-analysis.md) | ✅ 通过 |
+
+---
+
+## §2 规划中系统清单
+
+| 系统 | 目标 Phase | 前置 | 文档状态 |
+|------|-----------|------|---------| 
+| 天劫系统（炼气→筑基） | D | C 完成 | 待启动 |
+| 悬赏任务（D~B 级） | D | C 完成 | 待启动 |
+| AI 深化（事件扩展+灵脉叙事） | D | C 完成 | 待启动 |
+| 丹毒系统 | E | D 完成 | 待启动 |
+
+---
+
+## 变更日志
+
+| 日期 | 变更内容 |
+|------|---------|
+| 2026-03-28 | 从 MASTER-PRD.md §4.2/4.3 拆出，独立文件 |

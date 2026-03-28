@@ -1,7 +1,7 @@
 # 7game-lite — AI 助手全局执行规范
 
 > **此文件是所有 AI 助手在本项目中的行为准则。** 每次新会话自动生效。
-> **版本**: v1.0 | **更新日期**: 2026-03-27
+> **版本**: v1.2 | **更新日期**: 2026-03-28
 > **项目定位**: 从 7waygame 衍生的最简验证版。核心玩法：文字 MUD + AI 灵智弟子经营模拟。
 
 ---
@@ -16,32 +16,48 @@
 | 简单问答（技术概念、语法等） | ❌ 跳过 | 直接回答 |
 | Bug 修复 / 代码审查 | ✅ 必须 | 需要了解当前进度 |
 
-### 1.2 启动协议步骤
+### 1.2 启动协议步骤（两级阅读策略）
 
 ```
-1. docs/features/7game-lite-analysis.md   ← SGPA 分析进度（临时 handoff）
-2. docs/design/specs/7game-lite-user-stories-phaseA.md ← 当前 Phase 的 User Stories
-3. 根据任务类型，按需阅读对应文档（见下方 §二）
+Level 1（永远读）：
+  1. docs/project/MASTER-PRD.md           ← 索引（~120行）
+  2. docs/design/MASTER-ARCHITECTURE.md   ← 索引（~100行）
+  3. 确认当前活跃 Phase + 读对应文件（PRD/analysis/TDD）
+
+Level 2（按需读 detail）：
+  根据任务类型，读对应 detail 文件（见 §3.10 路径映射表）
 ```
 
 > [!NOTE]
-> 首次使用本项目时，应检查 `docs/project/handoff.md` 和 `docs/project/task-tracker.md`
-> 是否存在，不存在则创建空骨架。启动协议优先读取这两个文件。
+> MASTER 索引文件包含一句话摘要 + detail 链接。
+> AI 通过索引判断需要深入读哪些 detail 文件。
 
 > [!CAUTION]
-> **禁止**未读分析进度文件就开始编码或规划。
+> **禁止**未读 MASTER 索引就开始编码或规划。
 > **禁止**凭空猜测项目进度。
+
+### 1.3 Skill 路由优先级
+
+| 规则 | 说明 |
+|------|------|
+| **SPM 是默认入口** | 任何新功能想法先走 /SPM |
+| **SGA 前置条件** | PRD.md 存在 + `[x] GATE 1 PASSED` |
+| **SGE 前置条件** | TDD.md 存在 + `[x] GATE 2 PASSED` |
+| **回退规则** | 不确定时走 /SPM |
+
+> Skill 定义位于 `.agents/skills/{product-manager,architect,engineer}/SKILL.md`
 
 ---
 
 ## 二、任务类型路由
 
-| 任务类型 | 必读文档 |
-|----------|---------|
-| 编码实现 | 分析进度 → User Stories → 对应 `design/specs/` 文件 |
-| 需求变更 | 分析进度 → 涉及的 specs 文件 |
-| 架构决策 | 分析进度 → `docs/technical/architecture.md` |
-| Bug 修复 | 分析进度 → 对应代码文件 |
+| 任务类型 | 必读文档 | 推荐 Skill |
+|----------|---------|:-----------:|
+| 需求分析 | MASTER-PRD → 当前 Phase 文件 | /SPM |
+| 架构决策 | MASTER-ARCHITECTURE → 对应 TDD | /SGA |
+| 编码实施 | TDD → User Stories → 对应代码 | /SGE |
+| 需求变更 | MASTER-PRD → 涉及的 PRD/TDD | /SPM |
+| Bug 修复 | MASTER-ARCHITECTURE → 对应代码 | /SGE |
 
 ---
 
@@ -171,6 +187,42 @@ fix/*       → 修复分支
 | **临时脚本** | 调试用的一次性脚本可写在 `/tmp/`，但**验证完毕后**必须决定：归档到项目 或 删除 |
 | **npm 脚本** | 常用测试添加到 `package.json` 的 `scripts` 中 |
 
+### 3.9 Tick Pipeline 挂载协议
+
+> 新系统挂载到引擎 Tick Pipeline 时，必须遵循 `docs/design/MASTER-ARCHITECTURE.md` §6 的接入规范。
+>
+> **关键要求**：
+> - 确定挂载阶段（参考 `docs/design/arch/pipeline.md`）
+> - 更新依赖矩阵（`docs/design/arch/dependencies.md`）
+> - 确保无跨阶段因果依赖冲突
+> - 全局回归通过（`npm run test:regression`）
+
+### 3.10 文档模块化规则
+
+> [!CAUTION]
+> **MASTER 索引文件（MASTER-PRD.md / MASTER-ARCHITECTURE.md）只存放摘要和链接。**
+> **具体内容必须写入对应的 detail 文件。禁止向索引文件追加大段内容。**
+
+| 规则 | 说明 |
+|------|------|
+| **索引文件上限** | 每个 MASTER 索引文件 ≤ 150 行 |
+| **detail 文件上限** | 每个 detail 文件 ≤ 400 行；超过时进一步拆分 |
+| **新增内容写入** | 按下方路径映射表写入对应 detail 文件 |
+| **新增 detail 文件** | 必须在对应 MASTER 索引的 Detail 文件清单 中注册 |
+
+**写入路径映射表**：
+
+| 变更类型 | 写入 detail 文件 |
+|---------|:----------------:|
+| 新增资源 / 消耗 / 通胀分析 | `docs/project/prd/economy.md` |
+| 新增系统（已实现或规划中） | `docs/project/prd/systems.md` |
+| 新增公式函数 / 数据表 | `docs/project/prd/formulas.md` |
+| 新增代码文件 / 改层级归属 | `docs/design/arch/layers.md` |
+| 新增 GameState 字段 | `docs/design/arch/gamestate.md` |
+| 新增 Pipeline Handler | `docs/design/arch/pipeline.md` |
+| 新增代码依赖 | `docs/design/arch/dependencies.md` |
+| 新增存档版本 / 迁移函数 | `docs/design/arch/schema.md` |
+
 ---
 
 ## 四、文档更新联动规则
@@ -184,16 +236,17 @@ fix/*       → 修复分支
 步骤 1：更新文档   → 更新对应的设计文档或 User Story 文件
 步骤 2：用户确认   → 获得用户明确确认
 步骤 3：编写代码   → 按照已更新的文档进行编码
-步骤 4：完成联动   → 更新 7game-lite-analysis.md 进度
+步骤 4：完成联动   → 更新当前 Phase 对应文件（PRD/analysis/TDD）
 ```
 
 > 唯一例外：紧急热修复可先修复后补文档，但必须在同一会话内完成文档补齐。
 
 ### ✅ 完成任务时的检查清单
 
-1. 在 `docs/features/7game-lite-analysis.md` 中更新对应 Step 状态
-2. 如涉及新文件，在项目根目录 `README.md` 中同步
+1. 在当前 Phase 的 PRD/analysis 文件中更新进度
+2. 如涉及新文件，在 `docs/INDEX.md` 中同步
 3. 如完成了 User Story，在 Story 文件中标记 ✅
+4. 如涉及新挂载/新资源，更新对应 detail 文件（见 §3.10 写入路径映射表）
 
 ---
 
@@ -204,7 +257,11 @@ d:\7game\
 ├── .agents/                        ← AI 助手规范
 │   ├── AGENTS.md                   ← 你正在读的文件
 │   ├── workflows/                  ← 工作流（Git / AI 安装 / 测试等）
-│   └── skills/                     ← 技能扩展（SGPA 等）
+│   └── skills/                     ← Trinity Skill 体系
+│       ├── _shared/                ← 共享模块（Review 协议/评审角色/模板）
+│       ├── product-manager/        ← /SPM 资深产品经理
+│       ├── architect/              ← /SGA 资深架构师
+│       └── engineer/               ← /SGE 资深工程师
 ├── src/                            ← 前端（Vite SPA）
 │   ├── shared/                     ← 跨层共享
 │   │   ├── types/                  ← LiteGameState + AISoulContext
@@ -327,7 +384,7 @@ src/ai/prompts/
 
 ## 九、禁止事项
 
-1. ❌ **禁止**未读分析进度文件就开始编码或规划工作
+1. ❌ **禁止**未读 MASTER 文档和当前 Phase 文件就开始编码或规划工作
 2. ❌ **禁止**在一个 commit 中混合文档更新和代码变更
 3. ❌ **禁止**实现版本边界 OUT 列中的任何功能（§3.5）
 4. ❌ **禁止**在 `src/ui/` 中直接调用 AI 后端 API（必须通过 `LLMAdapter`）
@@ -339,3 +396,5 @@ src/ai/prompts/
 10. ❌ **禁止**添加 7waygame 公式库中不存在的数值公式（数值一致性）
 11. ❌ **禁止**提交涉及数值公式的代码变更而不附带验证脚本（§3.7）
 12. ❌ **禁止**未更新对应文档并获得用户确认就开始编码（§四）
+13. ❌ **禁止**修改 Tick Pipeline 挂载阶段而不更新 `docs/design/arch/pipeline.md`
+14. ❌ **禁止**向 MASTER 索引文件追加大段内容（§3.10），必须写入对应 detail 文件
