@@ -14,7 +14,7 @@
 | 层级 | 职责 | 文件数 |
 |------|------|:------:|
 | ① Data (`shared/`) | 类型 + 公式 + 数据表 | 9 |
-| ② Engine (`engine/`) | Tick / 行为树 / 存档 | 8 |
+| ② Engine (`engine/`) | Tick / 行为树 / 存档 | 15 |
 | ③ AI (`ai/`) | LLM 适配 / prompt | 3+ |
 | ④ Presentation (`main.ts`) | MUD 面板 / 命令系统 | 1 |
 
@@ -39,7 +39,7 @@
 
 ## §3 引擎 Tick Pipeline → [detail](arch/pipeline.md)
 
-> 12 步执行顺序 + 目标 Handler 架构。新系统挂载时必读。
+> 7 个 Handler 注册表 + TickPipeline 架构 + 新系统接入协议。新系统挂载时必读。
 
 ---
 
@@ -59,19 +59,18 @@
 
 ### 6.1 注册到 Tick Pipeline
 
-**当前方式（硬编码）**：
-1. 在 `idle-engine.ts` 的 `tick()` 方法中找到合适的位置
-2. 添加新的逻辑代码段
-
-**目标方式（Handler 模式）**（重构后）：
+**当前方式（TickPipeline + Handler）**：
 ```typescript
-// 1. 创建新 handler: src/engine/handlers/my-system-tick.ts
+// 1. 创建新 handler: src/engine/handlers/my-system.handler.ts
+import type { TickHandler, TickContext } from '../tick-pipeline';
+import { TickPhase } from '../tick-pipeline';
+
 export const mySystemHandler: TickHandler = {
   name: 'my-system',
   phase: TickPhase.SYSTEM_TICK,
-  execute(state, deltaS, logs) { /* ... */ }
+  execute(ctx: TickContext) { /* ... */ }
 };
-// 2. 注册: pipeline.register(mySystemHandler);
+// 2. 在 idle-engine.ts 构造函数中注册: this.pipeline.register(mySystemHandler);
 // 3. 更新 arch/pipeline.md
 ```
 
@@ -114,3 +113,4 @@ export const mySystemHandler: TickHandler = {
 |------|------|---------|
 | 2026-03-28 | v1.0 | 初始创建，如实描述当前硬编码结构 + 目标 Handler 模式 |
 | 2026-03-28 | v1.1 | 模块化拆分：§1→layers.md, §2→gamestate.md, §3→pipeline.md, §4→dependencies.md, §5→schema.md |
+| 2026-03-28 | v1.2 | Phase 4 重构完成: §3→Handler 架构, §6.1→当前为 Pipeline 模式, Engine 8→15 文件 |

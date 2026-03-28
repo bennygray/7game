@@ -26,9 +26,10 @@ trigger: >
 
 1. 读 `docs/project/MASTER-PRD.md`（索引）— 理解全局产品定位
 2. 读 `docs/project/prd/economy.md` — 理解资源经济（必读）
-3. 按需读 `docs/project/prd/formulas.md` — 涉及数值时
-4. 读当前活跃 Phase 的已有文档（如有）
-5. 如尚未了解项目状态，执行 AGENTS.md §1.2 启动协议
+3. 读 `docs/project/feature-backlog.md` — 检查需求债务（必读）
+4. 按需读 `docs/project/prd/formulas.md` — 涉及数值时
+5. 读当前活跃 Phase 的已有文档（如有）
+6. 如尚未了解项目状态，执行 AGENTS.md §1.2 启动协议
 
 ---
 
@@ -45,6 +46,12 @@ trigger: >
 ---
 
 ## Step 1：第一性原理解构 + 价值锚定
+
+### 1.0 需求债务检查（自动执行）
+
+检查 `docs/project/feature-backlog.md` 中是否有与本次需求相关的条目：
+- 如有匹配 → 标注为"本次清偿"，后续步骤中整合
+- 如无匹配 → 跳过
 
 ### 1a. 5-Why 根因链
 
@@ -169,6 +176,7 @@ Review 完成后，追加执行：
 | Pre-Mortem | 追加到 PRD 末尾 |
 | Assumption Audit | 追加到 PRD 末尾 |
 | Party Review 报告 | 追加到 PRD 末尾 |
+| 需求债务变更 | 更新 `docs/project/feature-backlog.md`（新增降级项 / 标记清偿项） |
 
 ---
 

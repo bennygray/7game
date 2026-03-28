@@ -33,6 +33,8 @@
 |------|------|
 | `project/handoff.md` | 交接文档（当前阶段、进度、遗留事项） |
 | `project/task-tracker.md` | 任务跟踪器（Phase 进度） |
+| `project/tech-debt.md` | 技术债务登记簿（架构妥协 + 清偿跟踪） |
+| `project/feature-backlog.md` | 需求债务登记簿（降级/暂缓/裁剪需求） |
 
 ## SGPA 分析进度
 

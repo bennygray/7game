@@ -37,9 +37,10 @@ trigger: >
 1. 读 `docs/design/MASTER-ARCHITECTURE.md`（索引）— 理解全局架构和约束
 2. 读 `docs/design/arch/gamestate.md` — 理解 GameState 拓扑（必读）
 3. 读 `docs/design/arch/pipeline.md` — 理解 Tick Pipeline（必读）
-4. 按需读 `docs/design/arch/dependencies.md`、`docs/design/arch/schema.md`
-5. 读已签章的 PRD.md — 理解本次需求的规则和数值
-6. 读 `AGENTS.md` §3.3（模块边界）+ §3.9（Pipeline 挂载协议）+ §3.10（文档模块化）
+4. 读 `docs/project/tech-debt.md` — 检查技术债务（必读）
+5. 按需读 `docs/design/arch/dependencies.md`、`docs/design/arch/schema.md`
+6. 读已签章的 PRD.md — 理解本次需求的规则和数值
+7. 读 `AGENTS.md` §3.3（模块边界）+ §3.9（Pipeline 挂载协议）+ §3.10（文档模块化）
 
 ---
 
@@ -111,6 +112,7 @@ SGA 的 Review 角色均为"挑刺者"——专注于发现架构缺陷而非业
 - [ ] Pipeline 挂载方案确认
 - [ ] 依赖矩阵已更新
 - [ ] Party Review 无 BLOCK 项
+- [ ] 技术债务已登记（Review WARN 项 → `docs/project/tech-debt.md`）
 
 签章：`[x] GATE 2 PASSED` — [日期]
 ```
@@ -126,6 +128,7 @@ SGA 的 Review 角色均为"挑刺者"——专注于发现架构缺陷而非业
 | TDD | `docs/design/specs/[name]-TDD.md` |
 | ADR | 追加到 TDD.md 末尾 |
 | Party Review 报告 | 追加到 TDD.md 末尾 |
+| 技术债务变更 | 更新 `docs/project/tech-debt.md`（新增 WARN 项 / 标记清偿项） |
 
 ---
 

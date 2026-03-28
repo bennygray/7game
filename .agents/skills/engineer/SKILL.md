@@ -35,9 +35,11 @@ trigger: >
 
 1. 读已签章的 TDD.md — 理解 interface、Pipeline 挂载、迁移策略
 2. 读对应的 User Stories 文件 — 理解 AC 验收标准
-3. 读 `AGENTS.md` §3.7（数值验证）+ §3.8（测试脚本）+ §3.10（文档模块化）
-4. 按需读 `docs/design/arch/schema.md` — 涉及存档迁移时
-5. 按需读 `docs/design/arch/pipeline.md` — 涉及 Pipeline 挂载时
+3. 读 `docs/project/tech-debt.md` — 检查可顺带清偿的技术债务
+4. 读 `docs/project/feature-backlog.md` — 检查可顺带清偿的需求债务
+5. 读 `AGENTS.md` §3.7（数值验证）+ §3.8（测试脚本）+ §3.10（文档模块化）
+6. 按需读 `docs/design/arch/schema.md` — 涉及存档迁移时
+7. 按需读 `docs/design/arch/pipeline.md` — 涉及 Pipeline 挂载时
 
 ---
 
@@ -119,6 +121,8 @@ trigger: >
 - [ ] 新增依赖 → 更新 `docs/design/arch/dependencies.md`
 - [ ] 新增文件 → 更新 `docs/INDEX.md`
 - [ ] 更新 AGENTS.md（如有新的项目约束）
+- [ ] 技术债务变更 → 更新 `docs/project/tech-debt.md`（新增 Review WARN 项 / 标记清偿项）
+- [ ] 需求债务变更 → 更新 `docs/project/feature-backlog.md`（新增降级项 / 标记清偿项）
 
 ---
 
