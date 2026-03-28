@@ -2,14 +2,16 @@
  * 修炼引擎 — 核心 Tick 循环
  *
  * Phase 4 重构: 硬编码 tick() → TickPipeline + TickHandler 模式。
+ * Phase D: +对话系统集成 +Logger 集成 +Intent 模式
  *
- * Pipeline 执行顺序（7 个 Handler）：
+ * Pipeline 执行顺序（8 个 Handler）：
  *   100 BUFF_COUNTDOWN  — boost-countdown: 修速丹 buff 倒计时
  *   200 PRE_PRODUCTION   — breakthrough-aid: 自动服破镜丹
  *   200 PRE_PRODUCTION   — auto-breakthrough: 自动突破检测+执行
  *   300 RESOURCE_PROD    — core-production: 灵气/悟性/灵石/时间/统计（内联）
  *   500 SYSTEM_TICK      — farm-tick: 灵田生长推进
- *   600 DISCIPLE_AI      — disciple-tick: 弟子行为树 tick
+ *   600 DISCIPLE_AI      — disciple-tick: 弟子行为树 tick（Phase D Intent 模式）
+ *   650 DIALOGUE         — dialogue-tick: 弟子间对话触发（Phase D）
  *   700 POST_PRODUCTION  — cultivate-boost: 自动服修速丹
  *
  * CR-A1: 突破冷却防竞态
@@ -36,6 +38,9 @@ import {
 } from './breakthrough-engine';
 import { executeBreakthrough } from './breakthrough-engine';
 import { TickPipeline, TickPhase, type TickHandler, type TickContext, type BreakthroughCallback } from './tick-pipeline';
+import type { GameLogger } from '../shared/types/logger';
+import type { DialogueExchange } from '../shared/types/dialogue';
+import { DialogueCoordinator } from './dialogue-coordinator';
 
 // Handler 导入
 import { boostCountdownHandler } from './handlers/boost-countdown.handler';
@@ -44,6 +49,7 @@ import { autoBreakthroughHandler } from './handlers/auto-breakthrough.handler';
 import { farmTickHandler } from './handlers/farm-tick.handler';
 import { discipleTickHandler } from './handlers/disciple-tick.handler';
 import { cultivateBoostHandler } from './handlers/cultivate-boost.handler';
+import { dialogueTickHandler } from './handlers/dialogue-tick.handler';
 
 /** Tick 回调：引擎每次 tick 后通知上层 */
 export type TickCallback = (state: LiteGameState, deltaS: number) => void;
@@ -61,6 +67,9 @@ export type FarmTickLogCallback = (logs: string[]) => void;
 /** 丹药/系统日志回调 (Phase C) */
 export type SystemLogCallback = (logs: string[]) => void;
 
+/** Phase D: 弟子间对话回调 */
+export type DialogueCallback = (exchange: DialogueExchange) => void;
+
 export class IdleEngine {
   private state: LiteGameState;
   private intervalId: ReturnType<typeof setInterval> | null = null;
@@ -70,9 +79,16 @@ export class IdleEngine {
   private onDiscipleBehaviorChange: DiscipleBehaviorChangeCallback | null = null;
   private onFarmTickLog: FarmTickLogCallback | null = null;
   private onSystemLog: SystemLogCallback | null = null;
+  private onDialogue: DialogueCallback | null = null;
 
   /** CR-A1: 突破冷却计数器，>0 时不允许突破 */
   private breakthroughCooldown: number = 0;
+
+  /** Phase D: Logger 引用 */
+  private logger: GameLogger;
+
+  /** Phase D: 对话协调器 */
+  private dialogueCoordinator: DialogueCoordinator;
 
   /** Tick Pipeline（Phase 4 重构） */
   private pipeline: TickPipeline;
@@ -83,11 +99,15 @@ export class IdleEngine {
   /** 仙历推进速率：降低 10× 以增加沉浸感（CR-08） */
   static readonly WORLD_TIME_PER_SECOND = 0.5 / 30 / 10;
 
-  constructor(state: LiteGameState) {
+  constructor(state: LiteGameState, logger: GameLogger, llmAdapter?: import('../ai/llm-adapter').LLMAdapter) {
     this.state = state;
     this.lastTickTime = Date.now();
+    this.logger = logger;
 
-    // 初始化 Pipeline 并注册所有 Handler
+    // Phase D: 初始化对话协调器
+    this.dialogueCoordinator = new DialogueCoordinator(llmAdapter ?? null, logger);
+
+    // 初始化 Pipeline 并注册所有 Handler（8 个）
     this.pipeline = new TickPipeline();
     this.pipeline.register(boostCountdownHandler);
     this.pipeline.register(breakthroughAidHandler);
@@ -95,6 +115,7 @@ export class IdleEngine {
     this.pipeline.register(this.createCoreProductionHandler());
     this.pipeline.register(farmTickHandler);
     this.pipeline.register(discipleTickHandler);
+    this.pipeline.register(dialogueTickHandler);
     this.pipeline.register(cultivateBoostHandler);
   }
 
@@ -121,6 +142,11 @@ export class IdleEngine {
   /** 注册系统日志回调（Phase C: 丹药/突破自动日志） */
   setOnSystemLog(cb: SystemLogCallback): void {
     this.onSystemLog = cb;
+  }
+
+  /** Phase D: 注册弟子间对话回调 */
+  setOnDialogue(cb: DialogueCallback): void {
+    this.onDialogue = cb;
   }
 
   /** 启动引擎 */
@@ -164,6 +190,8 @@ export class IdleEngine {
       systemLogs: [],
       farmLogs: [],
       discipleEvents: [],
+      dialogueTriggers: [],
+      logger: this.logger,
       onBreakthrough: this.onBreakthrough,
       breakthroughCooldown: this.breakthroughCooldown,
     };
@@ -183,6 +211,15 @@ export class IdleEngine {
     }
     if (ctx.systemLogs.length > 0) {
       this.onSystemLog?.(ctx.systemLogs);
+    }
+
+    // Phase D: 处理对话触发（异步，不阻塞 tick）
+    if (ctx.dialogueTriggers.length > 0) {
+      this.dialogueCoordinator.processTriggers(
+        ctx.dialogueTriggers,
+        this.state,
+        (exchange) => this.onDialogue?.(exchange),
+      );
     }
 
     // 最终通知上层 tick 完成

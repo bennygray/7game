@@ -36,13 +36,14 @@
 | `project/tech-debt.md` | 技术债务登记簿（架构妥协 + 清偿跟踪） |
 | `project/feature-backlog.md` | 需求债务登记簿（降级/暂缓/裁剪需求） |
 
-## SGPA 分析进度
+## Trinity 分析进度
 
 | 文件 | 状态 | 覆盖系统 |
 |------|------|---------| 
 | `features/7game-lite-analysis.md` | Phase A ✅ | 7game-lite 核心循环 |
 | `features/7game-lite-phaseB-analysis.md` | Phase B-α ✅ | 灵田+炼丹核心 |
 | `features/7game-lite-phaseC-analysis.md` | Phase C ✅ | 突破+灵脉+丹药使用 |
+| `features/phaseD-PRD.md` | Phase D ✅ (Trinity SPM) | AI对话+日志+Intent重构 |
 
 ## 设计文档
 
@@ -51,8 +52,10 @@
 | `design/specs/7game-lite-user-stories-phaseA.md` | Phase A User Stories (5 条) |
 | `design/specs/7game-lite-user-stories-phaseB-alpha.md` | Phase B-α User Stories (4 条) |
 | `design/specs/7game-lite-user-stories-phaseC.md` | Phase C User Stories (5 条) |
+| `design/specs/7game-lite-user-stories-phaseD.md` | Phase D User Stories (5 条) |
 | `design/specs/7game-lite-impl-plan-phaseB-alpha.md` | Phase B-α 实施计划 |
 | `design/specs/7game-lite-impl-plan-phaseC.md` | Phase C 实施计划 |
+| `design/specs/phaseD-TDD.md` | Phase D 技术设计文档 (Trinity SGA+SGE) |
 
 ## 验证记录
 
@@ -67,6 +70,7 @@
 |------|------|
 | `scripts/verify-phaseB-alpha.ts` | Phase B-α 数值验证脚本 (6 组) |
 | `scripts/verify-phaseC.ts` | Phase C 数值验证脚本 (10 组) |
+| `scripts/verify-phaseD-intent.ts` | Phase D Intent 等价性验证 (10 组/29 断言) |
 
 ---
 

@@ -22,6 +22,8 @@ const PERSONALITY_TEMPLATES: { name: string; traits: PersonalityTraits }[] = [
   { name: '沉稳', traits: { aggressive: 0.3, persistent: 0.8, kind: 0.4, lazy: 0.2, smart: 0.7 } },
   { name: '散漫', traits: { aggressive: 0.3, persistent: 0.3, kind: 0.6, lazy: 0.8, smart: 0.4 } },
   { name: '狡黠', traits: { aggressive: 0.6, persistent: 0.5, kind: 0.3, lazy: 0.4, smart: 0.8 } },
+  { name: '孤傲', traits: { aggressive: 0.5, persistent: 0.9, kind: 0.1, lazy: 0.1, smart: 0.6 } },
+  { name: '恐懦', traits: { aggressive: 0.1, persistent: 0.4, kind: 0.7, lazy: 0.5, smart: 0.3 } },
 ];
 
 // ===== 工具函数 =====
@@ -88,9 +90,58 @@ export function generateRandomDisciple(): LiteDiscipleState {
   };
 }
 
-/** 生成 N 名初始弟子 */
-export function generateInitialDisciples(count = 4): LiteDiscipleState[] {
-  return Array.from({ length: count }, () => generateRandomDisciple());
+/** 生成 N 名初始弟子（保证性格多样性） */
+export function generateInitialDisciples(count = 8): LiteDiscipleState[] {
+  // 前 N 个弟子依次分配不同性格，超出模板数量后随机
+  const shuffledTemplates = [...PERSONALITY_TEMPLATES].sort(() => Math.random() - 0.5);
+  const usedNames = new Set<string>();
+
+  return Array.from({ length: count }, (_, i) => {
+    // 确保名字不重复
+    let name: string;
+    do {
+      const surname = SURNAMES[Math.floor(Math.random() * SURNAMES.length)];
+      const givenName = GIVEN_NAMES[Math.floor(Math.random() * GIVEN_NAMES.length)];
+      name = `${surname}${givenName}`;
+    } while (usedNames.has(name));
+    usedNames.add(name);
+
+    // 性格：前 N 个保证不重复，超出后随机
+    const template = i < shuffledTemplates.length
+      ? shuffledTemplates[i]
+      : PERSONALITY_TEMPLATES[Math.floor(Math.random() * PERSONALITY_TEMPLATES.length)];
+
+    const starRating = rollStarRating();
+    const rootCount = 1 + Math.floor(Math.random() * 3);
+    const shuffledRoots = [...SPIRITUAL_ROOTS].sort(() => Math.random() - 0.5);
+    const spiritualRoots = shuffledRoots.slice(0, rootCount);
+    const personality: PersonalityTraits = {
+      aggressive: clamp(template.traits.aggressive + (Math.random() - 0.5) * 0.2, 0, 1),
+      persistent: clamp(template.traits.persistent + (Math.random() - 0.5) * 0.2, 0, 1),
+      kind: clamp(template.traits.kind + (Math.random() - 0.5) * 0.2, 0, 1),
+      lazy: clamp(template.traits.lazy + (Math.random() - 0.5) * 0.2, 0, 1),
+      smart: clamp(template.traits.smart + (Math.random() - 0.5) * 0.2, 0, 1),
+    };
+    const subRealm = 1 + Math.floor(Math.random() * 3);
+
+    return {
+      id: crypto.randomUUID(),
+      name,
+      starRating,
+      realm: 1,
+      subRealm,
+      aura: 0,
+      personality,
+      personalityName: template.name,
+      spiritualRoots,
+      behavior: DiscipleBehavior.IDLE,
+      lastDecisionTime: Date.now(),
+      behaviorTimer: 0,
+      stamina: 100,
+      farmPlots: [],
+      currentRecipeId: null,
+    };
+  });
 }
 
 /** 生成初始关系矩阵 */

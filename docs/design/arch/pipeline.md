@@ -20,10 +20,12 @@ graph LR
         P400["400 WORLD_UPDATE<br>(合并在 300)"]
         P500["500 SYSTEM_TICK"]
         P600["600 DISCIPLE_AI"]
+        P650["650 DIALOGUE<br>(Phase D)"]
         P700["700 POST_PRODUCTION"]
     end
-    P100 --> P200 --> P300 --> P500 --> P600 --> P700
+    P100 --> P200 --> P300 --> P500 --> P600 --> P650 --> P700
     style P400 fill:#f5f5f5,stroke-dasharray: 5 5
+    style P650 fill:#e8f5e9
 ```
 
 ### TickPhase 定义
@@ -36,6 +38,7 @@ export const TickPhase = {
   WORLD_UPDATE:     400,  // 当前合并在 core-production handler
   SYSTEM_TICK:      500,
   DISCIPLE_AI:      600,
+  DIALOGUE:         650,  // Phase D: 弟子间对话触发
   POST_PRODUCTION:  700,
 } as const;
 ```
@@ -51,8 +54,9 @@ export const TickPhase = {
 | 3 | `auto-breakthrough` | 200 | 10 | `handlers/auto-breakthrough.handler.ts` | breakthrough-engine | Phase C |
 | 4 | `core-production` | 300 | 0 | `idle-engine.ts`（内联） | idle-engine 核心 | Phase A |
 | 5 | `farm-tick` | 500 | 0 | `handlers/farm-tick.handler.ts` | farm-engine | Phase B-α |
-| 6 | `disciple-tick` | 600 | 0 | `handlers/disciple-tick.handler.ts` | behavior-tree | Phase A |
-| 7 | `cultivate-boost` | 700 | 0 | `handlers/cultivate-boost.handler.ts` | pill-consumer | Phase C |
+| 6 | `disciple-tick` | 600 | 0 | `handlers/disciple-tick.handler.ts` | behavior-tree (Intent 模式) | Phase A → Phase D 重构 |
+| 7 | `dialogue-tick` | 650 | 0 | `handlers/dialogue-tick.handler.ts` | dialogue-coordinator | Phase D |
+| 8 | `cultivate-boost` | 700 | 0 | `handlers/cultivate-boost.handler.ts` | pill-consumer | Phase C |
 
 ### Handler 拆分判定标准
 
@@ -112,3 +116,4 @@ export interface TickContext {
 |------|---------|
 | 2026-03-28 | 从 MASTER-ARCHITECTURE.md §3 拆出 |
 | 2026-03-28 | Phase 4 重构: 硬编码 → TickPipeline + 7 Handler，移除"当前硬编码"章节 |
+| 2026-03-28 | Phase D: +DIALOGUE=650 阶段 +dialogue-tick handler; disciple-tick 重构为 Intent 模式; TickContext +dialogueTriggers +logger |

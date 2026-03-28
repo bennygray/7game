@@ -9,7 +9,9 @@
  */
 
 import type { PersonalityTraits, DiscipleBehavior } from '../shared/types/game-state';
+import type { DialogueRequest, DialogueRound } from '../shared/types/dialogue';
 import { generateFallbackLine } from './fallback-lines';
+import { generateBystanderLine, generateResponseLine } from './bystander-lines';
 
 // ===== 请求/响应结构 =====
 
@@ -29,6 +31,8 @@ export interface GenerateRequest {
 
 export interface LLMAdapter {
   generateLine(req: GenerateRequest): Promise<string>;
+  /** Phase D: 弟子间对话生成（最多 2 轮） */
+  generateDialogue(req: DialogueRequest): Promise<DialogueRound[]>;
 }
 
 // ===== HTTP 适配器（调后端 API） =====
@@ -62,6 +66,11 @@ class HttpLLMAdapter implements LLMAdapter {
       clearTimeout(timer);
     }
   }
+
+  async generateDialogue(_req: DialogueRequest): Promise<DialogueRound[]> {
+    // HTTP 对话接口预留，当前直接抛出让 SmartAdapter 走 fallback
+    throw new Error('HTTP dialogue not implemented');
+  }
 }
 
 // ===== Fallback 适配器（模板台词） =====
@@ -70,6 +79,29 @@ class FallbackLLMAdapter implements LLMAdapter {
   async generateLine(req: GenerateRequest): Promise<string> {
     return generateFallbackLine(req.behavior, req.personality);
   }
+
+  async generateDialogue(req: DialogueRequest): Promise<DialogueRound[]> {
+    const rounds: DialogueRound[] = [];
+
+    // 第 1 轮：旁观者评论
+    const bystanderLine = generateBystanderLine(
+      req.triggerEvent.outcomeTag,
+      req.responder.personality,
+    );
+    if (!bystanderLine) return [];
+    rounds.push({ speakerId: req.responder.id, line: bystanderLine, round: 1 });
+
+    // 第 2 轮：触发者回应
+    const responseLine = generateResponseLine(
+      req.triggerEvent.outcomeTag,
+      req.source.personality,
+    );
+    if (responseLine) {
+      rounds.push({ speakerId: req.source.id, line: responseLine, round: 2 });
+    }
+
+    return rounds;
+  }
 }
 
 // ===== Smart 适配器（HTTP 优先，失败自动 fallback） =====
@@ -77,10 +109,8 @@ class FallbackLLMAdapter implements LLMAdapter {
 class SmartLLMAdapter implements LLMAdapter {
   private http: HttpLLMAdapter;
   private fallback: FallbackLLMAdapter;
-  private backendAvailable: boolean | null = null;
-  private lastCheckTime = 0;
-  /** 后端不可用时的重试间隔（ms） */
-  private static readonly RETRY_INTERVAL_MS = 30_000;
+  /** 默认 false — 后端未确认可用时始终走 fallback，零网络请求 */
+  private backendAvailable = false;
 
   constructor(baseUrl?: string) {
     this.http = new HttpLLMAdapter(baseUrl);
@@ -88,25 +118,40 @@ class SmartLLMAdapter implements LLMAdapter {
   }
 
   async generateLine(req: GenerateRequest): Promise<string> {
-    // 如果已知后端不可用且未过重试间隔 → 直接 fallback
-    if (this.backendAvailable === false) {
-      const elapsed = Date.now() - this.lastCheckTime;
-      if (elapsed < SmartLLMAdapter.RETRY_INTERVAL_MS) {
-        return this.fallback.generateLine(req);
-      }
+    // 后端未确认可用 → 始终 fallback，零网络请求
+    if (!this.backendAvailable) {
+      return this.fallback.generateLine(req);
     }
 
     try {
       const line = await this.http.generateLine(req);
-      this.backendAvailable = true;
       return line;
     } catch {
-      // 后端不可用 → 标记 + fallback
+      // 后端掉线 → 切回 fallback
       this.backendAvailable = false;
-      this.lastCheckTime = Date.now();
-      console.log('[LLMAdapter] 后端不可用，使用 fallback 模板台词');
+      console.warn('[LLM] 后端断开，切换到 fallback 模式');
       return this.fallback.generateLine(req);
     }
+  }
+
+  /** 手动连接后端（由 main.ts 的 'ai-connect' 命令调用） */
+  async tryConnect(): Promise<boolean> {
+    try {
+      await fetch(`${this.http['baseUrl']}/api/health`, {
+        signal: AbortSignal.timeout(3000),
+      });
+      this.backendAvailable = true;
+      console.log('[LLM] 后端连接成功，切换到 AI 模式');
+      return true;
+    } catch {
+      console.log('[LLM] 后端不可用，保持 fallback 模式');
+      return false;
+    }
+  }
+
+  async generateDialogue(req: DialogueRequest): Promise<DialogueRound[]> {
+    // 对话始终使用 fallback（Phase D 测试阶段，后续接入 HTTP）
+    return this.fallback.generateDialogue(req);
   }
 }
 

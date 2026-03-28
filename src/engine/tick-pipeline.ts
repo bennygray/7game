@@ -16,6 +16,8 @@
 import type { LiteGameState } from '../shared/types/game-state';
 import type { DiscipleBehaviorEvent } from './behavior-tree';
 import type { BreakthroughLog } from './breakthrough-engine';
+import type { DialogueTrigger } from '../shared/types/dialogue';
+import type { GameLogger } from '../shared/types/logger';
 
 /** 突破事件回调（定义在 tick-pipeline 以避免循环依赖） */
 export type BreakthroughCallback = (
@@ -39,6 +41,8 @@ export const TickPhase = {
   SYSTEM_TICK:      500,
   /** 600: 弟子 AI 行为树 */
   DISCIPLE_AI:      600,
+  /** 650: 弟子间对话触发（Phase D） */
+  DIALOGUE:         650,
   /** 700: 产出后处理（自动服修速丹等） */
   POST_PRODUCTION:  700,
 } as const;
@@ -72,6 +76,10 @@ export interface TickContext {
   farmLogs: string[];
   /** 弟子行为事件收集器 */
   discipleEvents: DiscipleBehaviorEvent[];
+  /** Phase D: 对话触发收集器 */
+  dialogueTriggers: DialogueTrigger[];
+  /** Phase D: Logger 引用 */
+  logger: GameLogger;
   /** 突破回调引用（由 IdleEngine 注入） */
   onBreakthrough: BreakthroughCallback | null;
   /** 突破冷却计数器（引擎级共享状态，TD-001） */

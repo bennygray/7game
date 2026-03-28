@@ -27,12 +27,15 @@ import { SEED_BY_ID } from './shared/data/seed-table';
 import { RECIPE_BY_ID } from './shared/data/recipe-table';
 import { getSpiritVeinDensity } from './shared/data/realm-table';
 import { getRealmDisplayName } from './shared/formulas/realm-display';
+import { createLogger } from './engine/game-logger';
+import type { DialogueExchange } from './shared/types/dialogue';
 
 // ===== 初始化 =====
 
 const state = loadGame();
-const engine = new IdleEngine(state);
 const llmAdapter = createLLMAdapter();
+const logger = createLogger();
+const engine = new IdleEngine(state, logger, llmAdapter);
 
 const AUTO_SAVE_INTERVAL = 30_000;
 
@@ -250,8 +253,25 @@ function handleCommand(cmd: string): void {
       updateLogDisplay();
       break;
 
+    case 'ai':
+      addMudLog('<span style="color:#8bc8c8">[系统] 正在尝试连接 AI 后端...</span>');
+      if ('tryConnect' in llmAdapter) {
+        (llmAdapter as any).tryConnect().then((ok: boolean) => {
+          if (ok) {
+            addMudLog('<span style="color:#50fa7b">[系统] ✓ AI 后端连接成功！弟子台词切换到 AI 模式</span>');
+          } else {
+            addMudLog('<span style="color:#ff6b6b">[系统] ✗ AI 后端不可用，请先运行 npm run ai</span>');
+          }
+        });
+      }
+      break;
+
     case 'reset':
-      addMudLog('<span style="color:#ff6b6b">[系统] 请刷新页面以清除存档（功能待完善）</span>');
+      engine.stop();
+      resetting = true;  // 阻止 beforeunload 重新保存
+      localStorage.removeItem('7game-lite-save');
+      addMudLog('<span style="color:#ff6b6b">[系统] 存档已清除，正在重新加载...</span>');
+      setTimeout(() => window.location.reload(), 300);
       break;
 
     default:
@@ -297,6 +317,28 @@ engine.setOnFarmTickLog((logs) => {
 engine.setOnSystemLog((logs) => {
   for (const log of logs) {
     addMudLog(`<span style="color:#8ac8c8">${escapeHtml(log)}</span>`);
+  }
+});
+
+// Phase D: 弟子间对话
+engine.setOnDialogue((exchange: DialogueExchange) => {
+  // 构建上下文：谁触发了什么事件
+  const triggerDisciple = state.disciples.find(d => d.id === exchange.triggerId);
+  const triggerName = triggerDisciple ? escapeHtml(triggerDisciple.name) : '???';
+  const eventDesc = escapeHtml(exchange.trigger.eventDescription);
+
+  // 先显示触发上下文
+  addMudLog(`<span style="color:#6a8a6a">── ${triggerName}${eventDesc.includes(triggerName) ? eventDesc.replace(triggerName, '') : '：' + eventDesc} ──</span>`);
+
+  // 再显示对话内容
+  for (const round of exchange.rounds) {
+    const speaker = state.disciples.find(d => d.id === round.speakerId);
+    const speakerName = speaker ? escapeHtml(speaker.name) : '???';
+    if (round.round === 1) {
+      addMudLog(`<span style="color:#b8d4a8">  ${speakerName}对${triggerName}说："${escapeHtml(round.line)}"</span>`);
+    } else {
+      addMudLog(`<span style="color:#a8c4d4">  ${triggerName}回应："${escapeHtml(round.line)}"</span>`);
+    }
   }
 });
 
@@ -358,8 +400,18 @@ addMudLog('<span style="color:#8bc8c8">[系统] 七道修仙 MUD 灵智版 v0.2.
 addMudLog('<span style="color:#8bc8c8">[系统] 引擎 Tick 循环已激活，修炼进行中...</span>');
 addMudLog('<span style="color:#8bc8c8">[系统] 输入 \'help\' 查看可用命令</span>');
 
+// 自动尝试连接 AI 后端（静默，成功才显示）
+if ('tryConnect' in llmAdapter) {
+  (llmAdapter as any).tryConnect().then((ok: boolean) => {
+    if (ok) {
+      addMudLog('<span style="color:#50fa7b">[系统] ✓ AI 后端已连接，弟子台词切换到 AI 模式</span>');
+    }
+  });
+}
+
 // 自动存档
-setInterval(() => saveGame(state), AUTO_SAVE_INTERVAL);
-window.addEventListener('beforeunload', () => saveGame(state));
+let resetting = false;
+setInterval(() => { if (!resetting) saveGame(state); }, AUTO_SAVE_INTERVAL);
+window.addEventListener('beforeunload', () => { if (!resetting) saveGame(state); });
 
 console.log('[7game-lite] 启动完成', state);

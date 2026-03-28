@@ -1,23 +1,19 @@
 /**
  * 弟子行为树 — 性格权重决策系统
  *
- * 由 IdleEngine.tick() 驱动。
- * ⚠️ tickDisciple 有副作用：通过 farm/alchemy engine 修改 state。
+ * Phase D 重构 (TD-003 清偿):
+ *   tickDisciple() → 保留（向后兼容，但标记 @deprecated）
+ *   planIntent() → 新增纯函数，返回 BehaviorIntent[]
+ *   executeIntents() → 移至 intent-executor.ts
  *
- * @deprecated-pattern Phase D 启动时需重构为 Intent 模式：
- *   tickDisciple() → BehaviorIntent[]（纯函数）
- *   IdleEngine.tick() → 统一执行 intents + 协调多弟子对话触发
- *   理由：弟子间对话需引擎层看到全部弟子意图后才能协调，
- *   当前副作用模式无法实现 A 炼丹成功 → B 旁观评论的交互。
+ * ADR-D01: 完全分离 — planIntent 不修改任何 state
  *
- * @see Story #4 ACs (Phase A)
- * @see Story #2/#3 ACs (Phase B-α)
+ * @see Story #2
+ * @see phaseD-TDD.md ADR-D01
  */
 
 import type { LiteDiscipleState, LiteGameState, PersonalityTraits, DiscipleBehavior } from '../shared/types/game-state';
 import { DiscipleBehavior as DB } from '../shared/types/game-state';
-import { tryPlant, harvestAll, plantResultToLog } from './farm-engine';
-import { startAlchemy, settleAlchemy } from './alchemy-engine';
 
 // ===== 行为配置 =====
 
@@ -57,6 +53,41 @@ const REST_STAMINA_PER_SEC = 2;
 
 /** 非 REST 行为每秒消耗体力 */
 const ACTIVE_STAMINA_DRAIN = 0.3;
+
+// ===== BehaviorIntent 类型 =====
+
+/** 弟子行为意图 — 纯数据，不含副作用 */
+export interface BehaviorIntent {
+  /** 意图类型 */
+  type: 'start-behavior' | 'end-behavior' | 'continue';
+  /** 弟子 ID */
+  discipleId: string;
+  /** 新行为（仅 start-behavior） */
+  newBehavior?: DiscipleBehavior;
+  /** 新行为持续时间（仅 start-behavior） */
+  duration?: number;
+  /** 旧行为（仅 end-behavior） */
+  oldBehavior?: DiscipleBehavior;
+  /** 行为结束灵气奖励（仅 end-behavior） */
+  auraReward?: number;
+  /** 体力变化量（正=恢复, 负=消耗） */
+  staminaDelta?: number;
+  /** 行为倒计时变化量（负=递减） */
+  timerDelta?: number;
+}
+
+// ===== 弟子行为变更事件（保持向后兼容） =====
+
+/** 弟子行为变更事件 */
+export interface DiscipleBehaviorEvent {
+  disciple: LiteDiscipleState;
+  oldBehavior: DiscipleBehavior;
+  newBehavior: DiscipleBehavior;
+  /** 行为结束时获得的灵气（仅 oldBehavior 结束时有值） */
+  auraReward: number;
+  /** FARM/ALCHEMY 引擎产生的 MUD 日志（可选） */
+  farmAlchemyLogs?: string[];
+}
 
 // ===== 权重计算 =====
 
@@ -121,30 +152,121 @@ export function getBehaviorLabel(behavior: DiscipleBehavior): string {
   return BEHAVIOR_LABELS[behavior] ?? '未知';
 }
 
-// ===== 弟子 Tick =====
+// ===== planIntent — 纯函数（Phase D 新增） =====
 
-/** 弟子行为变更事件 */
-export interface DiscipleBehaviorEvent {
-  disciple: LiteDiscipleState;
-  oldBehavior: DiscipleBehavior;
-  newBehavior: DiscipleBehavior;
-  /** 行为结束时获得的灵气（仅 oldBehavior 结束时有值） */
-  auraReward: number;
-  /** FARM/ALCHEMY 引擎产生的 MUD 日志（可选） */
-  farmAlchemyLogs?: string[];
+/**
+ * 为单个弟子生成行为意图（纯函数，不修改 state）
+ *
+ * ADR-D01: 完全分离 — 包括体力消耗也不在此计算，
+ * 而是作为 staminaDelta 返回给 executor。
+ *
+ * R-D3a: 禁止修改 state
+ *
+ * @param d 弟子状态（只读）
+ * @param deltaS 距上次 tick 秒数
+ * @param _state 游戏状态（只读，保留参数位以便未来扩展）
+ * @returns 行为意图数组
+ */
+export function planIntent(
+  d: Readonly<LiteDiscipleState>,
+  deltaS: number,
+  _state: Readonly<LiteGameState>,
+): BehaviorIntent[] {
+  // deltaS=0 防御 (R6-D1 WARN)
+  if (deltaS <= 0) return [];
+
+  const intents: BehaviorIntent[] = [];
+
+  // 1. 体力变化
+  if (d.behavior !== DB.IDLE && d.behavior !== DB.REST) {
+    intents.push({
+      type: 'continue',
+      discipleId: d.id,
+      staminaDelta: -ACTIVE_STAMINA_DRAIN * deltaS,
+      timerDelta: -deltaS,
+    });
+  }
+  if (d.behavior === DB.REST) {
+    intents.push({
+      type: 'continue',
+      discipleId: d.id,
+      staminaDelta: REST_STAMINA_PER_SEC * deltaS,
+      timerDelta: -deltaS,
+    });
+  }
+
+  // 2. 行为倒计时判断
+  if (d.behavior !== DB.IDLE) {
+    const remainingTimer = d.behaviorTimer - deltaS;
+
+    if (remainingTimer <= 0) {
+      // 行为结束
+      const reward = getBehaviorAuraReward(d.behavior, d.starRating);
+      intents.push({
+        type: 'end-behavior',
+        discipleId: d.id,
+        oldBehavior: d.behavior,
+        auraReward: reward,
+      });
+
+      // 行为结束后立刻进入 IDLE → 发起新决策
+      const weights = getPersonalityWeights(d.personality, d.stamina);
+      const chosen = weightedRandomPick(weights);
+      const duration = getBehaviorDuration(chosen);
+
+      if (duration > 0) {
+        intents.push({
+          type: 'start-behavior',
+          discipleId: d.id,
+          newBehavior: chosen,
+          duration,
+        });
+      }
+    }
+    // 行为未结束 → continue（体力变化已在上面处理）
+  } else {
+    // IDLE 状态 → 发起新决策
+    const weights = getPersonalityWeights(d.personality, d.stamina);
+    const chosen = weightedRandomPick(weights);
+    const duration = getBehaviorDuration(chosen);
+
+    if (duration > 0) {
+      intents.push({
+        type: 'start-behavior',
+        discipleId: d.id,
+        newBehavior: chosen,
+        duration,
+      });
+    }
+  }
+
+  return intents;
 }
+
+// ===== tickDisciple — 向后兼容（@deprecated） =====
 
 /**
  * 单弟子 tick 处理
  *
- * Phase B-α: 行为开始/结束时触发 farm/alchemy engine
- *
- * @param d 弟子状态（会被修改）
- * @param deltaS 距上次 tick 秒数
- * @param state 游戏全局状态（farm/alchemy 需要）
- * @returns 行为变更事件数组
+ * @deprecated Phase D: 请使用 planIntent + executeIntents 替代。
+ * 保留此函数仅用于 Phase A-C 的回归测试兼容。
  */
 export function tickDisciple(
+  d: LiteDiscipleState,
+  deltaS: number,
+  state: LiteGameState,
+): DiscipleBehaviorEvent[] {
+  return tickDiscipleLegacyImpl(d, deltaS, state);
+}
+
+// Phase B-alpha imports (used by legacy tickDisciple and intent-executor)
+import { tryPlant, harvestAll, plantResultToLog } from './farm-engine';
+import { startAlchemy, settleAlchemy } from './alchemy-engine';
+
+// Re-export for intent-executor
+export { tryPlant, harvestAll, plantResultToLog, startAlchemy, settleAlchemy };
+
+function tickDiscipleLegacyImpl(
   d: LiteDiscipleState,
   deltaS: number,
   state: LiteGameState,
@@ -152,25 +274,20 @@ export function tickDisciple(
   const events: DiscipleBehaviorEvent[] = [];
 
   if (d.behavior !== DB.IDLE && d.behavior !== DB.REST) {
-    // 非休息/发呆行为消耗体力
     d.stamina = Math.max(0, d.stamina - ACTIVE_STAMINA_DRAIN * deltaS);
   }
 
   if (d.behavior === DB.REST) {
-    // 休息恢复体力
     d.stamina = Math.min(100, d.stamina + REST_STAMINA_PER_SEC * deltaS);
   }
 
   if (d.behavior !== DB.IDLE) {
-    // 正在执行行为，倒计时
     d.behaviorTimer -= deltaS;
 
     if (d.behaviorTimer <= 0) {
-      // 行为结束 → 结算
       const reward = getBehaviorAuraReward(d.behavior, d.starRating);
       d.aura += reward;
 
-      // Phase B-α: FARM/ALCHEMY 行为结束时触发引擎
       const farmAlchemyLogs: string[] = [];
       if (d.behavior === DB.FARM) {
         farmAlchemyLogs.push(...harvestAll(d, state));
@@ -192,7 +309,6 @@ export function tickDisciple(
   }
 
   if (d.behavior === DB.IDLE) {
-    // IDLE 状态 → 发起新决策
     const weights = getPersonalityWeights(d.personality, d.stamina);
     const chosen = weightedRandomPick(weights);
     const duration = getBehaviorDuration(chosen);
@@ -203,7 +319,6 @@ export function tickDisciple(
       d.behaviorTimer = duration;
       d.lastDecisionTime = Date.now();
 
-      // Phase B-α: FARM/ALCHEMY 行为开始时触发引擎
       const farmAlchemyLogs: string[] = [];
       if (chosen === DB.FARM) {
         const result = tryPlant(d, state);
@@ -212,7 +327,6 @@ export function tickDisciple(
       } else if (chosen === DB.ALCHEMY) {
         const log = startAlchemy(d, state);
         farmAlchemyLogs.push(log);
-        // startAlchemy 会覆盖 behaviorTimer = craftTimeSec
       }
 
       events.push({

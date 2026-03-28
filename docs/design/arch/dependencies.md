@@ -21,6 +21,10 @@
 | **handlers/disciple-tick** | R/W | — | — | — | — | — | — | — |
 | **handlers/cultivate-boost** | R/W | — | — | — | — | — | — | — |
 | **behavior-tree** | R/W | — | — | — | — | — | — | — |
+| **intent-executor** | R/W | — | — | — | — | — | — | — |
+| **dialogue-coordinator** | R/W | — | — | — | — | — | — | — |
+| **game-logger** | — | — | — | — | — | — | — | — |
+| **handlers/dialogue-tick** | R | — | — | — | — | — | — | — |
 | **farm-engine** | R/W | — | — | R | — | R | R | — |
 | **alchemy-engine** | R/W | — | — | R | — | R | — | — |
 | **breakthrough-engine** | R/W | — | R | — | — (间接via realm-formulas) | R | — | R |
@@ -41,8 +45,11 @@
 | **handlers/auto-breakthrough** | — | R | — | — | — | R | — |
 | **handlers/farm-tick** | — | R | — | R | — | — | — |
 | **handlers/disciple-tick** | — | R | R | — | — | — | — |
+| **handlers/dialogue-tick** | — | R | — | — | — | — | — |
 | **handlers/cultivate-boost** | — | R | — | — | — | — | R |
 | **behavior-tree** | — | — | — | R | R | — | — |
+| **intent-executor** | — | — | R | R | R | — | — |
+| **dialogue-coordinator** | — | — | — | — | — | — | — |
 | **breakthrough-engine** | — | — | — | — | — | — | R |
 
 ---
@@ -73,3 +80,4 @@
 |------|---------|
 | 2026-03-28 | 从 MASTER-ARCHITECTURE.md §4 拆出 |
 | 2026-03-28 | Phase 4 重构: 新增 tick-pipeline + 6 个 handler 文件的依赖关系 |
+| 2026-03-28 | Phase D: 新增 intent-executor, dialogue-coordinator, game-logger, dialogue-tick handler 依赖 |
