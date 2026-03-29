@@ -1,6 +1,6 @@
 # 7game-lite — 全局进度追踪
 
-> **最后更新**：2026-03-28
+> **最后更新**：2026-03-29
 
 ---
 
@@ -12,18 +12,33 @@
 | B-α | v0.2 | 灵田+炼丹 | ✅ | ✅ | ✅ | 🟢 完成 |
 | C | v0.3 | 突破+灵脉+丹药使用 | ✅ | ✅ | ✅ | 🟢 完成 |
 | D | v0.4 | AI对话+日志+Intent重构 | ✅ | ✅ | ✅ | 🟢 完成 |
-| **E** | **v0.5** | **NPC灵魂（道德×特性×关系）** | 🔄 | — | — | 🟡 SPM |
+| E | v0.5 | NPC灵魂（道德×特性×关系） | ✅ | ✅ | ✅ | 🟢 完成 |
+| — | — | 世界线推演（探索性脑暴） | ✅ | — | — | 🟢 定案 |
+| — | — | Roadmap V3.1 审阅修复 + 文档对齐 | ✅ | — | — | 🟢 完成 |
+| **F0-α** | **v0.6** | **碰面世界（地点·碰面·道风）** | 待启动 | — | — | 🔴 规划中 |
+| **F0-β** | **v0.6** | **活世界（事件池·漏斗·Storyteller）** | 待启动 | — | — | 🔴 规划中 |
 
 ---
 
 ## 当前 Phase 详情
 
-**Phase E** — NPC 灵魂系统：道德 × 特性 × 关系
+**Phase F0-α** — 碰面世界：地点 · 碰面 · 宗门道风
 
-- **性质**：预研型 Phase（PoC 验证优先）
-- **SPM 状态**：Step 1-2 完成（第一性原理分析 + 规则数值），等待 Q1-Q4 USER 决策
-- **过程资产**：[`pipeline/phaseE/`](../pipeline/phaseE/)
-- **PRD**：待创建（SPM 完成后）
+- **性质**：验证基础设施（解锁后续 Phase 的测试能力）
+- **SPM 状态**：待正式启动 /SPM
+- **设计基线**：世界线推演文档 06~09 已定案
+- **Roadmap**：[SOUL-VISION-ROADMAP.md V3.1](SOUL-VISION-ROADMAP.md)
+- **估算工时**：3~5 天
+
+**Phase F0-β** — 活世界：事件池 · 五级漏斗 · Storyteller
+
+- **前置**：F0-α 完成
+- **估算工时**：5~8 天
+
+**Phase F** — 灵魂闭环（F1+F2 可与 F0-α 并行）
+
+- **SPM 状态**：待启动
+- **依赖**：Phase F0 的事件源为验证前提
 
 ---
 
@@ -31,13 +46,15 @@
 
 | 指标 | 数值 |
 |------|------|
-| 已实现系统 | 12 个（修炼、弟子×8、MUD、灵田、炼丹、突破、灵脉、丹药消费、AI对话、结构化日志、Intent、Tick Pipeline） |
-| 回归测试 | 56 组全通过 |
-| 技术债务 | TD-001~TD-007（2 个已清偿：TD-001 Pipeline 重构、TD-003 Intent） |
-| 需求债务 | FB-001~FB-004（1 个已清偿：FB-001 弟子对话） |
-| GameState 版本 | v3 |
+| 已实现系统 | 14 个（修炼、弟子×8、MUD、灵田、炼丹、突破、灵脉、丹药消费、AI对话、结构化日志、Intent、Tick Pipeline、灵魂事件总线、灵魂评估引擎） |
+| 回归测试 | 64 组全通过 |
+| 技术债务 | TD-001~TD-014（2 个已清偿：TD-001 Pipeline 重构、TD-003 Intent） |
+| 需求债务 | FB-001~FB-015（2 个已清偿：FB-001 弟子对话、FB-004 关系系统） |
+| GameState 版本 | v4 |
 | 弟子数量 | 8 人（4 初始 + 4 Phase D 新增） |
-| AI 模型 | Qwen3.5-0.8B（llama-server 子进程） |
+| AI 模型 | Qwen3.5-0.8B（llama-server 子进程，GPU -ngl 99） |
+| 世界线推演文档 | 9 份（soul-vision-rethinking/01~09） |
+| 宪法文档版本 | MASTER-PRD v2.0 / Roadmap V3.1 |
 
 ---
 
@@ -49,7 +66,9 @@
 | B-α | [analysis](../features/7game-lite-phaseB-analysis.md) | — | [stories](../design/specs/7game-lite-user-stories-phaseB-alpha.md) | — | [plan](../pipeline/phaseB-alpha/plan.md) |
 | C | [analysis](../features/7game-lite-phaseC-analysis.md) | — | [stories](../design/specs/7game-lite-user-stories-phaseC.md) | [verify](../verification/7game-lite-phaseC-verification.md) | [plan](../pipeline/phaseC/plan.md) |
 | D | [PRD](../features/phaseD-PRD.md) | [TDD](../design/specs/phaseD-TDD.md) | [stories](../design/specs/7game-lite-user-stories-phaseD.md) | — | — |
-| **E** | 待创建 | — | — | — | [spm-analysis](../pipeline/phaseE/spm-analysis.md) |
+| E | [PRD](../features/phaseE-PRD.md) | [TDD](../design/specs/phaseE-TDD.md) | [stories](../design/specs/7game-lite-user-stories-phaseE.md) | [poc-1 report](../verification/phaseE-poc1-soul-system-report.md) | [spm-analysis](../pipeline/phaseE/spm-analysis.md) |
+| **F0-α** | 待创建 | — | — | — | — |
+| **F0-β** | 待创建 | — | — | — | — |
 
 ---
 
@@ -58,3 +77,5 @@
 | 日期 | 变更 |
 |------|------|
 | 2026-03-28 | 初始创建，回填 Phase A-D 历史状态 |
+| 2026-03-29 | Phase E 标记完成(✅)；新增世界线推演条目(定案)；新增 Phase F0 规划中；更新累计统计(v4/64测试/14系统/9份推演文档) |
+| 2026-03-29 | **V3.1 审阅修复**：F0→F0-α/F0-β；新增文档对齐条目；需求债务更新(FB-001~015,2已清偿)；新增宪法文档版本跟踪 |

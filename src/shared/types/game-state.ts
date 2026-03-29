@@ -223,7 +223,7 @@ export interface LifetimeStats {
 
 // ===== 主状态 =====
 
-/** 7game-lite 精简游戏状态 — v3 */
+/** 7game-lite 精简游戏状态 — v4 */
 export interface LiteGameState {
   /** 存档版本号 */
   version: number;
