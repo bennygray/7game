@@ -21,6 +21,8 @@ import type { BehaviorIntent, DiscipleBehaviorEvent } from './behavior-tree';
 import { getBehaviorLabel } from './behavior-tree';
 import { tryPlant, harvestAll, plantResultToLog } from './farm-engine';
 import { startAlchemy, settleAlchemy } from './alchemy-engine';
+import type { EventBus } from './event-bus';
+import type { SoulEventType } from '../shared/types/soul';
 
 // ===== 结果类型 =====
 
@@ -44,6 +46,15 @@ const BEHAVIOR_OUTCOME_TAG: Record<string, string | null> = {
   bounty: null,
 };
 
+/** outcomeTag → SoulEventType 映射 */
+const OUTCOME_TO_SOUL_EVENT: Record<string, SoulEventType> = {
+  'alchemy-success': 'alchemy-success',
+  'alchemy-fail':    'alchemy-fail',
+  'harvest':         'harvest',
+  'meditation':      'meditation',
+  'explore-return':  'explore-return',
+};
+
 // ===== 执行器 =====
 
 /**
@@ -52,10 +63,12 @@ const BEHAVIOR_OUTCOME_TAG: Record<string, string | null> = {
  * R-D3b: Intent 按弟子顺序生成，统一在此执行
  * R-D3c: FARM/ALCHEMY 副作用仅在此调用
  * R-D3d: 返回 DiscipleBehaviorEvent[]（保持下游兼容）
+ * Phase E: eventBus 可选注入，存在时在 end-behavior 发射 SoulEvent
  */
 export function executeIntents(
   intents: BehaviorIntent[],
   state: LiteGameState,
+  eventBus?: EventBus,
 ): IntentExecutionResult {
   const events: DiscipleBehaviorEvent[] = [];
   const triggers: DialogueTrigger[] = [];
@@ -119,6 +132,18 @@ export function executeIntents(
             behavior: intent.oldBehavior as DiscipleBehavior,
             outcomeTag,
           });
+
+          // Phase E: 向 EventBus 发射灵魂事件
+          if (eventBus) {
+            const soulEventType = OUTCOME_TO_SOUL_EVENT[outcomeTag];
+            if (soulEventType) {
+              eventBus.emit({
+                type: soulEventType,
+                actorId: disciple.id,
+                timestamp: Date.now(),
+              });
+            }
+          }
         }
         break;
       }

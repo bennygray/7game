@@ -20,6 +20,10 @@
 | TD-008 | `bystander-lines.ts` L77 性格阈值 0.7 未命名为常量; `game-logger.ts` 字节估算 200 未命名 | Phase D SGE Review — R7-D2 WARN | P4 | bystander-lines.ts, game-logger.ts | 下次触及时 |
 | TD-009 | `tickDiscipleLegacyImpl` 与 `planIntent+executeIntents` 逻辑重复（@deprecated 向后兼容） | Phase D SGE Review — R7-D4 WARN | P3 | behavior-tree.ts | 下一 Phase 移除 @deprecated |
 | TD-010 | `tryConnect` 使用 `this.http['baseUrl']` 访问私有字段，应改为公开 getter 或构造参数 | Phase D Hotfix Review | P4 | llm-adapter.ts | 下次触及时 |
+| TD-011 | `docs/INDEX.md` 引用完整性无自动检查机制，已出现幽灵注册。需编写 `scripts/verify-docs-integrity.ts` | Pipeline 规范 Review WARN #2 | P3 | docs/INDEX.md, scripts/ | 下次有空时 |
+| TD-012 | 关系系统数值参数（衰减率 ×0.98、标签乘数 ×1.3/×1.5/×0.5、衰减下限 5）均为设计估算值，未经 Monte Carlo 模拟验证。需编写 `scripts/simulate-relationship.ts` 进行参数敏感度分析 | Phase E PRD USER 反馈 | P2 | soul-engine, relationship-handler | Phase E Story #5 验证阶段 |
+| TD-013 | `trait-registry.ts` 的 `generateInnateTraits` 函数中 0.8 概率常量（生成 1 个特性的概率）和 `disciple-generator.ts` 的 400 道德相似度归一化分母未命名为常量 | Phase E SGE Review — R7-D2 WARN | P4 | trait-registry.ts, disciple-generator.ts | 下次触及时 |
+| TD-014 | `sympathy-handler.ts` 候选池数据清理逻辑中存在硬编码的清理阈值 0.15 | Phase E SGE Review — R7-D3 WARN | P4 | sympathy-handler.ts | 下次触及时 |
 
 ---
 

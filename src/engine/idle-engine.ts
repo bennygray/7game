@@ -3,14 +3,17 @@
  *
  * Phase 4 重构: 硬编码 tick() → TickPipeline + TickHandler 模式。
  * Phase D: +对话系统集成 +Logger 集成 +Intent 模式
+ * Phase E: +灵魂系统（EventBus + soul-tick + soul-event）
  *
- * Pipeline 执行顺序（8 个 Handler）：
+ * Pipeline 执行顺序（10 个 Handler）：
  *   100 BUFF_COUNTDOWN  — boost-countdown: 修速丹 buff 倒计时
  *   200 PRE_PRODUCTION   — breakthrough-aid: 自动服破镜丹
  *   200 PRE_PRODUCTION   — auto-breakthrough: 自动突破检测+执行
  *   300 RESOURCE_PROD    — core-production: 灵气/悟性/灵石/时间/统计（内联）
  *   500 SYSTEM_TICK      — farm-tick: 灵田生长推进
+ *   500 SYSTEM_TICK(10)  — soul-tick: 关系衰减 + 道德漂移 + 后天特性（Phase E）
  *   600 DISCIPLE_AI      — disciple-tick: 弟子行为树 tick（Phase D Intent 模式）
+ *   625 SOUL_EVAL        — soul-event: 灵魂事件评估（Phase E）
  *   650 DIALOGUE         — dialogue-tick: 弟子间对话触发（Phase D）
  *   700 POST_PRODUCTION  — cultivate-boost: 自动服修速丹
  *
@@ -41,6 +44,7 @@ import { TickPipeline, TickPhase, type TickHandler, type TickContext, type Break
 import type { GameLogger } from '../shared/types/logger';
 import type { DialogueExchange } from '../shared/types/dialogue';
 import { DialogueCoordinator } from './dialogue-coordinator';
+import { EventBus } from './event-bus';
 
 // Handler 导入
 import { boostCountdownHandler } from './handlers/boost-countdown.handler';
@@ -50,6 +54,8 @@ import { farmTickHandler } from './handlers/farm-tick.handler';
 import { discipleTickHandler } from './handlers/disciple-tick.handler';
 import { cultivateBoostHandler } from './handlers/cultivate-boost.handler';
 import { dialogueTickHandler } from './handlers/dialogue-tick.handler';
+import { soulTickHandler } from './handlers/soul-tick.handler';
+import { soulEventHandler } from './handlers/soul-event.handler';
 
 /** Tick 回调：引擎每次 tick 后通知上层 */
 export type TickCallback = (state: LiteGameState, deltaS: number) => void;
@@ -107,14 +113,16 @@ export class IdleEngine {
     // Phase D: 初始化对话协调器
     this.dialogueCoordinator = new DialogueCoordinator(llmAdapter ?? null, logger);
 
-    // 初始化 Pipeline 并注册所有 Handler（8 个）
+    // 初始化 Pipeline 并注册所有 Handler（10 个）
     this.pipeline = new TickPipeline();
     this.pipeline.register(boostCountdownHandler);
     this.pipeline.register(breakthroughAidHandler);
     this.pipeline.register(autoBreakthroughHandler);
     this.pipeline.register(this.createCoreProductionHandler());
     this.pipeline.register(farmTickHandler);
+    this.pipeline.register(soulTickHandler);     // Phase E: 500:10 内心周期更新
     this.pipeline.register(discipleTickHandler);
+    this.pipeline.register(soulEventHandler);    // Phase E: 625 灵魂事件评估
     this.pipeline.register(dialogueTickHandler);
     this.pipeline.register(cultivateBoostHandler);
   }
@@ -194,6 +202,7 @@ export class IdleEngine {
       logger: this.logger,
       onBreakthrough: this.onBreakthrough,
       breakthroughCooldown: this.breakthroughCooldown,
+      eventBus: new EventBus(),   // Phase E: 每 tick 创建新实例，生命周期与 tick 绑定
     };
 
     // 执行 Pipeline（7 个 Handler 按 phase+order 顺序执行）

@@ -1,8 +1,8 @@
 # 7game-lite — 全局架构文档 (MASTER-ARCHITECTURE)
 
-> **版本**：v1.1 | **最后更新**：2026-03-28
+> **版本**：v1.2 | **最后更新**：2026-03-29
 > **文档角色**：宪法层索引 — 所有 Phase 的架构总纲
-> **存档版本**：v3（Phase C）
+> **存档版本**：v4（Phase E）
 > **阅读策略**：本文件为索引，永远在 Bootstrap 时读取。按需阅读 detail 文件。
 
 ---
@@ -13,9 +13,9 @@
 
 | 层级 | 职责 | 文件数 |
 |------|------|:------:|
-| ① Data (`shared/`) | 类型 + 公式 + 数据表 | 9 |
-| ② Engine (`engine/`) | Tick / 行为树 / 存档 | 15 |
-| ③ AI (`ai/`) | LLM 适配 / prompt | 3+ |
+| ① Data (`shared/`) | 类型 + 公式 + 数据表 | 14 |
+| ② Engine (`engine/`) | Tick / 行为树 / 存档 / 灵魂 | 22 |
+| ③ AI (`ai/`) | LLM 适配 / prompt / 灵魂评估 | 5+ |
 | ④ Presentation (`main.ts`) | MUD 面板 / 命令系统 | 1 |
 
 ### 跨层通信禁令
@@ -39,7 +39,7 @@
 
 ## §3 引擎 Tick Pipeline → [detail](arch/pipeline.md)
 
-> 7 个 Handler 注册表 + TickPipeline 架构 + 新系统接入协议。新系统挂载时必读。
+> 10 个 Handler 注册表 + TickPipeline 架构 + 新系统接入协议。新系统挂载时必读。
 
 ---
 
@@ -114,3 +114,4 @@ export const mySystemHandler: TickHandler = {
 | 2026-03-28 | v1.0 | 初始创建，如实描述当前硬编码结构 + 目标 Handler 模式 |
 | 2026-03-28 | v1.1 | 模块化拆分：§1→layers.md, §2→gamestate.md, §3→pipeline.md, §4→dependencies.md, §5→schema.md |
 | 2026-03-28 | v1.2 | Phase 4 重构完成: §3→Handler 架构, §6.1→当前为 Pipeline 模式, Engine 8→15 文件 |
+| 2026-03-29 | v1.3 | Phase E: 存档 v3→v4, Data 11→14, Engine 19→22, AI 4+→5+, Handler 8→10 |

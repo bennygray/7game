@@ -37,9 +37,11 @@ trigger: >
 2. 读对应的 User Stories 文件 — 理解 AC 验收标准
 3. 读 `docs/project/tech-debt.md` — 检查可顺带清偿的技术债务
 4. 读 `docs/project/feature-backlog.md` — 检查可顺带清偿的需求债务
-5. 读 `AGENTS.md` §3.7（数值验证）+ §3.8（测试脚本）+ §3.10（文档模块化）
-6. 按需读 `docs/design/arch/schema.md` — 涉及存档迁移时
-7. 按需读 `docs/design/arch/pipeline.md` — 涉及 Pipeline 挂载时
+5. 读 `docs/project/handoff.md` — 理解当前断点和上下文（必读）
+6. 读 `docs/pipeline/phaseX/plan.md` — 理解实施计划（必读）
+7. 读 `AGENTS.md` §3.7（数值验证）+ §3.8（测试脚本）+ §3.10（文档模块化）
+8. 按需读 `docs/design/arch/schema.md` — 涉及存档迁移时
+9. 按需读 `docs/design/arch/pipeline.md` — 涉及 Pipeline 挂载时
 
 ---
 
@@ -123,6 +125,15 @@ trigger: >
 - [ ] 更新 AGENTS.md（如有新的项目约束）
 - [ ] 技术债务变更 → 更新 `docs/project/tech-debt.md`（新增 Review WARN 项 / 标记清偿项）
 - [ ] 需求债务变更 → 更新 `docs/project/feature-backlog.md`（新增降级项 / 标记清偿项）
+- [ ] **🆕 完成 `docs/pipeline/phaseX/walkthrough.md`**（变更总结 + 验证结果 + 经验教训）
+
+### 产出物归档表
+
+| 产出物 | 保存路径 |
+|--------|---------|
+| 验证结果 | `docs/verification/[name]-verification.md` |
+| **🆕 执行追踪** | `docs/pipeline/phaseX/task.md`（living document，执行过程中持续更新） |
+| **🆕 完成总结** | `docs/pipeline/phaseX/walkthrough.md`（变更清单 + 验证结果 + 经验教训） |
 
 ---
 
@@ -136,6 +147,7 @@ trigger: >
 - [ ] `npm run test:regression` 退出码 0
 - [ ] Party Review 无 BLOCK 项
 - [ ] 交接文档已更新
+- [ ] Pipeline 过程资产已归档（task.md + walkthrough.md）
 
 签章：`[x] GATE 3 PASSED` — [日期]
 ```

@@ -18,6 +18,7 @@ import type { DiscipleBehaviorEvent } from './behavior-tree';
 import type { BreakthroughLog } from './breakthrough-engine';
 import type { DialogueTrigger } from '../shared/types/dialogue';
 import type { GameLogger } from '../shared/types/logger';
+import type { EventBus } from './event-bus';
 
 /** 突破事件回调（定义在 tick-pipeline 以避免循环依赖） */
 export type BreakthroughCallback = (
@@ -41,6 +42,8 @@ export const TickPhase = {
   SYSTEM_TICK:      500,
   /** 600: 弟子 AI 行为树 */
   DISCIPLE_AI:      600,
+  /** 625: 灵魂事件评估（Phase E）— 弟子 AI 行为决策之后，对话之前 */
+  SOUL_EVAL:        625,
   /** 650: 弟子间对话触发（Phase D） */
   DIALOGUE:         650,
   /** 700: 产出后处理（自动服修速丹等） */
@@ -84,6 +87,8 @@ export interface TickContext {
   onBreakthrough: BreakthroughCallback | null;
   /** 突破冷却计数器（引擎级共享状态，TD-001） */
   breakthroughCooldown: number;
+  /** Phase E: 灵魂事件总线 */
+  eventBus: EventBus;
 }
 
 // ===== TickPipeline 类 =====

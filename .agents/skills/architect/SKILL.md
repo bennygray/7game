@@ -38,9 +38,11 @@ trigger: >
 2. 读 `docs/design/arch/gamestate.md` — 理解 GameState 拓扑（必读）
 3. 读 `docs/design/arch/pipeline.md` — 理解 Tick Pipeline（必读）
 4. 读 `docs/project/tech-debt.md` — 检查技术债务（必读）
-5. 按需读 `docs/design/arch/dependencies.md`、`docs/design/arch/schema.md`
-6. 读已签章的 PRD.md — 理解本次需求的规则和数值
-7. 读 `AGENTS.md` §3.3（模块边界）+ §3.9（Pipeline 挂载协议）+ §3.10（文档模块化）
+5. 读 `docs/project/handoff.md` — 理解当前断点和上下文（必读）
+6. 读 `docs/pipeline/phaseX/spm-analysis.md` — 理解 SPM 分析决策（必读）
+7. 按需读 `docs/design/arch/dependencies.md`、`docs/design/arch/schema.md`
+8. 读已签章的 PRD.md — 理解本次需求的规则和数值
+9. 读 `AGENTS.md` §3.3（模块边界）+ §3.9（Pipeline 挂载协议）+ §3.10（文档模块化）
 
 ---
 
@@ -127,8 +129,9 @@ SGA 的 Review 角色均为"挑刺者"——专注于发现架构缺陷而非业
 |--------|---------|
 | TDD | `docs/design/specs/[name]-TDD.md` |
 | ADR | 追加到 TDD.md 末尾 |
-| Party Review 报告 | 追加到 TDD.md 末尾 |
+| Party Review 报告 | `docs/pipeline/phaseX/review.md`（独立存储） |
 | 技术债务变更 | 更新 `docs/project/tech-debt.md`（新增 WARN 项 / 标记清偿项） |
+| **实施计划** | `docs/pipeline/phaseX/plan.md`（架构设计 + 任务分解 + 风险评估） |
 
 ---
 

@@ -27,9 +27,10 @@ trigger: >
 1. 读 `docs/project/MASTER-PRD.md`（索引）— 理解全局产品定位
 2. 读 `docs/project/prd/economy.md` — 理解资源经济（必读）
 3. 读 `docs/project/feature-backlog.md` — 检查需求债务（必读）
-4. 按需读 `docs/project/prd/formulas.md` — 涉及数值时
-5. 读当前活跃 Phase 的已有文档（如有）
-6. 如尚未了解项目状态，执行 AGENTS.md §1.2 启动协议
+4. 读 `docs/project/handoff.md` — 理解当前断点和上下文（必读）
+5. 读 `docs/pipeline/phaseX/` — 当前 Phase 过程资产（如有）
+6. 按需读 `docs/project/prd/formulas.md` — 涉及数值时
+7. 如尚未了解项目状态，执行 AGENTS.md §1.2 启动协议
 
 ---
 
@@ -40,6 +41,8 @@ trigger: >
   - `docs/design/specs/` — User Stories 和 TDD
   - `docs/verification/` — 验证清单
   - `scripts/` — 数值验证脚本
+  - `docs/pipeline/` — Pipeline 过程资产
+  - `docs/pipeline/phaseX/` — 当前 Phase 的子目录
 - 检查 `docs/INDEX.md` 是否存在，不存在则创建空骨架
 - 此步骤自动执行，不计入 Gate
 
@@ -106,7 +109,50 @@ trigger: >
 - **MECE 校验**：规则是否相互独立且完全穷尽？
 - **持久化考量**：GameState 存储方案（不做架构设计，仅标注需求）
 
+### Step 2 规格深度要求（硬约束）
+
+> [!IMPORTANT]
+> **深度标准**：PRD 的规则与数值章节必须达到「开发者读完后无需反问即可编码」的深度。
+> 以下检查清单中，每个适用项必须在 PRD 中有对应的**完整数据表**，而非概要描述。
+
+**完成度检查清单**（每项标注 ✅ 已完成 / ⬜ 不适用 / ❌ 缺失）：
+
+| # | 检查项 | 判定标准 |
+|---|--------|---------|
+| C1 | **实体全量枚举** | 每个 enum/union/registry 的全部成员已列出（如特性池的每个 TraitDef） |
+| C2 | **规则映射表** | 每条规则的输入→输出映射已展开为完整查找表（如事件类型×角色→候选情绪） |
+| C3 | **公式全参数** | 每个公式的所有参数、常量、边界值已明确（无"受X影响"式的模糊表述） |
+| C4 | **阈值/标签表** | 所有分档/分级的阈值边界和对应标签已列出完整区间表 |
+| C5 | **Fallback 文案** | AI/随机系统的 fallback 模板文案已提供（至少每类 3 条） |
+| C6 | **效果数值表** | 每个 tag/buff/trait 的具体效果数值已量化（无"加成"式无数值描述） |
+
+**违规处理**：
+- C1~C4 任一 ❌ → **禁止进入 Step 3**，必须补全
+- C5~C6 ❌ → 可标注为 `[待 USER 确认]` 后进入 Step 3，但 Review 时作为 WARN
+
 ---
+
+## Step 2.5：规格深度自检门禁（Step 2 → Step 3 过渡）
+
+> 在进入 Step 3 User Story 之前，**必须**执行以下自检：
+
+1. 逐条检查 Step 2 完成度清单（C1~C6），标注状态
+2. 对每个 ❌ 项：补全 → 转 ✅，或标注原因（USER 待决、需 PoC 等）
+3. 确认没有「规则编号 + 一行概要」式的占位内容 — 每条规则必须有可直接查表的数据
+
+**禁止的模式**（反例）：
+```markdown
+❌ "R-E7 特性池大小 | Phase E 阶段 10~15 个"  — 只有数量，没有内容
+❌ "受道德相似度影响"  — 没说公式是什么
+❌ "使用模板生成"  — 模板在哪？
+```
+
+**要求的模式**（正例）：
+```markdown
+✅ 特性池定义表：列出每个 TraitDef 的 id/name/category/polarity/effects/aiHint
+✅ affinity = random(-20,20) + clamp(20 - moralDistance(A,B), -10, 10)
+✅ Fallback 模板表：emotion→3条候选 innerThought 文案
+```
 
 ## Step 3：User Story 映射
 
@@ -124,8 +170,8 @@ trigger: >
 
 | 类型 | 角色 | 维度数 |
 |------|------|:-----:|
-| **必选** | R1 魔鬼PM | 3 |
-| **必选** | R3 数值策划 | 5 |
+| **必选** | R1 魔鬼PM | 4 |
+| **必选** | R3 数值策划 | 6 |
 | **必选** | R5 偏执架构师 | 5 |
 | **按需** | R2 资深玩家 | 4 |
 | **按需** | R4 项目经理 | 5 |
@@ -175,8 +221,9 @@ Review 完成后，追加执行：
 | User Stories | `docs/design/specs/[name]-user-stories-phaseX.md` |
 | Pre-Mortem | 追加到 PRD 末尾 |
 | Assumption Audit | 追加到 PRD 末尾 |
-| Party Review 报告 | 追加到 PRD 末尾 |
+| Party Review 报告 | `docs/pipeline/phaseX/review.md`（独立存储） |
 | 需求债务变更 | 更新 `docs/project/feature-backlog.md`（新增降级项 / 标记清偿项） |
+| **SPM 分析过程** | `docs/pipeline/phaseX/spm-analysis.md`（第一性原理 + 决策记录 + PoC 计划） |
 
 ---
 

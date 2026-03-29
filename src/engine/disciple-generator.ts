@@ -8,6 +8,13 @@
 import type { LiteDiscipleState, PersonalityTraits, StarRating } from '../shared/types/game-state';
 import { DiscipleBehavior } from '../shared/types/game-state';
 import type { RelationshipEdge } from '../shared/types/game-state';
+import { generateInnateTraits } from '../shared/data/trait-registry';
+
+// ===== 随机整数工具 =====
+
+function randomInt(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 // ===== 数据表 =====
 
@@ -71,6 +78,12 @@ export function generateRandomDisciple(): LiteDiscipleState {
   };
   const subRealm = 1 + Math.floor(Math.random() * 3);
 
+  // Phase E 新增：道德双轴
+  const moral = {
+    goodEvil: randomInt(-30, 30),
+    lawChaos: randomInt(-30, 30),
+  };
+
   return {
     id: crypto.randomUUID(),
     name: `${surname}${givenName}`,
@@ -87,6 +100,9 @@ export function generateRandomDisciple(): LiteDiscipleState {
     stamina: 100,
     farmPlots: [],
     currentRecipeId: null,
+    moral,
+    initialMoral: { ...moral },
+    traits: generateInnateTraits(),
   };
 }
 
@@ -124,6 +140,12 @@ export function generateInitialDisciples(count = 8): LiteDiscipleState[] {
     };
     const subRealm = 1 + Math.floor(Math.random() * 3);
 
+    // Phase E 新增：道德双轴
+    const moral = {
+      goodEvil: randomInt(-30, 30),
+      lawChaos: randomInt(-30, 30),
+    };
+
     return {
       id: crypto.randomUUID(),
       name,
@@ -140,17 +162,42 @@ export function generateInitialDisciples(count = 8): LiteDiscipleState[] {
       stamina: 100,
       farmPlots: [],
       currentRecipeId: null,
+      moral,
+      initialMoral: { ...moral },
+      traits: generateInnateTraits(),
     };
   });
 }
 
-/** 生成初始关系矩阵 */
+/**
+ * 生成初始关系矩阵 — v4
+ *
+ * - affinity 初始值: [-20, +20]（按 R-E9 简化版）
+ * - tags: []
+ * - lastInteraction: Date.now()
+ */
 export function generateInitialRelationships(disciples: LiteDiscipleState[]): RelationshipEdge[] {
   const edges: RelationshipEdge[] = [];
+  const now = Date.now();
   for (let i = 0; i < disciples.length; i++) {
     for (let j = 0; j < disciples.length; j++) {
       if (i === j) continue;
-      edges.push({ sourceId: disciples[i].id, targetId: disciples[j].id, value: 0 });
+      const a = disciples[i];
+      const b = disciples[j];
+      // R-E9: 初始好感度基于道德相似度弱影响
+      const moralSimilarity =
+        1 - (Math.abs(a.moral.goodEvil - b.moral.goodEvil) +
+             Math.abs(a.moral.lawChaos - b.moral.lawChaos)) / 400;
+      // 基础值 [-10, +10] + 道德影响 [-10, +10]
+      const baseAffinity = randomInt(-10, 10) + Math.round((moralSimilarity - 0.5) * 20);
+      const affinity = Math.max(-20, Math.min(20, baseAffinity));
+      edges.push({
+        sourceId: a.id,
+        targetId: b.id,
+        affinity,
+        tags: [],
+        lastInteraction: now,
+      });
     }
   }
   return edges;

@@ -6,6 +6,7 @@
  *
  * CR-A1: 冷却防竞态。通过 TickContext.breakthroughCooldown 共享冷却状态。
  * TD-001: breakthroughCooldown 暴露到 TickContext 是已知技术债务。
+ * Phase E: 突破结果发送到 EventBus，触发灵魂评估。
  */
 
 import type { TickHandler, TickContext } from '../tick-pipeline';
@@ -33,6 +34,24 @@ export const autoBreakthroughHandler: TickHandler = {
       }
       // 突破结果通知
       ctx.onBreakthrough?.(ctx.state, btLog);
+
+      // Phase E: 向 EventBus 发射突破灵魂事件
+      if (ctx.eventBus) {
+        // 突破由宗门弟子共同见证，actorId 取第一个弟子（宗主代表）
+        const actorId = ctx.state.disciples[0]?.id;
+        if (actorId) {
+          ctx.eventBus.emit({
+            type: btLog.success ? 'breakthrough-success' : 'breakthrough-fail',
+            actorId,
+            timestamp: Date.now(),
+            metadata: {
+              newRealm: btLog.result.newRealm,
+              newSubRealm: btLog.result.newSubRealm,
+              successRate: btLog.result.successRate,
+            },
+          });
+        }
+      }
     }
   },
 };

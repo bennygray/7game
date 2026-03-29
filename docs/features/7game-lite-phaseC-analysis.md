@@ -219,7 +219,7 @@ export interface CultivateBoostBuff {
 
 ### Step 7: 文档先行与代码实施 — [✅]
 
-**实施计划文件**：[7game-lite-impl-plan-phaseC.md](file:///d:/7game/docs/design/specs/7game-lite-impl-plan-phaseC.md)
+**实施计划文件**：[plan.md](file:///d:/7game/docs/pipeline/phaseC/plan.md)（已迁移至 pipeline 目录）
 
 #### 执行清单摘要
 
@@ -296,7 +296,7 @@ export interface CultivateBoostBuff {
 
 ### Phase III 完成门禁：Self-Review — [✅]
 
-1. **Spec 覆盖度**：✅ impl-plan-phaseC.md 覆盖全部 5 条 Story 涉及的文件
+1. **Spec 覆盖度**：✅ plan.md（pipeline/phaseC/）覆盖全部 5 条 Story 涉及的文件
 2. **数值验证覆盖度**：✅ Step 3 中 F-C1a~C1c、F-C3、F-C4、Fix C 全部有对应验证行
 
 ---

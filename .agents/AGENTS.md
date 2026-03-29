@@ -22,7 +22,9 @@
 Level 1（永远读）：
   1. docs/project/MASTER-PRD.md           ← 索引（~120行）
   2. docs/design/MASTER-ARCHITECTURE.md   ← 索引（~100行）
-  3. 确认当前活跃 Phase + 读对应文件（PRD/analysis/TDD）
+  3. docs/project/handoff.md              ← 当前断点 + 接手指南
+  4. 确认当前活跃 Phase + 读对应文件（PRD/analysis/TDD）
+  5. 读 docs/pipeline/phaseX/ 过程资产    ← 恢复当前 Phase 上下文
 
 Level 2（按需读 detail）：
   根据任务类型，读对应 detail 文件（见 §3.10 路径映射表）
@@ -222,6 +224,44 @@ fix/*       → 修复分支
 | 新增 Pipeline Handler | `docs/design/arch/pipeline.md` |
 | 新增代码依赖 | `docs/design/arch/dependencies.md` |
 | 新增存档版本 / 迁移函数 | `docs/design/arch/schema.md` |
+| 🆕 SPM 分析过程 / 决策记录 | `docs/pipeline/phaseX/spm-analysis.md` |
+| 🆕 实施计划 / 任务分解 | `docs/pipeline/phaseX/plan.md` |
+| 🆕 执行进度追踪 | `docs/pipeline/phaseX/task.md` |
+| 🆕 完成总结 / 经验教训 | `docs/pipeline/phaseX/walkthrough.md` |
+
+### 3.11 Pipeline 过程资产规范
+
+> [!IMPORTANT]
+> **Trinity Pipeline 的过程文档是不可丢弃的项目资产。**
+> **禁止将 plan/task/walkthrough 遗留在 Antigravity brain 临时目录中。**
+
+| 规则 | 说明 |
+|------|------|
+| **资产目录** | `docs/pipeline/phaseX/`（X = A, B-alpha, C, D, E, ...） |
+| **固定文件名** | `spm-analysis.md`, `plan.md`, `task.md`, `review.md`, `walkthrough.md` |
+| **创建时机** | 各 Skill 启动时自动创建对应文件 |
+| **SPM 启动** | 创建 `spm-analysis.md` |
+| **SGA 启动** | 创建 `plan.md` |
+| **SGE 启动** | 创建 `task.md`；GATE 3 后创建 `walkthrough.md` |
+| **Gate Review 后** | √追加到 `review.md`（独立存储，不再追加到 PRD/TDD） |
+| **跨会话继承** | 新会话 Bootstrap 时读取当前 Phase 的 pipeline 文件以恢复上下文 |
+| **Git 管理** | 所有 pipeline 文件纳入版本控制 |
+| **只增不删** | 已创建的过程资产禁止删除 |
+
+### 3.12 全局交接文档规范
+
+> [!IMPORTANT]
+> **每次会话结束前，必须更新 `docs/project/handoff.md` 以确保下次会话可无缝接手。**
+
+| 规则 | 说明 |
+|------|------|
+| **handoff.md** | `docs/project/handoff.md` — 当前断点 + 接手指南 + 关键决策 + 遗留风险 |
+| **task-tracker.md** | `docs/project/task-tracker.md` — Phase 级进度仪表盘 + 累计统计 |
+| **handoff 更新时机** | 每次会话结束前，或当 Phase 状态发生变化时 |
+| **task-tracker 更新时机** | Phase 完成 / Phase 新建 / Gate 状态变化时 |
+| **Bootstrap 优先级** | handoff.md 在 Level 1 必读列表中（第 3 位） |
+
+> 详见 `docs/pipeline/README.md`。
 
 ---
 
@@ -293,8 +333,9 @@ d:\7game\
 ├── docs/                           ← 文档
 │   ├── INDEX.md                    ← 全文档索引
 │   ├── project/                    ← 项目管理（handoff / task-tracker）
-│   ├── features/                   ← SGPA 分析进度
-│   ├── design/specs/               ← User Stories + 设计文档
+│   ├── features/                   ← PRD / SGPA 分析进度
+│   ├── design/specs/               ← TDD + User Stories
+│   ├── pipeline/                   ← 🆕 Trinity Pipeline 过程资产（spm-analysis/plan/task/walkthrough）
 │   └── verification/               ← 集成验证清单
 ├── index.html                      ← Vite 入口
 ├── package.json

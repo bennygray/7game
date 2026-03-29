@@ -182,6 +182,51 @@ suite('Save Migration v1→v2→v3');
   assert(raw['aura'] === 100, '原有数据保留: aura=100');
   assert((raw['materialPouch'] as Record<string, number>)['low-herb'] === 5, '原有数据保留: low-herb=5');
   assert(stats['breakthroughTotal'] === 2, '原有统计保留: breakthroughTotal=2');
+
+  // === v3 → v4 migration (Phase E) ===
+  // 模拟 v3 弟子缺少 moral/traits 字段
+  const v3Save = JSON.parse(JSON.stringify(raw)) as Record<string, unknown>;
+  v3Save['version'] = 3;
+  const v3Disciples = v3Save['disciples'] as Record<string, unknown>[];
+  delete v3Disciples[0]['moral'];
+  delete v3Disciples[0]['initialMoral'];
+  delete v3Disciples[0]['traits'];
+  // 旧关系边使用 value 字段
+  v3Save['relationships'] = [
+    { sourceId: 'reg-1', targetId: 'reg-2', value: 15 },
+  ];
+
+  // 执行迁移逻辑（内联，不依赖 save-manager 避免 localStorage）
+  for (const d of v3Disciples) {
+    if (!d['moral']) {
+      d['moral'] = { goodEvil: 0, lawChaos: 0 };
+    }
+    if (!d['initialMoral']) {
+      d['initialMoral'] = { ...(d['moral'] as Record<string, unknown>) };
+    }
+    if (!Array.isArray(d['traits'])) {
+      d['traits'] = [];
+    }
+  }
+  const v3Rels = v3Save['relationships'] as Record<string, unknown>[];
+  v3Save['relationships'] = v3Rels.map(r => ({
+    sourceId: r['sourceId'],
+    targetId: r['targetId'],
+    affinity: (r['value'] as number) ?? 0,
+    tags: [],
+    lastInteraction: Date.now(),
+  }));
+  v3Save['version'] = 4;
+
+  assert(v3Save['version'] === 4, 'v3→v4: version = 4');
+  assert(!!(v3Disciples[0]['moral']), 'v3→v4: 弟子.moral 已补充');
+  assert(!!(v3Disciples[0]['initialMoral']), 'v3→v4: 弟子.initialMoral 已补充');
+  assert(Array.isArray(v3Disciples[0]['traits']), 'v3→v4: 弟子.traits 已补充');
+  const migratedRel = (v3Save['relationships'] as Record<string, unknown>[])[0];
+  assert('affinity' in migratedRel, 'v3→v4: 关系边含 affinity');
+  assert((migratedRel['affinity'] as number) === 15, 'v3→v4: value→affinity 值正确');
+  assert(Array.isArray(migratedRel['tags']), 'v3→v4: 关系边含 tags');
+  assert(!('value' in migratedRel), 'v3→v4: 关系边无 value 字段');
 }
 
 // ================================================================

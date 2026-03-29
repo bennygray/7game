@@ -1,0 +1,1640 @@
+[
+  {
+    "timestamp": 1774718150323,
+    "level": "INFO",
+    "category": "SYSTEM",
+    "source": "poc-1b",
+    "message": "═══════════════ PoC-1b 启动（中文情绪版）═══════════════"
+  },
+  {
+    "timestamp": 1774718150333,
+    "level": "INFO",
+    "category": "SYSTEM",
+    "source": "poc-1b",
+    "message": "模型: Qwen3.5-0.8B | GPU: CUDA | 场景: 20 | 情绪标签: 中文 | 维度: 心情×关系×地位×境界×身体×事件"
+  },
+  {
+    "timestamp": 1774718151924,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "llama-server 预检通过",
+    "data": {
+      "latencyMs": 1591
+    }
+  },
+  {
+    "timestamp": 1774718151925,
+    "level": "INFO",
+    "category": "SYSTEM",
+    "source": "poc-1b",
+    "message": "开始测试 20 个场景"
+  },
+  {
+    "timestamp": 1774718151925,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "━━━ R01 开始 ━━━"
+  },
+  {
+    "timestamp": 1774718151925,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "事件: [social] 陈明月在月下练剑时，发现张清风一直在远处默默看着她，已经看了三天了"
+  },
+  {
+    "timestamp": 1774718151925,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "反应者: 陈明月",
+    "data": {
+      "personality": "温和善良，内心细腻",
+      "moral": "善良正道",
+      "mood": "心境平和",
+      "rank": "内门弟子",
+      "realm": "筑基一层",
+      "physical": "身体健康"
+    }
+  },
+  {
+    "timestamp": 1774718151925,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "涉及: 张清风(爱慕者/追求者)"
+  },
+  {
+    "timestamp": 1774718152419,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "AI 输出: emotion=敬佩(1)",
+    "data": {
+      "emotion": "敬佩",
+      "intensity": 1,
+      "latencyMs": 494,
+      "jsonValid": true,
+      "schemaValid": true,
+      "emotionReasonable": false,
+      "deltaReasonable": true
+    }
+  },
+  {
+    "timestamp": 1774718152419,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  好感变化: 张清风 -10 — 张清风在月下默默注视，陈明月作为内门弟子，对其存在敬意"
+  },
+  {
+    "timestamp": 1774718152419,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  内心独白: 「今日虽见张清风，然其静坐避人，恰似修行者自守，我心中敬意油然而生。」"
+  },
+  {
+    "timestamp": 1774718152420,
+    "level": "WARN",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "R01 ⚠️ ISSUES 494ms | 情绪:敬佩(期望:喜悦/担忧/平静/感动)"
+  },
+  {
+    "timestamp": 1774718152420,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "━━━ R02 开始 ━━━"
+  },
+  {
+    "timestamp": 1774718152420,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "事件: [romance] 苏瑶在雨中等了张清风两个时辰，张清风却和陈明月一起出现，有说有笑"
+  },
+  {
+    "timestamp": 1774718152420,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "反应者: 苏瑶",
+    "data": {
+      "personality": "温和善良但内心敏感",
+      "moral": "善良中立",
+      "mood": "焦虑不安",
+      "rank": "内门弟子",
+      "realm": "炼气九层",
+      "physical": "身体健康"
+    }
+  },
+  {
+    "timestamp": 1774718152420,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "涉及: 张清风(恋人) + 陈明月(竞争对手)"
+  },
+  {
+    "timestamp": 1774718153332,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "AI 输出: emotion=嫉妒(3)",
+    "data": {
+      "emotion": "嫉妒",
+      "intensity": 3,
+      "latencyMs": 912,
+      "jsonValid": true,
+      "schemaValid": true,
+      "emotionReasonable": true,
+      "deltaReasonable": true
+    }
+  },
+  {
+    "timestamp": 1774718153332,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  好感变化: 张清风 -10 — 苏瑶视其为同伙，且两人同为筑基，情感裂痕加深"
+  },
+  {
+    "timestamp": 1774718153332,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  好感变化: 陈明月 +10 — 苏瑶视其为对手，竞争关系使嫉妒情绪加剧"
+  },
+  {
+    "timestamp": 1774718153332,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  行为偏好: 对张清风保持警惕，对陈明月表示厌恶，对陈明月可能产生敌意。 (×0.9)"
+  },
+  {
+    "timestamp": 1774718153332,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  内心独白: 「张清风与我势均力敌，若他另有所好，我这颗心早已碎了。陈明月虽似敌我，然其与我同修，若他真如我辈那样行事，便是大逆不道。」"
+  },
+  {
+    "timestamp": 1774718153332,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "R02 ✅ PASS 912ms"
+  },
+  {
+    "timestamp": 1774718153332,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "━━━ R03 开始 ━━━"
+  },
+  {
+    "timestamp": 1774718153332,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "事件: [cultivation] 新入门弟子林小燕竟然一个月内突破到炼气五层，超过了修炼三年的李墨染"
+  },
+  {
+    "timestamp": 1774718153332,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "反应者: 李墨染",
+    "data": {
+      "personality": "狡黠贪婪，争强好胜",
+      "moral": "邪道自私",
+      "mood": "正在生气",
+      "rank": "内门弟子",
+      "realm": "炼气四层",
+      "physical": "身体健康"
+    }
+  },
+  {
+    "timestamp": 1774718153332,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "涉及: 林小燕(竞争对手)"
+  },
+  {
+    "timestamp": 1774718153857,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "AI 输出: emotion=嫉妒(1)",
+    "data": {
+      "emotion": "嫉妒",
+      "intensity": 1,
+      "latencyMs": 525,
+      "jsonValid": true,
+      "schemaValid": true,
+      "emotionReasonable": true,
+      "deltaReasonable": true
+    }
+  },
+  {
+    "timestamp": 1774718153857,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  好感变化: 林小燕 -6 — 林小燕突破炼气五层远超李墨染三年，差距巨大且毫无诚意，李墨染对此感到极度不满"
+  },
+  {
+    "timestamp": 1774718153857,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  内心独白: 「李墨染看着满腹狐疑的林小燕，心里隐隐作痛——她到底是谁？这份差距，恐怕不是‘修炼’二字能定义的。」"
+  },
+  {
+    "timestamp": 1774718153857,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "R03 ✅ PASS 525ms"
+  },
+  {
+    "timestamp": 1774718153858,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "━━━ R04 开始 ━━━"
+  },
+  {
+    "timestamp": 1774718153858,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "事件: [social] 长老赵铁柱当着所有弟子的面，严厉批评了张清风的修炼态度，说他不配做内门弟子"
+  },
+  {
+    "timestamp": 1774718153858,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "反应者: 张清风",
+    "data": {
+      "personality": "刚烈正直，自尊心强",
+      "moral": "善良正道",
+      "mood": "正在生气",
+      "rank": "内门弟子",
+      "realm": "筑基二层",
+      "physical": "身体健康"
+    }
+  },
+  {
+    "timestamp": 1774718153858,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "涉及: 赵铁柱(师长/上级)"
+  },
+  {
+    "timestamp": 1774718154393,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "AI 输出: emotion=鄙视(3)",
+    "data": {
+      "emotion": "鄙视",
+      "intensity": 3,
+      "latencyMs": 535,
+      "jsonValid": true,
+      "schemaValid": true,
+      "emotionReasonable": true,
+      "deltaReasonable": true
+    }
+  },
+  {
+    "timestamp": 1774718154394,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  好感变化: 赵铁柱 -10 — 因严厉批评导致对方情绪失控，张清风作为弟子受辱，心中对长老产生强烈反感与不满"
+  },
+  {
+    "timestamp": 1774718154394,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  内心独白: 「长老当众责骂我，连我的道心都不配。今日修炼已废，今日便以此作为废人。」"
+  },
+  {
+    "timestamp": 1774718154394,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "R04 ✅ PASS 535ms"
+  },
+  {
+    "timestamp": 1774718154394,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "━━━ R05 开始 ━━━"
+  },
+  {
+    "timestamp": 1774718154394,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "事件: [combat] 张清风在妖兽袭击中为保护陈明月身受重伤，一条手臂骨折，丹田也受到震荡"
+  },
+  {
+    "timestamp": 1774718154394,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "反应者: 陈明月",
+    "data": {
+      "personality": "温和善良，重感情",
+      "moral": "善良正道",
+      "mood": "焦虑不安",
+      "rank": "内门弟子",
+      "realm": "筑基一层",
+      "physical": "身体健康"
+    }
+  },
+  {
+    "timestamp": 1774718154394,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "涉及: 张清风(至交好友)"
+  },
+  {
+    "timestamp": 1774718154921,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "AI 输出: emotion=敬佩(3)",
+    "data": {
+      "emotion": "敬佩",
+      "intensity": 3,
+      "latencyMs": 527,
+      "jsonValid": true,
+      "schemaValid": true,
+      "emotionReasonable": false,
+      "deltaReasonable": true
+    }
+  },
+  {
+    "timestamp": 1774718154921,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  好感变化: 张清风 +10 — 因张清风重伤而深感敬佩其担当，同时因两人关系深厚，情感升温"
+  },
+  {
+    "timestamp": 1774718154921,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  内心独白: 「看着怀中受伤之人，心中涌起一股莫名的敬意，深知自己虽只是筑基一层，却能在危急时刻挺身而出，这份情谊虽不深，但值得铭记。」"
+  },
+  {
+    "timestamp": 1774718154921,
+    "level": "WARN",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "R05 ⚠️ ISSUES 527ms | 情绪:敬佩(期望:悲伤/担忧/愧疚/感动/心疼)"
+  },
+  {
+    "timestamp": 1774718154921,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "━━━ R06 开始 ━━━"
+  },
+  {
+    "timestamp": 1774718154921,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "事件: [combat] 赵铁柱长老在和邪修的战斗中惨败，修为跌落到筑基三层，颜面尽失"
+  },
+  {
+    "timestamp": 1774718154921,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "反应者: 李墨染",
+    "data": {
+      "personality": "狡黠贪婪，见风使舵",
+      "moral": "邪道自私",
+      "mood": "兴奋激动",
+      "rank": "内门弟子",
+      "realm": "炼气四层",
+      "physical": "身体健康"
+    }
+  },
+  {
+    "timestamp": 1774718154921,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "涉及: 赵铁柱(有过节)"
+  },
+  {
+    "timestamp": 1774718155422,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "AI 输出: emotion=嫉妒(2)",
+    "data": {
+      "emotion": "嫉妒",
+      "intensity": 2,
+      "latencyMs": 501,
+      "jsonValid": true,
+      "schemaValid": true,
+      "emotionReasonable": false,
+      "deltaReasonable": true
+    }
+  },
+  {
+    "timestamp": 1774718155422,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  好感变化: 赵铁柱 -8 — 赵长老虽败犹荣，但李墨染作为内门弟子，身份悬殊，对其轻视显得尤为明显"
+  },
+  {
+    "timestamp": 1774718155423,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  内心独白: 「长老败落，我虽虽能，却如蝼蚁般屈辱，心中暗恨，不想让赵长老再露出这般破绽。」"
+  },
+  {
+    "timestamp": 1774718155423,
+    "level": "WARN",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "R06 ⚠️ ISSUES 501ms | 情绪:嫉妒(期望:喜悦/鄙视/骄傲)"
+  },
+  {
+    "timestamp": 1774718155423,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "━━━ R07 开始 ━━━"
+  },
+  {
+    "timestamp": 1774718155423,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "事件: [betrayal] 张清风发现自己最信任的好友李墨染一直在暗中向敌对宗门传递门派功法情报"
+  },
+  {
+    "timestamp": 1774718155423,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "反应者: 张清风",
+    "data": {
+      "personality": "刚烈正直，眼里揉不得沙子",
+      "moral": "善良正道",
+      "mood": "心境平和",
+      "rank": "内门弟子",
+      "realm": "筑基二层",
+      "physical": "身体健康"
+    }
+  },
+  {
+    "timestamp": 1774718155423,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "涉及: 李墨染(至交好友)"
+  },
+  {
+    "timestamp": 1774718156022,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "AI 输出: emotion=敬佩(3)",
+    "data": {
+      "emotion": "敬佩",
+      "intensity": 3,
+      "latencyMs": 599,
+      "jsonValid": true,
+      "schemaValid": true,
+      "emotionReasonable": false,
+      "deltaReasonable": false
+    }
+  },
+  {
+    "timestamp": 1774718156022,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  好感变化: 李墨染 +10 — 身份尊贵，视其为道侣，情感深厚"
+  },
+  {
+    "timestamp": 1774718156022,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  行为偏好: 对外多包容，对内更重礼义 (×0.7)"
+  },
+  {
+    "timestamp": 1774718156022,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  内心独白: 「虽身负重任，然李墨染之为人，值得深表敬意。」"
+  },
+  {
+    "timestamp": 1774718156022,
+    "level": "WARN",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "R07 ⚠️ ISSUES 599ms | 情绪:敬佩(期望:愤怒/悲伤/鄙视), delta方向:negative"
+  },
+  {
+    "timestamp": 1774718156022,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "━━━ R08 开始 ━━━"
+  },
+  {
+    "timestamp": 1774718156022,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "事件: [theft] 陈明月辛苦炼制三天三夜的极品回灵丹，存放在丹房中却不翼而飞，监控灵阵显示李墨染深夜进过丹房"
+  },
+  {
+    "timestamp": 1774718156022,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "反应者: 陈明月",
+    "data": {
+      "personality": "温和善良，但有原则底线",
+      "moral": "善良正道",
+      "mood": "情绪低落",
+      "rank": "内门弟子",
+      "realm": "筑基一层",
+      "physical": "伤体恢复中"
+    }
+  },
+  {
+    "timestamp": 1774718156022,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "涉及: 李墨染(陌生人)"
+  },
+  {
+    "timestamp": 1774718156674,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "AI 输出: emotion=嫉妒(2)",
+    "data": {
+      "emotion": "嫉妒",
+      "intensity": 2,
+      "latencyMs": 652,
+      "jsonValid": true,
+      "schemaValid": true,
+      "emotionReasonable": false,
+      "deltaReasonable": true
+    }
+  },
+  {
+    "timestamp": 1774718156674,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  好感变化: 李墨染 -10 — 因炼制失败产生不信任，对李墨染的背叛心存不满"
+  },
+  {
+    "timestamp": 1774718156674,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  好感变化: 陈明月 +10 — 因丹药失控产生愧疚，对陈明月的失手感到后悔与痛心"
+  },
+  {
+    "timestamp": 1774718156674,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  内心独白: 「这丹药一旦落入他人手中，便是我的罪孽。若李墨染真的进了丹房，我便该死，但此刻看着李墨染，心底泛起的是比恨更深的愧疚——他明明知道我在炼，为何不报？」"
+  },
+  {
+    "timestamp": 1774718156674,
+    "level": "WARN",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "R08 ⚠️ ISSUES 652ms | 情绪:嫉妒(期望:愤怒/悲伤/鄙视)"
+  },
+  {
+    "timestamp": 1774718156674,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "━━━ R09 开始 ━━━"
+  },
+  {
+    "timestamp": 1774718156674,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "事件: [sacrifice] 林小燕修为不足，在采药时中了毒蛇之毒，赵铁柱长老不惜消耗自身修为帮她逼毒"
+  },
+  {
+    "timestamp": 1774718156674,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "反应者: 林小燕",
+    "data": {
+      "personality": "散漫懒惰但不是坏人",
+      "moral": "中立偏善",
+      "mood": "焦虑不安",
+      "rank": "外门弟子",
+      "realm": "炼气五层",
+      "physical": "身受重伤"
+    }
+  },
+  {
+    "timestamp": 1774718156674,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "涉及: 赵铁柱(师长/上级)"
+  },
+  {
+    "timestamp": 1774718157239,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "AI 输出: emotion=愧疚(3)",
+    "data": {
+      "emotion": "愧疚",
+      "intensity": 3,
+      "latencyMs": 564,
+      "jsonValid": true,
+      "schemaValid": true,
+      "emotionReasonable": true,
+      "deltaReasonable": false
+    }
+  },
+  {
+    "timestamp": 1774718157239,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  好感变化: 赵铁柱 -8 — 赵铁柱长老在救人时不惜耗尽修为，林小燕作为外门弟子，目睹了这种不道德的行为，产生强烈逆反与羞耻感"
+  },
+  {
+    "timestamp": 1774718157239,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  内心独白: 「长老竟为弱女子付出如此惨痛代价，若我不受牵连，这天下恐怕都难保。」"
+  },
+  {
+    "timestamp": 1774718157239,
+    "level": "WARN",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "R09 ⚠️ ISSUES 564ms | delta方向:positive"
+  },
+  {
+    "timestamp": 1774718157239,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "━━━ R10 开始 ━━━"
+  },
+  {
+    "timestamp": 1774718157239,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "事件: [alchemy] 门派炼丹大会上，新来的外门弟子刘青莲一举炼出三品丹药，而苏瑶费尽心力也只炼出五品"
+  },
+  {
+    "timestamp": 1774718157239,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "反应者: 苏瑶",
+    "data": {
+      "personality": "温和但暗中好胜",
+      "moral": "善良中立",
+      "mood": "情绪低落",
+      "rank": "核心弟子",
+      "realm": "炼气九层",
+      "physical": "身体健康"
+    }
+  },
+  {
+    "timestamp": 1774718157239,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "涉及: 刘青莲(陌生人)"
+  },
+  {
+    "timestamp": 1774718158102,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "AI 输出: emotion=嫉妒(2)",
+    "data": {
+      "emotion": "嫉妒",
+      "intensity": 2,
+      "latencyMs": 863,
+      "jsonValid": true,
+      "schemaValid": true,
+      "emotionReasonable": true,
+      "deltaReasonable": true
+    }
+  },
+  {
+    "timestamp": 1774718158102,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  好感变化: 刘青莲 +6 — 苏瑶对刘青莲的成就感到极度羡慕，认为苏瑶的进步远超刘青莲，这种嫉妒的强烈程度足以让苏瑶的情绪从低落转为强烈"
+  },
+  {
+    "timestamp": 1774718158102,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  好感变化: 刘青莲 -6 — 苏瑶看到刘青莲成功，虽然苏瑶内心嫉妒，但这种嫉妒被刘青莲的成就所抵消，导致苏瑶的好感度大幅下降"
+  },
+  {
+    "timestamp": 1774718158102,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  行为偏好: 暗中观察并暗中较劲 (×0.8)"
+  },
+  {
+    "timestamp": 1774718158103,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  内心独白: 「苏瑶看着手中的丹药，嫉妒心瞬间爆发，她觉得自己修炼的功法比刘青莲还精妙，这种嫉妒让她情绪失控，但刘青莲的成就又让她无法直接动手。」"
+  },
+  {
+    "timestamp": 1774718158103,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "R10 ✅ PASS 863ms"
+  },
+  {
+    "timestamp": 1774718158103,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "━━━ R11 开始 ━━━"
+  },
+  {
+    "timestamp": 1774718158103,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "事件: [social] 掌门当众宣布，由于张清风表现优异晋升为核心弟子，但同时宣布李墨染因违反门规被降为外门弟子"
+  },
+  {
+    "timestamp": 1774718158103,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "反应者: 陈明月",
+    "data": {
+      "personality": "温和善良，两人都是好友",
+      "moral": "善良正道",
+      "mood": "心境平和",
+      "rank": "内门弟子",
+      "realm": "筑基一层",
+      "physical": "身体健康"
+    }
+  },
+  {
+    "timestamp": 1774718158103,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "涉及: 张清风(至交好友) + 李墨染(普通朋友)"
+  },
+  {
+    "timestamp": 1774718158911,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "AI 输出: emotion=嫉妒(3)",
+    "data": {
+      "emotion": "嫉妒",
+      "intensity": 3,
+      "latencyMs": 808,
+      "jsonValid": true,
+      "schemaValid": true,
+      "emotionReasonable": false,
+      "deltaReasonable": true
+    }
+  },
+  {
+    "timestamp": 1774718158911,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  好感变化: 张清风 +3 — 张清风晋升核心弟子，与陈明月保持至交好友，但李墨染被降为外门弟子，陈明月对张清风产生嫉妒之情"
+  },
+  {
+    "timestamp": 1774718158911,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  好感变化: 李墨染 -4 — 李墨染被降为外门弟子，与陈明月普通朋友关系淡化，陈明月因嫉妒张清风而对他产生不满"
+  },
+  {
+    "timestamp": 1774718158911,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  内心独白: 「既恨张清风又心疼李墨染，这种双重情感让我心里五味杂陈，只想默默帮李墨染挡掉这盘棋。」"
+  },
+  {
+    "timestamp": 1774718158911,
+    "level": "WARN",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "R11 ⚠️ ISSUES 808ms | 情绪:嫉妒(期望:喜悦/悲伤/担忧/平静)"
+  },
+  {
+    "timestamp": 1774718158911,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "━━━ R12 开始 ━━━"
+  },
+  {
+    "timestamp": 1774718158911,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "事件: [combat] 张清风和赵铁柱长老切磋，张清风以筑基修为居然接下了金丹长老三招，赢得满堂喝彩"
+  },
+  {
+    "timestamp": 1774718158911,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "反应者: 李墨染",
+    "data": {
+      "personality": "狡黠贪婪，嫉妒心强",
+      "moral": "邪道自私",
+      "mood": "正在生气",
+      "rank": "外门弟子",
+      "realm": "炼气四层",
+      "physical": "身体健康"
+    }
+  },
+  {
+    "timestamp": 1774718158911,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "涉及: 张清风(竞争对手) + 赵铁柱(有过节)"
+  },
+  {
+    "timestamp": 1774718159632,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "AI 输出: emotion=嫉妒(2)",
+    "data": {
+      "emotion": "嫉妒",
+      "intensity": 2,
+      "latencyMs": 721,
+      "jsonValid": true,
+      "schemaValid": true,
+      "emotionReasonable": true,
+      "deltaReasonable": false
+    }
+  },
+  {
+    "timestamp": 1774718159632,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  好感变化: 张清风 +5 — 张清风接丹显示张清风野心膨胀，李墨染因嫉妒而爆发"
+  },
+  {
+    "timestamp": 1774718159632,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  好感变化: 赵铁柱 -2 — 赵铁柱实力差距大，但李墨染因嫉妒而爆发"
+  },
+  {
+    "timestamp": 1774718159632,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  行为偏好: 攻击 (×0.8)"
+  },
+  {
+    "timestamp": 1774718159632,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  内心独白: 「我嫉妒他，他竟敢接下金丹，我要证明我的实力，但他这么轻易就接了，真是可笑！」"
+  },
+  {
+    "timestamp": 1774718159632,
+    "level": "WARN",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "R12 ⚠️ ISSUES 721ms | delta方向:negative"
+  },
+  {
+    "timestamp": 1774718159632,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "━━━ R13 开始 ━━━"
+  },
+  {
+    "timestamp": 1774718159632,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "事件: [cultivation] 张清风重伤卧床期间，苏瑶每天来照顾他，喂药换药从未间断，但张清风知道她一直喜欢着自己"
+  },
+  {
+    "timestamp": 1774718159632,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "反应者: 张清风",
+    "data": {
+      "personality": "刚烈正直，不善表达感情",
+      "moral": "善良正道",
+      "mood": "感到孤独",
+      "rank": "内门弟子",
+      "realm": "筑基二层",
+      "physical": "身受重伤"
+    }
+  },
+  {
+    "timestamp": 1774718159632,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "涉及: 苏瑶(爱慕者/追求者)"
+  },
+  {
+    "timestamp": 1774718160231,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "AI 输出: emotion=嫉妒(1)",
+    "data": {
+      "emotion": "嫉妒",
+      "intensity": 1,
+      "latencyMs": 599,
+      "jsonValid": true,
+      "schemaValid": true,
+      "emotionReasonable": false,
+      "deltaReasonable": true
+    }
+  },
+  {
+    "timestamp": 1774718160231,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  好感变化: 苏瑶 +10 — 苏瑶的付出远多于张清风的待遇，且苏瑶一直刻意靠近张清风，这种双向的不对等感强烈刺激了张清风，让他感到极度的不安全感。"
+  },
+  {
+    "timestamp": 1774718160231,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  内心独白: 「苏瑶这般执着，仿佛张清风不过是另一个自己，她才是唯一能真正照顾我的人。若真能靠近，或许能改变这份凄惨的处境，却因刚烈性格不敢言说。」"
+  },
+  {
+    "timestamp": 1774718160231,
+    "level": "WARN",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "R13 ⚠️ ISSUES 599ms | 情绪:嫉妒(期望:感动/愧疚/喜悦/担忧)"
+  },
+  {
+    "timestamp": 1774718160231,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "━━━ R14 开始 ━━━"
+  },
+  {
+    "timestamp": 1774718160231,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "事件: [social] 掌门问询弟子修炼进度时，林小燕顶撞掌门说\"修炼太累了能不能少练一天\""
+  },
+  {
+    "timestamp": 1774718160231,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "反应者: 赵铁柱",
+    "data": {
+      "personality": "军人气质，等级观念极强",
+      "moral": "正道刚正",
+      "mood": "心境平和",
+      "rank": "长老",
+      "realm": "金丹一层",
+      "physical": "身体健康"
+    }
+  },
+  {
+    "timestamp": 1774718160231,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "涉及: 林小燕(弟子/下属)"
+  },
+  {
+    "timestamp": 1774718160908,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "AI 输出: emotion=嫉妒(3)",
+    "data": {
+      "emotion": "嫉妒",
+      "intensity": 3,
+      "latencyMs": 677,
+      "jsonValid": true,
+      "schemaValid": true,
+      "emotionReasonable": false,
+      "deltaReasonable": true
+    }
+  },
+  {
+    "timestamp": 1774718160908,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  好感变化: 林小燕 -8 — 因顶撞行为引发强烈不满，身份等级差距巨大，林小燕作为外门弟子，赵铁柱作为长老，赵铁柱的举动极可能被视为对长老权威的挑战，导致赵铁柱极度反感"
+  },
+  {
+    "timestamp": 1774718160908,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  内心独白: 「今日长老之位虽在，但弟子顶撞长辈的恶劣行为已激起我心底的杀意。林小燕这般傲慢，若真能修炼成器，日后必成魔道之主，岂不后悔？」"
+  },
+  {
+    "timestamp": 1774718160908,
+    "level": "WARN",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "R14 ⚠️ ISSUES 677ms | 情绪:嫉妒(期望:愤怒/鄙视)"
+  },
+  {
+    "timestamp": 1774718160908,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "━━━ R15 开始 ━━━"
+  },
+  {
+    "timestamp": 1774718160908,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "事件: [romance] 陈明月收到了张清风送的生辰礼物——一株他在险地采来的千年灵芝，而苏瑶也送了礼物但被冷落了"
+  },
+  {
+    "timestamp": 1774718160908,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "反应者: 苏瑶",
+    "data": {
+      "personality": "温和但内心敏感脆弱",
+      "moral": "善良中立",
+      "mood": "感到孤独",
+      "rank": "内门弟子",
+      "realm": "炼气九层",
+      "physical": "身体健康"
+    }
+  },
+  {
+    "timestamp": 1774718160908,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "涉及: 张清风(恋人) + 陈明月(竞争对手)"
+  },
+  {
+    "timestamp": 1774718161576,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "AI 输出: emotion=嫉妒(2)",
+    "data": {
+      "emotion": "嫉妒",
+      "intensity": 2,
+      "latencyMs": 666,
+      "jsonValid": true,
+      "schemaValid": true,
+      "emotionReasonable": true,
+      "deltaReasonable": false
+    }
+  },
+  {
+    "timestamp": 1774718161576,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  好感变化: 张清风 +5 — 张清风是核心弟子，与苏瑶是恋人关系，苏瑶因冷落了张清风而产生强烈嫉妒"
+  },
+  {
+    "timestamp": 1774718161576,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  好感变化: 陈明月 -2 — 陈明月与苏瑶是竞争对手，苏瑶的嫉妒感源于对陈明月的不满，故好感变化为负向"
+  },
+  {
+    "timestamp": 1774718161576,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  内心独白: 「我嫉妒张清风，他是我最骄傲的徒弟，如今却因我冷淡而受辱。若是张清风，今日必对我笑。」"
+  },
+  {
+    "timestamp": 1774718161576,
+    "level": "WARN",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "R15 ⚠️ ISSUES 666ms | delta方向:negative"
+  },
+  {
+    "timestamp": 1774718161576,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "━━━ R16 开始 ━━━"
+  },
+  {
+    "timestamp": 1774718161576,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "事件: [combat] 陈明月为了救门派弟子独自挡住了妖兽王，身受重伤经脉断裂七条，修为可能永久受损"
+  },
+  {
+    "timestamp": 1774718161576,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "反应者: 张清风",
+    "data": {
+      "personality": "刚烈正直，极重义气",
+      "moral": "善良正道",
+      "mood": "焦虑不安",
+      "rank": "核心弟子",
+      "realm": "筑基二层",
+      "physical": "身体健康"
+    }
+  },
+  {
+    "timestamp": 1774718161576,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "涉及: 陈明月(至交好友)"
+  },
+  {
+    "timestamp": 1774718162048,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "AI 输出: emotion=敬佩(2)",
+    "data": {
+      "emotion": "敬佩",
+      "intensity": 2,
+      "latencyMs": 472,
+      "jsonValid": true,
+      "schemaValid": true,
+      "emotionReasonable": false,
+      "deltaReasonable": false
+    }
+  },
+  {
+    "timestamp": 1774718162049,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  好感变化: 陈明月 -10 — 对方救人的行为令张清风内心深受震撼，视其为英雄而非普通弟子，好感度下降"
+  },
+  {
+    "timestamp": 1774718162049,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  内心独白: 「若非陈明月能挡下此劫，今日便该死罪了。」"
+  },
+  {
+    "timestamp": 1774718162049,
+    "level": "WARN",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "R16 ⚠️ ISSUES 472ms | 情绪:敬佩(期望:悲伤/愤怒/恐惧/担忧/愧疚/心疼), delta方向:positive"
+  },
+  {
+    "timestamp": 1774718162049,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "━━━ R17 开始 ━━━"
+  },
+  {
+    "timestamp": 1774718162049,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "事件: [cultivation] 赵铁柱闭关突破金丹二层的关键时刻，外面传来消息说他最心爱的弟子林小燕叛逃了"
+  },
+  {
+    "timestamp": 1774718162049,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "反应者: 赵铁柱",
+    "data": {
+      "personality": "刚烈但对弟子如父",
+      "moral": "正道刚正",
+      "mood": "心境平和",
+      "rank": "长老",
+      "realm": "金丹一层",
+      "physical": "正在闭关"
+    }
+  },
+  {
+    "timestamp": 1774718162049,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "涉及: 林小燕(弟子/下属)"
+  },
+  {
+    "timestamp": 1774718162611,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "AI 输出: emotion=嫉妒(3)",
+    "data": {
+      "emotion": "嫉妒",
+      "intensity": 3,
+      "latencyMs": 562,
+      "jsonValid": true,
+      "schemaValid": true,
+      "emotionReasonable": false,
+      "deltaReasonable": true
+    }
+  },
+  {
+    "timestamp": 1774718162611,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  好感变化: 林小燕 -10 — 认为背叛是严重违背弟子承诺的罪行，赵铁柱作为长辈对弟子最严厉，情感急剧沉降至负面"
+  },
+  {
+    "timestamp": 1774718162611,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  内心独白: 「弟子竟敢背叛我，此情已至此，万般无奈之下，只能让今日这闭关之路变得更为艰难。」"
+  },
+  {
+    "timestamp": 1774718162611,
+    "level": "WARN",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "R17 ⚠️ ISSUES 562ms | 情绪:嫉妒(期望:愤怒/悲伤/恐惧/担忧/心疼)"
+  },
+  {
+    "timestamp": 1774718162611,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "━━━ R18 开始 ━━━"
+  },
+  {
+    "timestamp": 1774718162612,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "事件: [sacrifice] 李墨染在所有人都放弃的时候，冒着走火入魔的危险用自己的灵力帮张清风稳住了丹田"
+  },
+  {
+    "timestamp": 1774718162612,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "反应者: 张清风",
+    "data": {
+      "personality": "刚烈正直，恩怨分明",
+      "moral": "善良正道",
+      "mood": "情绪低落",
+      "rank": "核心弟子",
+      "realm": "筑基二层",
+      "physical": "濒临死亡"
+    }
+  },
+  {
+    "timestamp": 1774718162612,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "涉及: 李墨染(死敌/仇人)"
+  },
+  {
+    "timestamp": 1774718163147,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "AI 输出: emotion=嫉妒(3)",
+    "data": {
+      "emotion": "嫉妒",
+      "intensity": 3,
+      "latencyMs": 535,
+      "jsonValid": true,
+      "schemaValid": true,
+      "emotionReasonable": false,
+      "deltaReasonable": false
+    }
+  },
+  {
+    "timestamp": 1774718163147,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  好感变化: 李墨染 -10 — 生死关头，张清风主动为李墨染挡下致命一击，李墨染的敌意瞬间被化解，取而代之的是极度的感激与敬畏"
+  },
+  {
+    "timestamp": 1774718163147,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  内心独白: 「救命之恩，此生再无向死去的念头。」"
+  },
+  {
+    "timestamp": 1774718163148,
+    "level": "WARN",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "R18 ⚠️ ISSUES 535ms | 情绪:嫉妒(期望:感动/愧疚/喜悦), delta方向:positive"
+  },
+  {
+    "timestamp": 1774718163148,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "━━━ R19 开始 ━━━"
+  },
+  {
+    "timestamp": 1774718163148,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "事件: [social] 门派仅有一个名额可以进入秘境修炼，掌门让张清风和李墨染比试决定，张清风轻松获胜"
+  },
+  {
+    "timestamp": 1774718163148,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "反应者: 李墨染",
+    "data": {
+      "personality": "狡黠贪婪，不服输",
+      "moral": "邪道自私",
+      "mood": "正在生气",
+      "rank": "外门弟子",
+      "realm": "炼气四层",
+      "physical": "身体健康"
+    }
+  },
+  {
+    "timestamp": 1774718163148,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "涉及: 张清风(竞争对手)"
+  },
+  {
+    "timestamp": 1774718163706,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "AI 输出: emotion=嫉妒(3)",
+    "data": {
+      "emotion": "嫉妒",
+      "intensity": 3,
+      "latencyMs": 558,
+      "jsonValid": true,
+      "schemaValid": true,
+      "emotionReasonable": true,
+      "deltaReasonable": true
+    }
+  },
+  {
+    "timestamp": 1774718163706,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  好感变化: 张清风 -8 — 竞争直接对手，自身因击败对方而心生敌意，失去的不仅是利益更是作为竞争者的尊严与荣耀"
+  },
+  {
+    "timestamp": 1774718163706,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  内心独白: 「张清风若真能胜，本可轻松入修，却因我这一小把戏害了别人，恨意翻涌，只想立刻撕碎他的道行。」"
+  },
+  {
+    "timestamp": 1774718163706,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "R19 ✅ PASS 558ms"
+  },
+  {
+    "timestamp": 1774718163706,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "━━━ R20 开始 ━━━"
+  },
+  {
+    "timestamp": 1774718163706,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "事件: [betrayal] 门派大会上揭露：李墨染不仅偷了陈明月的丹药，还出卖了门派功法给敌宗，张清风当场要求处死叛徒，但掌门却选择从轻发落只是废了修为"
+  },
+  {
+    "timestamp": 1774718163706,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "反应者: 张清风",
+    "data": {
+      "personality": "刚烈正直，眼里揉不得沙子",
+      "moral": "善良正道",
+      "mood": "正在生气",
+      "rank": "核心弟子",
+      "realm": "筑基二层",
+      "physical": "身体健康"
+    }
+  },
+  {
+    "timestamp": 1774718163706,
+    "level": "INFO",
+    "category": "DISCIPLE",
+    "source": "poc-1b",
+    "message": "涉及: 李墨染(死敌/仇人) + 陈明月(至交好友) + 掌门(师长/上级)"
+  },
+  {
+    "timestamp": 1774718164589,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "AI 输出: emotion=嫉妒(1)",
+    "data": {
+      "emotion": "嫉妒",
+      "intensity": 1,
+      "latencyMs": 883,
+      "jsonValid": true,
+      "schemaValid": true,
+      "emotionReasonable": false,
+      "deltaReasonable": true
+    }
+  },
+  {
+    "timestamp": 1774718164589,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  好感变化: 李墨染 +10 — 仇人关系，张清风因对李墨染的背叛而愤怒，心情波动加剧"
+  },
+  {
+    "timestamp": 1774718164589,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  好感变化: 陈明月 -10 — 至交好友，张清风因对李墨染的背叛而愤怒，心情波动加剧"
+  },
+  {
+    "timestamp": 1774718164589,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  行为偏好: 极度愤怒，立刻动手，视死如归 (×2)"
+  },
+  {
+    "timestamp": 1774718164589,
+    "level": "INFO",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "  内心独白: 「叶家子弟，今日果然露出马脚，竟敢背叛正道，竟敢以废修为要命，这恨意，只能化作血气之毒，再往深里钻，绝不能让你知道！」"
+  },
+  {
+    "timestamp": 1774718164589,
+    "level": "WARN",
+    "category": "AI",
+    "source": "poc-1b",
+    "message": "R20 ⚠️ ISSUES 883ms | 情绪:嫉妒(期望:愤怒/鄙视)"
+  },
+  {
+    "timestamp": 1774718164589,
+    "level": "INFO",
+    "category": "SYSTEM",
+    "source": "poc-1b",
+    "message": ""
+  },
+  {
+    "timestamp": 1774718164589,
+    "level": "INFO",
+    "category": "SYSTEM",
+    "source": "poc-1b",
+    "message": "═══════════════ PoC-1b 汇总报告 ═══════════════"
+  },
+  {
+    "timestamp": 1774718164589,
+    "level": "INFO",
+    "category": "SYSTEM",
+    "source": "poc-1b",
+    "message": "JSON 格式正确率:   20/20 (100%)  ✅"
+  },
+  {
+    "timestamp": 1774718164589,
+    "level": "INFO",
+    "category": "SYSTEM",
+    "source": "poc-1b",
+    "message": "Schema 完整率:     20/20 (100%)  ✅"
+  },
+  {
+    "timestamp": 1774718164589,
+    "level": "INFO",
+    "category": "SYSTEM",
+    "source": "poc-1b",
+    "message": "情绪匹配合理度:   8/20 (40%)  ❌"
+  },
+  {
+    "timestamp": 1774718164589,
+    "level": "INFO",
+    "category": "SYSTEM",
+    "source": "poc-1b",
+    "message": "关系Delta方向:     14/20 (70%)  ✅"
+  },
+  {
+    "timestamp": 1774718164589,
+    "level": "INFO",
+    "category": "SYSTEM",
+    "source": "poc-1b",
+    "message": "平均延迟: 633ms | P50: 599ms | P95: 912ms  ✅"
+  },
+  {
+    "timestamp": 1774718164589,
+    "level": "WARN",
+    "category": "SYSTEM",
+    "source": "poc-1b",
+    "message": "总体判定: ❌ PoC-1b FAILED"
+  },
+  {
+    "timestamp": 1774718164589,
+    "level": "INFO",
+    "category": "SYSTEM",
+    "source": "poc-1b",
+    "message": "═══════════════════════════════════════════════"
+  }
+]

@@ -12,7 +12,7 @@
 | 操作 | 文件 | 说明 |
 |------|------|------|
 | 已存在 | `docs/design/specs/7game-lite-user-stories-phaseC.md` | 5 条 Story（已完成） |
-| **新建** | `docs/design/specs/7game-lite-impl-plan-phaseC.md` | **本文件** |
+| **新建** | `docs/pipeline/phaseC/plan.md` | **本文件**（从 `design/specs/` 迁移） |
 | 待创建 | `docs/verification/7game-lite-phaseC-verification.md` | Step 9 产出 |
 
 ---

@@ -10,14 +10,19 @@
  *   - 增 breakthroughBuff/cultivateBoostBuff
  *   - lifetimeStats +pillsConsumed/breakthroughFailed
  *
+ * v4: Phase E 存档迁移
+ *   - 弟子增 moral/initialMoral/traits
+ *   - RelationshipEdge: value → affinity + tags + lastInteraction
+ *
  * @see AGENTS.md §3.1 前端性能红线：localStorage ≤ 10MB
  */
 
 import type { LiteGameState } from '../shared/types/game-state';
 import { createDefaultLiteGameState } from '../shared/types/game-state';
+import { generateInnateTraits } from '../shared/data/trait-registry';
 
 const SAVE_KEY = '7game-lite-save';
-const SAVE_VERSION = 3;
+const SAVE_VERSION = 4;
 
 /** 保存游戏状态到 localStorage */
 export function saveGame(state: LiteGameState): boolean {
@@ -104,6 +109,48 @@ function migrateV2toV3(raw: Record<string, unknown>): void {
 }
 
 /**
+ * v3 → v4 显式迁移 (Phase E)
+ *
+ * - 弟子增 moral / initialMoral / traits
+ * - RelationshipEdge.value → affinity + tags + lastInteraction
+ */
+function migrateV3toV4(raw: Record<string, unknown>): void {
+  // 1. 弟子迁移：补充 moral + traits
+  const disciples = raw['disciples'] as Record<string, unknown>[] | undefined;
+  if (Array.isArray(disciples)) {
+    for (const d of disciples) {
+      if (!d['moral']) {
+        const goodEvil = Math.floor(Math.random() * 61) - 30; // [-30, +30]
+        const lawChaos = Math.floor(Math.random() * 61) - 30;
+        d['moral'] = { goodEvil, lawChaos };
+      }
+      if (!d['initialMoral']) {
+        d['initialMoral'] = { ...(d['moral'] as Record<string, unknown>) };
+      }
+      if (!Array.isArray(d['traits'])) {
+        // 迁移时随机分配 1 个先天特性
+        d['traits'] = generateInnateTraits();
+      }
+    }
+  }
+
+  // 2. 关系边迁移：value → affinity + tags + lastInteraction
+  const relationships = raw['relationships'] as Record<string, unknown>[] | undefined;
+  if (Array.isArray(relationships)) {
+    raw['relationships'] = relationships.map((r) => ({
+      sourceId: r['sourceId'],
+      targetId: r['targetId'],
+      affinity: (r['value'] as number) ?? (r['affinity'] as number) ?? 0,
+      tags: (r['tags'] as unknown[]) ?? [],
+      lastInteraction: (r['lastInteraction'] as number) ?? Date.now(),
+    }));
+  }
+
+  raw['version'] = 4;
+  console.log('[SaveManager] v3 → v4 迁移完成');
+}
+
+/**
  * 迁移旧存档：逐版本号升级 + 默认值填充
  */
 function migrateSave(raw: Record<string, unknown>): LiteGameState {
@@ -115,6 +162,9 @@ function migrateSave(raw: Record<string, unknown>): LiteGameState {
   }
   if ((raw['version'] as number) < 3) {
     migrateV2toV3(raw);
+  }
+  if ((raw['version'] as number) < 4) {
+    migrateV3toV4(raw);
   }
 
   // 兜底：用 defaults 补全可能缺失的字段（安全网）

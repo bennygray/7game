@@ -29,7 +29,8 @@ export const discipleTickHandler: TickHandler = {
     }
 
     // 2. 统一执行（R-D3b: 按弟子顺序, R-D3c: 副作用集中）
-    const result = executeIntents(allIntents, ctx.state);
+    // Phase E: 传递 eventBus，end-behavior 时自动发射 SoulEvent
+    const result = executeIntents(allIntents, ctx.state, ctx.eventBus);
 
     // 3. 输出到 TickContext
     ctx.discipleEvents.push(...result.events);

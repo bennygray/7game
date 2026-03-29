@@ -1,5 +1,5 @@
 /**
- * 7game-lite 精简游戏状态 — v3
+ * 7game-lite 精简游戏状态 — v4
  *
  * Phase B-α: 删除 FieldSlot/AlchemyState，新增 FarmPlot/PillItem，
  * 弟子级 farmPlots + currentRecipeId。
@@ -7,11 +7,15 @@
  * Phase C: 新增 BreakthroughBuffState/CultivateBoostBuff，
  * lifetimeStats +pillsConsumed/breakthroughFailed。
  *
+ * Phase E: 新增 NPC 灵魂系统 — 道德双轴(moral/initialMoral)、特性列表(traits)、
+ * 升级关系边(affinity/tags/lastInteraction)。存档版本 v3→v4。
+ *
  * @see AGENTS.md §3.5 版本边界
- * @see 7game-lite-phaseC-analysis.md Step 2 + Fix A~F
+ * @see phaseE-TDD.md Step 2.2
  */
 
 import type { AISoulContext } from './ai-soul';
+import type { MoralAlignment, DiscipleTrait, RelationshipTag } from './soul';
 import { generateInitialDisciples, generateInitialRelationships } from '../../engine/disciple-generator';
 
 // ===== 常量 =====
@@ -142,14 +146,27 @@ export interface LiteDiscipleState {
   farmPlots: FarmPlot[];
   /** 当前炼制的丹方 ID（null = 未在炼丹） */
   currentRecipeId: string | null;
+
+  // === Phase E 新增 — NPC 灵魂系统 ===
+
+  /** 道德双轴 [-100, +100] */
+  moral: MoralAlignment;
+  /** 初始道德（生成时记录，不可变，用于趋同夹值） */
+  initialMoral: MoralAlignment;
+  /** 特性列表（先天 1~2 + 后天 0~3） */
+  traits: DiscipleTrait[];
 }
 
-/** 弟子关系边 */
+/** 弟子关系边 — v4 升级 */
 export interface RelationshipEdge {
   sourceId: string;
   targetId: string;
-  /** 关系值 -100 ~ +100 */
-  value: number;
+  /** 好感度 -100 ~ +100（Phase E: 替代原 value 字段） */
+  affinity: number;
+  /** 关系标签（可叠加，由 soul-engine 自动分配） */
+  tags: RelationshipTag[];
+  /** 最后交互时间戳（用于衰减计算） */
+  lastInteraction: number;
 }
 
 /** 宗门等级 */
@@ -254,12 +271,12 @@ export interface LiteGameState {
 
 // ===== 工厂函数 =====
 
-/** 创建默认新游戏状态 — v3 */
+/** 创建默认新游戏状态 — v4 */
 export function createDefaultLiteGameState(): LiteGameState {
   const now = Date.now();
   const disciples = generateInitialDisciples();
   return {
-    version: 3,
+    version: 4,
     aura: 0,
     spiritStones: 200,
     realm: Realm.LIANQI,
