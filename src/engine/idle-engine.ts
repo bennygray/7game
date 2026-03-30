@@ -6,7 +6,7 @@
  * Phase E: +灵魂系统（EventBus + soul-tick + soul-event）
  * Phase F0-α: +碰面系统（encounter-tick）
  *
- * Pipeline 执行顺序（11 个 Handler）：
+ * Pipeline 执行顺序（12 个 Handler）：
  *   100 BUFF_COUNTDOWN  — boost-countdown: 修速丹 buff 倒计时
  *   200 PRE_PRODUCTION   — breakthrough-aid: 自动服破镜丹
  *   200 PRE_PRODUCTION   — auto-breakthrough: 自动突破检测+执行
@@ -216,7 +216,7 @@ export class IdleEngine {
       emotionMap: this.emotionMap, // Phase F: 弟子情绪运行时状态 (ADR-F-01)
     };
 
-    // 执行 Pipeline（7 个 Handler 按 phase+order 顺序执行）
+    // 执行 Pipeline（12 个 Handler 按 phase+order 顺序执行）
     this.pipeline.execute(ctx);
 
     // 回写引擎级状态（TD-001: 通过 ctx 共享的 breakthroughCooldown）

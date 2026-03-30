@@ -29,6 +29,15 @@ import { getSpiritVeinDensity } from './shared/data/realm-table';
 import { getRealmDisplayName } from './shared/formulas/realm-display';
 import { createLogger } from './engine/game-logger';
 import type { DialogueExchange } from './shared/types/dialogue';
+import {
+  formatLookOverview,
+  formatDiscipleProfile,
+  matchDisciple,
+  formatSeverityLog,
+  formatStatusBar,
+  pickAmbientLine,
+} from './ui/mud-formatter';
+import { EventSeverity } from './shared/types/world-event';
 
 // ===== 初始化 =====
 
@@ -55,6 +64,7 @@ function getProgressText(): string {
   if (nextCost === Infinity) return '需天劫';
   return `${Math.min(100, (state.aura / nextCost * 100)).toFixed(1)}%`;
 }
+void getProgressText; // Phase H-α: 状态栏改用 formatStatusBar，保留备用
 
 // ===== DOM 初始化（只调用一次） =====
 
@@ -70,8 +80,23 @@ function initUI(): void {
       min-height: 100vh;
       margin: 0;
     ">
+      <!-- Phase H-α: 固定状态栏 -->
+      <div id="status-bar" style="
+        position: sticky;
+        top: 0;
+        background: #0d0d2a;
+        border-bottom: 1px solid #333;
+        padding: 6px 20px;
+        font-size: 13px;
+        font-family: 'Courier New', monospace;
+        color: #c8b88b;
+        z-index: 100;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      ">七道修仙 — 加载中...</div>
       <pre id="mud-screen" style="
-        padding: 20px 20px 0;
+        padding: 16px 20px 0;
         margin: 0;
         font-size: 14px;
         line-height: 1.6;
@@ -79,23 +104,9 @@ function initUI(): void {
 ╔══════════════════════════════════════════╗
 ║     七 道 修 仙 — MUD 灵智版            ║
 ╚══════════════════════════════════════════╝
-
-  [仙历 <span id="ui-time">---</span>]
-
-  ─── 宗主状态 ───
-  宗门：<span id="ui-sect">---</span>
-  境界：<span id="ui-realm">---</span>
-  灵气：<span id="ui-aura">0</span> (<span id="ui-aura-rate">+0</span>/s)
-  灵石：<span id="ui-stones">0</span>
-  悟性：<span id="ui-comp">0</span>
-  突破进度：<span id="ui-progress">0%</span>
-
-  ─── 弟子 ───
-<span id="ui-disciples">---</span>
-
-  ─── 命令 ───</pre>
+</pre>
       <div style="padding: 0 20px 20px;">
-        <input id="cmd-input" type="text" placeholder="输入命令..." style="
+        <input id="cmd-input" type="text" placeholder="输入命令 (help 查看列表)..." style="
           width: 100%;
           box-sizing: border-box;
           background: #0d0d1a;
@@ -112,7 +123,7 @@ function initUI(): void {
           font-size: 13px;
           line-height: 1.5;
           margin-top: 10px;
-          max-height: 300px;
+          max-height: 400px;
           overflow-y: auto;
         "></div>
       </div>
@@ -131,30 +142,18 @@ function initUI(): void {
 // ===== 增量更新（每 tick 调用） =====
 
 function updateDisplay(): void {
-  const worldMonths = state.inGameWorldTime * 12;
-  const year = Math.floor(worldMonths / 12);
-  const month = Math.floor(worldMonths % 12) + 1;
-
-  setText('ui-time', `第${year}年 ${month}月`);
-  setText('ui-sect', `${state.sect.name}（${state.sect.level}级）`);
-  setText('ui-realm', getRealmDisplayName(state.realm, state.subRealm));
-  setText('ui-aura', state.aura.toFixed(0));
-  setText('ui-aura-rate', `+${engine.getCurrentAuraRate().toFixed(1)}`);
-  setText('ui-stones', state.spiritStones.toFixed(1));
-  setText('ui-comp', state.comprehension.toFixed(1));
-  setText('ui-progress', getProgressText());
-
-  // 弟子列表
-  const discipleText = state.disciples
-    .map(d => `  ${d.name} (${d.starRating}★ ${d.personalityName}) — ${d.behavior}`)
-    .join('\n');
-  setText('ui-disciples', discipleText);
+  // Phase H-α: 更新固定状态栏
+  const statusBar = document.getElementById('status-bar');
+  if (statusBar) {
+    statusBar.innerHTML = formatStatusBar(state, engine.getCurrentAuraRate());
+  }
 }
 
 function setText(id: string, value: string): void {
   const el = document.getElementById(id);
   if (el) el.textContent = value;
 }
+void setText; // 保留备用，避免 unused 警告
 
 // ===== MUD 日志系统 =====
 
@@ -187,14 +186,42 @@ function handleCommand(cmd: string): void {
   // CR-02: HTML 转义防 XSS
   const safeCmd = escapeHtml(cmd);
 
-  switch (cmd.toLowerCase()) {
+  // Phase H-α: look 命令（带参数时查弟子，不带参数查宗门）
+  const parts = cmd.trim().split(/\s+/);
+  const verb  = parts[0].toLowerCase();
+  const arg   = parts.slice(1).join(' ').trim();
+
+  // look / l — 带参为弟子档案，不带参为宗门总览
+  if (verb === 'look' || verb === 'l') {
+    if (arg) {
+      const result = matchDisciple(arg, state.disciples);
+      if (result.type === 'exact') {
+        addMudLog(formatDiscipleProfile(result.disciple, state));
+      } else if (result.type === 'multiple') {
+        addMudLog(`<span style="color:#8bc8c8">[系统] 找到多名匹配弟子，请输入更完整的名字：</span>`);
+        for (const c of result.candidates) {
+          addMudLog(`  ${escapeHtml(c.name)}`);
+        }
+      } else {
+        addMudLog(`<span style="color:#666">[系统] 未找到名为"${escapeHtml(arg)}"的弟子</span>`);
+      }
+    } else {
+      addMudLog(formatLookOverview(state));
+    }
+    return;
+  }
+
+  switch (verb) {
     case 'help':
       addMudLog('<span style="color:#8bc8c8">[系统] 可用命令：</span>');
-      addMudLog('  status  — 查看宗主状态');
-      addMudLog('  bt      — 尝试突破');
-      addMudLog('  clear   — 清空日志');
-      addMudLog('  reset   — 清除存档（重新开始）');
-      addMudLog('  help    — 显示帮助');
+      addMudLog('  look         — 查看宗门总览（各区弟子分布）');
+      addMudLog('  look <弟子名> — 查看弟子档案（性格/特性/关系）');
+      addMudLog('  status       — 查看宗主状态');
+      addMudLog('  bt           — 尝试突破');
+      addMudLog('  clear        — 清空日志');
+      addMudLog('  reset        — 清除存档（重新开始）');
+      addMudLog('  ai           — 连接 AI 后端');
+      addMudLog('  help         — 显示帮助');
       break;
 
     case 'status':
@@ -279,44 +306,55 @@ function handleCommand(cmd: string): void {
   }
 }
 
+
+
 // ===== 引擎回调 =====
 
 let tickCounter = 0;
 
 engine.setOnTick(() => {
   tickCounter++;
-  // 每 5 秒输出一次修炼日志
+  // 每 5 秒输出一次修炼日志（RIPPLE 级）
   if (tickCounter % 5 === 0) {
     const rate = engine.getCurrentAuraRate();
     const wm = state.inGameWorldTime * 12;
     const y = Math.floor(wm / 12);
     const m = Math.floor(wm % 12) + 1;
-    addMudLog(`<span style="color:#6a8a6a">[仙历${y}年${m}月] 宗主打坐入定，灵气 +${(rate * 5).toFixed(1)}</span>`);
+    addMudLog(formatSeverityLog(
+      EventSeverity.RIPPLE,
+      `[仙历${y}年${m}月] 宗主打坐入定，灵气 +${(rate * 5).toFixed(1)}`
+    ));
   }
   updateDisplay();
 });
 
-// Phase C: 突破回调改为接收 BreakthroughLog
+// Phase C: 突破回调 — STORM 级
 engine.setOnBreakthrough((_s, btLog) => {
   if (btLog.success) {
     const r = btLog.result;
-    addMudLog(`<span style="color:#ffd700">═══ 突破！境界提升至${escapeHtml(getRealmDisplayName(r.newRealm, r.newSubRealm))} ═══</span>`);
+    addMudLog(formatSeverityLog(
+      EventSeverity.STORM,
+      `突破！境界提升至${getRealmDisplayName(r.newRealm, r.newSubRealm)}`
+    ));
   } else {
-    addMudLog(`<span style="color:#ff6b6b">═══ 突破失败！${escapeHtml(btLog.message)} ═══</span>`);
+    addMudLog(formatSeverityLog(
+      EventSeverity.SPLASH,
+      `突破失败！${btLog.message}`
+    ));
   }
 });
 
-// Phase B-α: 灵田 tick 日志
+// Phase B-α: 灵田 tick 日志 — RIPPLE 级
 engine.setOnFarmTickLog((logs) => {
   for (const log of logs) {
-    addMudLog(`<span style="color:#8ac88a">${escapeHtml(log)}</span>`);
+    addMudLog(formatSeverityLog(EventSeverity.RIPPLE, log));
   }
 });
 
-// Phase C: 系统日志（自动服丹/突破自动触发）
+// Phase C: 系统日志（自动服丹/突破自动触发）— RIPPLE 级
 engine.setOnSystemLog((logs) => {
   for (const log of logs) {
-    addMudLog(`<span style="color:#8ac8c8">${escapeHtml(log)}</span>`);
+    addMudLog(formatSeverityLog(EventSeverity.RIPPLE, log));
   }
 });
 
@@ -381,7 +419,11 @@ engine.setOnDiscipleBehaviorChange((events) => {
       };
 
       llmAdapter.generateLine(req).then((line) => {
-        addMudLog(`<span style="color:#d4a574">[${name}] "${escapeHtml(line)}"</span>`);
+        // AI 台词 — SPLASH 级
+        addMudLog(formatSeverityLog(
+          EventSeverity.SPLASH,
+          `[${name}] "${line}"`
+        ));
         // 记录到短期记忆 (FIFO, max 10)
         addShortTermMemory(ctx, `${getBehaviorLabel(evt.newBehavior)}: ${line}`);
         ctx.lastInferenceTime = Date.now();
@@ -395,6 +437,19 @@ engine.setOnDiscipleBehaviorChange((events) => {
 initUI();
 updateDisplay();
 engine.start();
+
+// Phase H-α: 启动时自动执行 look 展示宗门总览
+addMudLog(formatLookOverview(state));
+
+// Phase H-α: 环境呼吸定时器 — 25~45s 随机触发
+function scheduleAmbientBreath(): void {
+  const delay = (25 + Math.random() * 20) * 1000; // 25~45s
+  setTimeout(() => {
+    addMudLog(formatSeverityLog(EventSeverity.BREATH, pickAmbientLine()));
+    scheduleAmbientBreath(); // 下一次
+  }, delay);
+}
+scheduleAmbientBreath();
 
 addMudLog('<span style="color:#8bc8c8">[系统] 七道修仙 MUD 灵智版 v0.2.0 已启动</span>');
 addMudLog('<span style="color:#8bc8c8">[系统] 引擎 Tick 循环已激活，修炼进行中...</span>');
