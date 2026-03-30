@@ -183,6 +183,10 @@ export interface SectState {
   stoneDripAccumulator: number;
   /** 弟子上缴丹药总数 */
   tributePills: number;
+  /** Phase F0-α: 道风 [-100, +100]，-100=仁 ↔ +100=霸 */
+  ethos: number;
+  /** Phase F0-α: 门规 [-100, +100]，-100=放 ↔ +100=律 */
+  discipline: number;
 }
 
 /** 悬赏任务状态 */
@@ -276,7 +280,7 @@ export function createDefaultLiteGameState(): LiteGameState {
   const now = Date.now();
   const disciples = generateInitialDisciples();
   return {
-    version: 4,
+    version: 5,
     aura: 0,
     spiritStones: 200,
     realm: Realm.LIANQI,
@@ -287,6 +291,7 @@ export function createDefaultLiteGameState(): LiteGameState {
     sect: {
       name: '无名小宗', level: 1, reputation: 0,
       auraDensity: 1.0, stoneDripAccumulator: 0, tributePills: 0,
+      ethos: 0, discipline: 0,  // Phase F0-α: 默认中庸，开局选择后可覆盖
     },
     disciples,
     relationships: generateInitialRelationships(disciples),

@@ -31,6 +31,8 @@
 | **pill-consumer** | R/W | — | R | — | — | R | — | — |
 | **save-manager** | R/W | — | — | — | — | — | — | — |
 | **disciple-generator** | W | — | — | — | — | — | — | — |
+| **storyteller** | R | — | — | — | — | — | — | — |
+| **handlers/world-event-tick** | R | — | — | — | — | — | — | — |
 
 ---
 
@@ -51,6 +53,8 @@
 | **intent-executor** | — | — | R | R | R | — | — |
 | **dialogue-coordinator** | — | — | — | — | — | — | — |
 | **breakthrough-engine** | — | — | — | — | — | — | R |
+| **storyteller** | — | — | — | — | — | — | — |
+| **handlers/world-event-tick** | — | R | — | — | — | — | — |
 
 ---
 
@@ -71,6 +75,8 @@
 | `alchemy-engine.ts` | behavior-tree | pills[] 变更 |
 | `breakthrough-engine.ts` | handlers/auto-breakthrough, idle-engine | realm/subRealm 变更 → 全局影响 |
 | `pill-consumer.ts` | handlers/boost-countdown, breakthrough-aid, cultivate-boost, idle-engine | buff 状态变更 |
+| `storyteller.ts` | handlers/world-event-tick | EventBus emit + MUD 日志 |
+| `world-event-registry.ts` | storyteller | 事件定义变更 |
 
 ---
 
@@ -81,3 +87,4 @@
 | 2026-03-28 | 从 MASTER-ARCHITECTURE.md §4 拆出 |
 | 2026-03-28 | Phase 4 重构: 新增 tick-pipeline + 6 个 handler 文件的依赖关系 |
 | 2026-03-28 | Phase D: 新增 intent-executor, dialogue-coordinator, game-logger, dialogue-tick handler 依赖 |
+| 2026-03-30 | Phase F0-β: 新增 storyteller, world-event-tick handler, world-event-registry 依赖 |

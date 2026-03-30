@@ -14,7 +14,7 @@ trigger: >
 
 > **职责边界**：Where / How — 定义在哪实现、怎么实现
 > **硬禁令**：🚫 禁止输出业务逻辑代码、体验设计、数值公式
-> **输入**：签章 PRD.md + `docs/design/MASTER-ARCHITECTURE.md`
+> **输入**：签章 PRD.md + `${paths.master_arch}`
 > **输出**：TDD.md + ADR
 > **上游**：SPM（需 GATE 1 签章）
 > **下游**：SGE（需 GATE 2 签章）
@@ -26,50 +26,53 @@ trigger: >
 触发本 Skill 时，**必须首先验证**：
 
 1. ✅ PRD.md 文件存在？
-   - 路径：`docs/features/[name]-PRD.md` 或 `docs/features/[name]-analysis.md`
-2. ✅ PRD.md 中有 `[x] GATE 1 PASSED` 签章？（Phase A-C 旧格式视为已签章）
+   - 路径：`${paths.features_dir}/[name]-PRD.md` 或 `${paths.features_dir}/[name]-analysis.md`
+2. ✅ PRD.md 中有 `[x] GATE 1 PASSED` 签章？（旧格式视为已签章）
 3. 如任一条件不满足 → **拒绝执行**，输出提示让 USER 先完成 SPM 流程
 
 ---
 
 ## 上下文协议（Bootstrap）
 
-1. 读 `docs/design/MASTER-ARCHITECTURE.md`（索引）— 理解全局架构和约束
-2. 读 `docs/design/arch/gamestate.md` — 理解 GameState 拓扑（必读）
-3. 读 `docs/design/arch/pipeline.md` — 理解 Tick Pipeline（必读）
-4. 读 `docs/project/tech-debt.md` — 检查技术债务（必读）
-5. 读 `docs/project/handoff.md` — 理解当前断点和上下文（必读）
-6. 读 `docs/pipeline/phaseX/spm-analysis.md` — 理解 SPM 分析决策（必读）
-7. 按需读 `docs/design/arch/dependencies.md`、`docs/design/arch/schema.md`
-8. 读已签章的 PRD.md — 理解本次需求的规则和数值
-9. 读 `AGENTS.md` §3.3（模块边界）+ §3.9（Pipeline 挂载协议）+ §3.10（文档模块化）
+1. 读 `.agents/project.yaml` — 获取所有文档路径（**必须最先读取**）
+2. 读 `${paths.master_arch}`（索引）— 理解全局架构和约束
+3. 读 `${paths.arch_gamestate}` — 理解数据拓扑（必读）
+4. 读 `${paths.arch_pipeline}` — 理解 Pipeline 架构（必读）
+5. 读 `${paths.tech_debt}` — 检查技术债务（必读）
+6. 读 `${paths.handoff}` — 理解当前断点和上下文（必读）
+7. 读 `${paths.pipeline_dir}/phaseX/spm-analysis.md` — 理解 SPM 分析决策（必读）
+8. 按需读 `${paths.arch_dependencies}`、`${paths.arch_schema}`
+9. 读已签章的 PRD.md — 理解本次需求的规则和数值
+10. 读 `AGENTS.md` 模块边界、Pipeline 挂载协议、文档模块化规则
+
+> **路径解析**：`${paths.xxx}` 指 `.agents/project.yaml` 中 `paths:` 段对应的值。
 
 ---
 
 ## Step 1：全局对齐 + Invariant 验证
 
-- 对照 `arch/layers.md` 分层架构，确认新系统属于哪一层
-- 对照 `arch/gamestate.md` GameState 拓扑，确认新字段的 Owner
+- 对照 `${paths.arch_layers}` 分层架构，确认新系统属于哪一层
+- 对照 `${paths.arch_gamestate}` 数据拓扑，确认新字段的 Owner
 - 验证 PRD 中的 Invariant 是否与现有架构冲突
 - 产出：全局对齐检查表
 
 ---
 
-## Step 2：Interface 设计 + GameState 变更 + 存档迁移策略
+## Step 2：Interface 设计 + 数据变更 + 迁移策略
 
 - 设计新增/修改的 TypeScript `interface`
-- 设计 GameState 新字段（含默认值）
-- 设计 `createDefaultLiteGameState` 更新方案
-- 设计存档迁移函数 `migrateVNtoVN+1`
-- 遵循 MASTER-ARCHITECTURE §6 新系统接入规范
+- 设计数据结构新字段（含默认值）
+- 设计默认状态创建函数更新方案
+- 设计迁移函数策略
+- 遵循 MASTER-ARCHITECTURE 新系统接入规范
 - 产出：Interface 草案 + 迁移策略
 
 ---
 
-## Step 3：Tick Pipeline 挂载规划 + 依赖矩阵更新 + 回归影响评估
+## Step 3：Pipeline 挂载规划 + 依赖矩阵更新 + 回归影响评估
 
-- 确定新系统挂载到 Pipeline 的哪个阶段（参考 `arch/pipeline.md`）
-- 更新依赖矩阵（参考 `arch/dependencies.md`）
+- 确定新系统挂载到 Pipeline 的哪个阶段（参考 `${paths.arch_pipeline}`）
+- 更新依赖矩阵（参考 `${paths.arch_dependencies}`）
 - 评估对现有系统的影响范围
 - 产出：Pipeline 挂载方案 + 依赖变更 + 回归清单
 
@@ -100,7 +103,7 @@ SGA 的 Review 角色均为"挑刺者"——专注于发现架构缺陷而非业
 
 ### 执行流程
 
-引用 `_shared/review-protocol.md` 三层防线协议执行。
+引用 `_shared/review-protocol.md` 四层防线协议执行。
 
 ---
 
@@ -110,11 +113,11 @@ SGA 的 Review 角色均为"挑刺者"——专注于发现架构缺陷而非业
 ## SGA Signoff
 
 - [ ] Interface 设计完整（所有新字段有 Owner）
-- [ ] 存档迁移策略完整（迁移函数已规划）
+- [ ] 迁移策略完整（迁移函数已规划）
 - [ ] Pipeline 挂载方案确认
 - [ ] 依赖矩阵已更新
 - [ ] Party Review 无 BLOCK 项
-- [ ] 技术债务已登记（Review WARN 项 → `docs/project/tech-debt.md`）
+- [ ] 技术债务已登记（Review WARN 项 → `${paths.tech_debt}`）
 
 签章：`[x] GATE 2 PASSED` — [日期]
 ```
@@ -127,17 +130,17 @@ SGA 的 Review 角色均为"挑刺者"——专注于发现架构缺陷而非业
 
 | 产出物 | 保存路径 |
 |--------|---------|
-| TDD | `docs/design/specs/[name]-TDD.md` |
+| TDD | `${paths.specs_dir}/[name]-TDD.md` |
 | ADR | 追加到 TDD.md 末尾 |
-| Party Review 报告 | `docs/pipeline/phaseX/review.md`（独立存储） |
-| 技术债务变更 | 更新 `docs/project/tech-debt.md`（新增 WARN 项 / 标记清偿项） |
-| **实施计划** | `docs/pipeline/phaseX/plan.md`（架构设计 + 任务分解 + 风险评估） |
+| Party Review 报告 | `${paths.pipeline_dir}/phaseX/review.md`（独立存储） |
+| 技术债务变更 | 更新 `${paths.tech_debt}` |
+| **实施计划** | `${paths.pipeline_dir}/phaseX/plan.md` |
 
 ---
 
 ## 引用共享模块
 
-- `_shared/review-protocol.md` — Party Review 三层防线
+- `_shared/review-protocol.md` — Party Review 四层防线
 - `_shared/cove-protocol.md` — CoVe 证据验证
 - `_shared/communication-rules.md` — 沟通纪律
 - `_shared/anti-rationalization.md` — 反合理化（查看 SGA 专属部分）

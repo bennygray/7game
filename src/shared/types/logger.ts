@@ -30,6 +30,8 @@ export const LogCategory = {
   SYSTEM: 'SYSTEM',
   /** 资源变动（灵气/灵石/丹药） */
   ECONOMY: 'ECONOMY',
+  /** Phase F0-α: 世界事件（碰面/地点） */
+  WORLD: 'WORLD',
 } as const;
 export type LogCategory = (typeof LogCategory)[keyof typeof LogCategory];
 

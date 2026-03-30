@@ -49,6 +49,24 @@ export const EMOTION_CANDIDATE_POOL: Record<SoulEventType, Record<SoulRole, Emot
     self:     ['sadness', 'anger', 'shame', 'worry', 'neutral'],
     observer: ['worry', 'sadness', 'neutral', 'relief', 'contempt'],
   },
+  // Phase F0-α: 碰面事件情绪候选池
+  'encounter-chat': {
+    self:     ['joy', 'neutral', 'relief', 'admiration'],
+    observer: ['neutral', 'joy'],
+  },
+  'encounter-discuss': {
+    self:     ['joy', 'admiration', 'gratitude', 'pride', 'neutral'],
+    observer: ['admiration', 'envy', 'neutral', 'joy'],
+  },
+  'encounter-conflict': {
+    self:     ['anger', 'contempt', 'sadness', 'fear', 'neutral'],
+    observer: ['worry', 'contempt', 'neutral', 'fear'],
+  },
+  // Phase F0-β: 世界事件情绪候选池（广谱覆盖，实际极性由 metadata 决定）
+  'world-event': {
+    self:     ['joy', 'fear', 'worry', 'pride', 'neutral', 'sadness'],
+    observer: ['worry', 'neutral', 'admiration', 'fear'],
+  },
 };
 
 // ===== 候选池查询 =====
@@ -175,7 +193,13 @@ export function fallbackGenerateThought(
       'meditation':          `${discipleName}静思：「今日修炼颇有所得，道心更进一步。」`,
       'explore-return':      `${discipleName}回想此行：「外面的世界风云变幻，历练令我成长不少。」`,
       'breakthrough-success':`${discipleName}心潮澎湃：「终于突破了！境界提升，天地法则更加清晰！」`,
-      'breakthrough-fail':   `${discipleName}皱眉：「距离突破尚有一线之隔，须从长计议…」`,
+      'breakthrough-fail':   `${discipleName}眉头紧锁：「距离突破尚有一线之隔，须从长计议…」`,
+      // Phase F0-α: 碰面事件
+      'encounter-chat':      `${discipleName}想：「今日碰见了同门，闲聊了几句，倒也有趣。」`,
+      'encounter-discuss':   `${discipleName}想：「从同门处学到了不少，修炼的感悟更深了。」`,
+      'encounter-conflict':  `${discipleName}怒道：「今日受了气，必须记住这笔账！」`,
+      // Phase F0-β: 世界事件
+      'world-event':         `${discipleName}喊道：「宗门出了异事，不知是福是祸…」`,
     };
     return templates[eventType] ?? `${discipleName}陷入沉思。`;
   } else {

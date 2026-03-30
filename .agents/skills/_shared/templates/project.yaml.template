@@ -1,0 +1,78 @@
+# Trinity Pipeline 项目配置（模板）
+# 新项目初始化时，由 /SPM Step 0 基于此模板生成 project.yaml。
+# 将 `{{placeholder}}` 替换为项目实际信息。
+
+project:
+  name: "{{PROJECT_NAME}}"
+  description: "{{PROJECT_DESCRIPTION}}"
+
+# ===== 文档路径约定 =====
+# 默认使用 Trinity Pipeline 标准目录结构，可按需修改。
+
+paths:
+  # 宪法层文档
+  master_prd: "docs/project/MASTER-PRD.md"
+  master_arch: "docs/design/MASTER-ARCHITECTURE.md"
+  
+  # 项目管理
+  handoff: "docs/project/handoff.md"
+  task_tracker: "docs/project/task-tracker.md"
+  tech_debt: "docs/project/tech-debt.md"
+  feature_backlog: "docs/project/feature-backlog.md"
+  doc_index: "docs/INDEX.md"
+  roadmap: "docs/project/ROADMAP.md"          # 可选：项目路线图
+  
+  # PRD detail 文件
+  prd_economy: "docs/project/prd/economy.md"
+  prd_systems: "docs/project/prd/systems.md"
+  prd_formulas: "docs/project/prd/formulas.md"
+  
+  # 架构 detail 文件
+  arch_layers: "docs/design/arch/layers.md"
+  arch_gamestate: "docs/design/arch/gamestate.md"
+  arch_pipeline: "docs/design/arch/pipeline.md"
+  arch_dependencies: "docs/design/arch/dependencies.md"
+  arch_schema: "docs/design/arch/schema.md"
+  
+  # 产出物基础目录
+  features_dir: "docs/features"
+  specs_dir: "docs/design/specs"
+  verification_dir: "docs/verification"
+  pipeline_dir: "docs/pipeline"
+  scripts_dir: "scripts"
+
+# ===== 脚手架配置 =====
+
+scaffold:
+  directories:
+    - "docs/features"
+    - "docs/design/specs"
+    - "docs/design/arch"
+    - "docs/verification"
+    - "docs/project"
+    - "docs/project/prd"
+    - "docs/pipeline"
+    - "scripts"
+  
+  seed_files:
+    - path: "docs/INDEX.md"
+      template: "index-template.md"
+    - path: "docs/project/MASTER-PRD.md"
+      template: "master-prd-template.md"
+    - path: "docs/design/MASTER-ARCHITECTURE.md"
+      template: "master-arch-template.md"
+    - path: "docs/project/handoff.md"
+      template: "handoff-template.md"
+    - path: "docs/project/tech-debt.md"
+      template: "tech-debt-template.md"
+    - path: "docs/project/feature-backlog.md"
+      template: "feature-backlog-template.md"
+
+# ===== Antigravity 覆盖规则 =====
+
+overrides:
+  pipeline_assets_to_project: true
+  artifact_filename_mapping:
+    implementation_plan: "plan.md"
+    task: "task.md"
+    walkthrough: "walkthrough.md"

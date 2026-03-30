@@ -129,6 +129,12 @@ function getEventDescription(
       'explore-return':      '你完成外出历练归来',
       'breakthrough-success': '你成功突破了境界',
       'breakthrough-fail':   '你突破境界失败了',
+      // Phase F0-α: 碰面事件
+      'encounter-chat':      '你和同门偶然碰面，闲聊了几句',
+      'encounter-discuss':   '你和同门碰面，交流了修炼心得',
+      'encounter-conflict':  '你和同门碰面，发生了言语冲突',
+      // Phase F0-β: 世界事件
+      'world-event':         '宗门发生了一件异事',
     };
     return selfDesc[eventType] ?? `你完成了${eventType}`;
   } else {
@@ -140,6 +146,12 @@ function getEventDescription(
       'explore-return':      `你的同门${actorName}历练归来`,
       'breakthrough-success': `你的同门${actorName}成功突破了境界`,
       'breakthrough-fail':   `你的同门${actorName}突破境界失败`,
+      // Phase F0-α: 碰面事件
+      'encounter-chat':      `你和${actorName}偶然碰面，闲聊了几句`,
+      'encounter-discuss':   `你和${actorName}碰面，交流了修炼心得`,
+      'encounter-conflict':  `你和${actorName}碰面，发生了言语冲突`,
+      // Phase F0-β: 世界事件
+      'world-event':         `宗门发生了一件异事，波及${actorName}`,
     };
     return observerDesc[eventType] ?? `你的同门${actorName}发生了${eventType}`;
   }

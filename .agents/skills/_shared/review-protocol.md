@@ -1,6 +1,6 @@
-# Party Review 三层防线执行协议
+# Party Review 四层防线执行协议
 
-> **版本**：v1.0 | **适用场景**：SPM / SGA / SGE 各阶段 Review Gate
+> **版本**：v1.1 | **适用场景**：SPM / SGA / SGE 各阶段 Review Gate
 > **引用方**：各 Skill 的 Party Review Gate 段落
 
 ---
@@ -8,8 +8,37 @@
 ## 执行流程
 
 ```
-L1 维度穷举签字 → L2 CoVe 证据验证（仅 WARN/BLOCK）→ L3 结构化辩论（仅评审者矛盾）
+L0 Content Traceability → L1 维度穷举签字 → L2 CoVe 证据验证（仅 WARN/BLOCK）→ L3 结构化辩论（仅评审者矛盾）
 ```
+
+---
+
+## L0：Content Traceability Pre-Check（必执行）
+
+> **在 L1 维度审查之前，必须先执行此步骤。**
+> 此步骤是客观验证（查文件），不依赖主观判断。
+> **适用条件**：仅当审查对象包含 User Story（含 Data Anchor 列）时执行。SGA（TDD 审查）和 SGE（代码审查）跳过 L0，直接进入 L1。
+
+1. 列出本次 Review 对象（PRD + User Stories）中所有 **Data Anchor 引用**
+2. 对每个引用，执行追溯：
+   - `PRD §X.X` → 打开 PRD 对应章节，确认内容为完整数据表（≥3 行实际数据）
+   - `内联` → 确认 AC Then 列中包含完整枚举
+   - `脚本 Case #N` → 确认脚本文件存在且包含对应断言
+3. 追溯失败的条目直接标记为 🔴 BLOCK（不进入 L1）
+4. 检查 User Story 中**引用可枚举数据但缺少 Data Anchor**的 AC → 标记为 🔴 BLOCK
+
+**产出**：Content Traceability 检查表
+
+```markdown
+| Story# | AC# | Data Anchor | 追溯结果 | 状态 |
+|--------|-----|-------------|---------|------|
+| 1 | 3 | PRD §5.3 TRAIT_REGISTRY | 12 个完整 TraitDef 定义 | ✅ |
+| 1 | 5 | 脚本 Case #7 | 断言存在且覆盖迁移逻辑 | ✅ |
+| 3 | 2 | PRD §5.4 映射表 | 仅有概要，无完整映射 | 🔴 |
+| 3 | 1 | — (缺失) | AC 引用了候选情绪但无锚定 | 🔴 |
+```
+
+> L0 有任意 🔴 → 整体 Review 判定为 **BLOCKED**，要求补全后重新提交。
 
 ---
 

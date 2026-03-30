@@ -8,7 +8,7 @@
 ## §1 完整属性清单
 
 ```
-LiteGameState (v3)
+LiteGameState (v5)
 ├── version: number                          ← SaveManager 写入
 ├── aura: number                             ← IdleEngine.tick() 产出
 ├── spiritStones: number                     ← IdleEngine.tick() 产出
@@ -23,7 +23,9 @@ LiteGameState (v3)
 │   ├── reputation: number                   ← 悬赏完成时增加（Phase D）
 │   ├── auraDensity: number                  ← 固定 1.0（灵脉密度由函数计算）
 │   ├── stoneDripAccumulator: number         ← 灵石累加器
-│   └── tributePills: number                 ← AlchemyEngine 上缴时写入
+│   ├── tributePills: number                 ← AlchemyEngine 上缴时写入
+│   ├── ethos: number                        ← Phase F0-α: 道风 [-100,+100]，初始化后只读
+│   └── discipline: number                   ← Phase F0-α: 门规 [-100,+100]，初始化后只读
 ├── disciples: LiteDiscipleState[]
 │   ├── [].id / name / starRating / ...      ← DiscipleGenerator 初始化
 │   ├── [].aura: number                      ← 弟子级灵气（未使用，预留）
@@ -89,3 +91,4 @@ LiteGameState (v3)
 | 日期 | 变更内容 |
 |------|---------|
 | 2026-03-28 | 从 MASTER-ARCHITECTURE.md §2 拆出 |
+| 2026-03-30 | Phase F0-α: +sect.ethos +sect.discipline; LiteGameState v3→v5 |

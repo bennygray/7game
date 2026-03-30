@@ -28,3 +28,6 @@ models/
 # Server binaries & models (too large for git)
 server/models/
 server/llama-server/
+server/llama-server-cpu-backup/
+server/**/*.dll
+server/**/*.exe

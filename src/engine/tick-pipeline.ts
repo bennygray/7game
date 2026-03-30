@@ -19,6 +19,7 @@ import type { BreakthroughLog } from './breakthrough-engine';
 import type { DialogueTrigger } from '../shared/types/dialogue';
 import type { GameLogger } from '../shared/types/logger';
 import type { EventBus } from './event-bus';
+import type { DiscipleEmotionState } from '../shared/types/soul';
 
 /** 突破事件回调（定义在 tick-pipeline 以避免循环依赖） */
 export type BreakthroughCallback = (
@@ -42,6 +43,10 @@ export const TickPhase = {
   SYSTEM_TICK:      500,
   /** 600: 弟子 AI 行为树 */
   DISCIPLE_AI:      600,
+  /** 605: 世界事件抽取（Phase F0-β）— 弟子行为确定后、碰面前 */
+  WORLD_EVENT:      605,
+  /** 610: 碰面检定（Phase F0-α）— 弟子行为确定后、灵魂事件评估前 (ADR-F0α-01) */
+  ENCOUNTER:        610,
   /** 625: 灵魂事件评估（Phase E）— 弟子 AI 行为决策之后，对话之前 */
   SOUL_EVAL:        625,
   /** 650: 弟子间对话触发（Phase D） */
@@ -89,6 +94,8 @@ export interface TickContext {
   breakthroughCooldown: number;
   /** Phase E: 灵魂事件总线 */
   eventBus: EventBus;
+  /** Phase F: 弟子情绪运行时状态 (ADR-F-01) */
+  emotionMap: Map<string, DiscipleEmotionState>;
 }
 
 // ===== TickPipeline 类 =====

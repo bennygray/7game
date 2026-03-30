@@ -25,7 +25,7 @@ trigger: >
 触发本 Skill 时，**必须首先验证**：
 
 1. ✅ TDD.md 文件存在？
-   - 路径：`docs/design/specs/[name]-TDD.md`
+   - 路径：`${paths.specs_dir}/[name]-TDD.md`
 2. ✅ TDD.md 中有 `[x] GATE 2 PASSED` 签章？
 3. 如任一条件不满足 → **拒绝执行**，输出提示让 USER 先完成 SGA 流程
 
@@ -33,15 +33,18 @@ trigger: >
 
 ## 上下文协议（Bootstrap）
 
-1. 读已签章的 TDD.md — 理解 interface、Pipeline 挂载、迁移策略
-2. 读对应的 User Stories 文件 — 理解 AC 验收标准
-3. 读 `docs/project/tech-debt.md` — 检查可顺带清偿的技术债务
-4. 读 `docs/project/feature-backlog.md` — 检查可顺带清偿的需求债务
-5. 读 `docs/project/handoff.md` — 理解当前断点和上下文（必读）
-6. 读 `docs/pipeline/phaseX/plan.md` — 理解实施计划（必读）
-7. 读 `AGENTS.md` §3.7（数值验证）+ §3.8（测试脚本）+ §3.10（文档模块化）
-8. 按需读 `docs/design/arch/schema.md` — 涉及存档迁移时
-9. 按需读 `docs/design/arch/pipeline.md` — 涉及 Pipeline 挂载时
+1. 读 `.agents/project.yaml` — 获取所有文档路径（**必须最先读取**）
+2. 读已签章的 TDD.md — 理解 interface、Pipeline 挂载、迁移策略
+3. 读对应的 User Stories 文件 — 理解 AC 验收标准
+4. 读 `${paths.tech_debt}` — 检查可顺带清偿的技术债务
+5. 读 `${paths.feature_backlog}` — 检查可顺带清偿的需求债务
+6. 读 `${paths.handoff}` — 理解当前断点和上下文（必读）
+7. 读 `${paths.pipeline_dir}/phaseX/plan.md` — 理解实施计划（必读）
+8. 读 `AGENTS.md` 数值验证、测试脚本、文档模块化规则
+9. 按需读 `${paths.arch_schema}` — 涉及存档迁移时
+10. 按需读 `${paths.arch_pipeline}` — 涉及 Pipeline 挂载时
+
+> **路径解析**：`${paths.xxx}` 指 `.agents/project.yaml` 中 `paths:` 段对应的值。
 
 ---
 
@@ -50,7 +53,7 @@ trigger: >
 - 遵循 TDD 的 interface 定义（**不得擅改**）
 - 遵循 TDD 的 Pipeline 挂载方案
 - 按 Data Layer → Engine Layer → UI Layer 顺序实现
-- 遵循 AGENTS.md §四 文档先行原则（先文档 → 确认 → 编码）
+- 遵循 AGENTS.md 文档先行原则（先文档 → 确认 → 编码）
 
 ### BLOCKER-REPORT 机制
 
@@ -76,16 +79,16 @@ trigger: >
 
 ## Step 2：数值验证脚本
 
-- 遵循 AGENTS.md §3.7 数值验证脚本规范
-- 为本系统编写验证脚本 `scripts/[system]-sim.ts`
+- 遵循 AGENTS.md 数值验证脚本规范
+- 为本系统编写验证脚本 `${paths.scripts_dir}/[system]-verify.ts`
 - 覆盖 PRD 中定义的所有公式
-- 验证极端情况（24h 挂机、连续失败、最好运气）
+- 验证极端情况
 
 ---
 
 ## Step 3：全局回归
 
-- 执行 `npm run test:regression`
+- 执行全量回归测试
 - **必须退出码 0** 才能继续
 - 如果回归失败：
   1. 先假设是新代码的问题
@@ -107,33 +110,33 @@ trigger: >
 
 ### 执行流程
 
-引用 `_shared/review-protocol.md` 三层防线协议执行。
+引用 `_shared/review-protocol.md` 四层防线协议执行。
 
 ---
 
 ## Step 4：交接更新
 
-编码和验证完成后，更新以下文档（按 §3.10 写入路径映射表）：
+编码和验证完成后，更新以下文档（按 AGENTS.md 写入路径映射表）：
 
-- [ ] 新增资源/系统 → 更新 `docs/project/prd/economy.md` + `prd/systems.md`
-- [ ] 新增公式 → 更新 `docs/project/prd/formulas.md`
-- [ ] 新增代码文件 → 更新 `docs/design/arch/layers.md`
-- [ ] 新增 GameState 字段 → 更新 `docs/design/arch/gamestate.md` + `arch/schema.md`
-- [ ] 新增 Pipeline 挂载 → 更新 `docs/design/arch/pipeline.md`
-- [ ] 新增依赖 → 更新 `docs/design/arch/dependencies.md`
-- [ ] 新增文件 → 更新 `docs/INDEX.md`
+- [ ] 新增资源/系统 → 更新 `${paths.prd_economy}` + `${paths.prd_systems}`
+- [ ] 新增公式 → 更新 `${paths.prd_formulas}`
+- [ ] 新增代码文件 → 更新 `${paths.arch_layers}`
+- [ ] 新增数据字段 → 更新 `${paths.arch_gamestate}` + `${paths.arch_schema}`
+- [ ] 新增 Pipeline 挂载 → 更新 `${paths.arch_pipeline}`
+- [ ] 新增依赖 → 更新 `${paths.arch_dependencies}`
+- [ ] 新增文件 → 更新 `${paths.doc_index}`
 - [ ] 更新 AGENTS.md（如有新的项目约束）
-- [ ] 技术债务变更 → 更新 `docs/project/tech-debt.md`（新增 Review WARN 项 / 标记清偿项）
-- [ ] 需求债务变更 → 更新 `docs/project/feature-backlog.md`（新增降级项 / 标记清偿项）
-- [ ] **🆕 完成 `docs/pipeline/phaseX/walkthrough.md`**（变更总结 + 验证结果 + 经验教训）
+- [ ] 技术债务变更 → 更新 `${paths.tech_debt}`
+- [ ] 需求债务变更 → 更新 `${paths.feature_backlog}`
+- [ ] **完成 `${paths.pipeline_dir}/phaseX/walkthrough.md`**（变更总结 + 验证结果）
 
 ### 产出物归档表
 
 | 产出物 | 保存路径 |
 |--------|---------|
-| 验证结果 | `docs/verification/[name]-verification.md` |
-| **🆕 执行追踪** | `docs/pipeline/phaseX/task.md`（living document，执行过程中持续更新） |
-| **🆕 完成总结** | `docs/pipeline/phaseX/walkthrough.md`（变更清单 + 验证结果 + 经验教训） |
+| 验证结果 | `${paths.verification_dir}/[name]-verification.md` |
+| **执行追踪** | `${paths.pipeline_dir}/phaseX/task.md`（执行过程中持续更新） |
+| **完成总结** | `${paths.pipeline_dir}/phaseX/walkthrough.md`（变更清单 + 验证结果） |
 
 ---
 
@@ -144,7 +147,7 @@ trigger: >
 
 - [ ] 所有 User Story 的 AC 已验证通过
 - [ ] 数值验证脚本退出码 0
-- [ ] `npm run test:regression` 退出码 0
+- [ ] 全量回归退出码 0
 - [ ] Party Review 无 BLOCK 项
 - [ ] 交接文档已更新
 - [ ] Pipeline 过程资产已归档（task.md + walkthrough.md）
@@ -156,7 +159,7 @@ trigger: >
 
 ## 引用共享模块
 
-- `_shared/review-protocol.md` — Party Review 三层防线
+- `_shared/review-protocol.md` — Party Review 四层防线
 - `_shared/cove-protocol.md` — CoVe 证据验证
 - `_shared/communication-rules.md` — 沟通纪律
 - `_shared/anti-rationalization.md` — 反合理化（查看 SGE 专属部分）

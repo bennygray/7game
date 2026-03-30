@@ -82,7 +82,7 @@ graph TB
 
 | 层级 | 职责 | 文件数 | 文件列表 |
 |------|------|:------:|---------| 
-| **① Data** | 类型定义 + 公式 + 数据表（所有层的只读依赖） | 14 | `game-state.ts`, `ai-soul.ts`, `dialogue.ts`, `logger.ts`, `soul.ts`, `idle-formulas.ts`, `realm-formulas.ts`, `alchemy-formulas.ts`, `realm-display.ts`, `realm-table.ts`, `recipe-table.ts`, `seed-table.ts`, `trait-registry.ts`, `emotion-pool.ts` |
+| **① Data** | 类型定义 + 公式 + 数据表（所有层的只读依赖） | 15 | `game-state.ts`, `ai-soul.ts`, `dialogue.ts`, `logger.ts`, `soul.ts`, `idle-formulas.ts`, `realm-formulas.ts`, `alchemy-formulas.ts`, `realm-display.ts`, `realm-table.ts`, `recipe-table.ts`, `seed-table.ts`, `trait-registry.ts`, `emotion-pool.ts`, `emotion-behavior-modifiers.ts` |
 | **② Engine** | 游戏引擎逻辑（tick / 行为树 / 存档 / 日志 / 对话 / 灵魂） | 22 | `idle-engine.ts`, `tick-pipeline.ts`, `event-bus.ts`, `soul-engine.ts`, `handlers/boost-countdown.handler.ts`, `handlers/breakthrough-aid.handler.ts`, `handlers/auto-breakthrough.handler.ts`, `handlers/farm-tick.handler.ts`, `handlers/soul-tick.handler.ts`, `handlers/disciple-tick.handler.ts`, `handlers/soul-event.handler.ts`, `handlers/dialogue-tick.handler.ts`, `handlers/cultivate-boost.handler.ts`, `behavior-tree.ts`, `intent-executor.ts`, `dialogue-coordinator.ts`, `game-logger.ts`, `farm-engine.ts`, `alchemy-engine.ts`, `breakthrough-engine.ts`, `pill-consumer.ts`, `save-manager.ts`, `disciple-generator.ts` |
 | **③ AI** | AI 适配层（LLM 调用 / prompt 构建 / fallback / 灵魂评估） | 5+ | `llm-adapter.ts`, `prompt-builder.ts`, `soul-prompt-builder.ts`, `prompts/` 目录, `fallback-lines.ts`, `bystander-lines.ts` |
 | **④ Presentation** | DOM 组件 / 命令系统 / MUD 面板 | 1 | `main.ts`（含 UI 初始化、命令系统、引擎回调、AI 集成） |
@@ -98,3 +98,4 @@ graph TB
 | 2026-03-28 | Phase D: Data +2 (dialogue.ts, logger.ts), Engine +4 (intent-executor, dialogue-coordinator, game-logger, dialogue-tick.handler), AI +1 (bystander-lines); Engine 15→19, Data 9→11, AI 3→4+ |
 | 2026-03-28 | Phase D Hotfix: BehaviorIntent 新增 timerDelta 字段; SmartLLMAdapter 移除自动重试改为手动 tryConnect; FallbackLLMAdapter 对话改 2 轮; 弟子 4→8 人 + 新性格(孤傲/恐懦); reset 命令实装 |
 | 2026-03-29 | Phase E: Data +3 (soul.ts, trait-registry.ts, emotion-pool.ts), Engine +3 (event-bus, soul-engine, soul-tick.handler, soul-event.handler), AI +1 (soul-prompt-builder); GameState v3→v4; Data 11→14, Engine 19→22, AI 4+→5+ |
+| 2026-03-30 | Phase F: Data +1 (emotion-behavior-modifiers.ts), soul.ts +DiscipleEmotionState; Data 14→15; behavior-tree +getEnhancedPersonalityWeights; tick-pipeline TickContext +emotionMap; idle-engine +emotionMap |

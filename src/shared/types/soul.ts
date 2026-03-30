@@ -94,7 +94,11 @@ export type SoulEventType =
   | 'meditation'         // 修炼结束
   | 'explore-return'     // 历练归来
   | 'breakthrough-success' // 突破成功
-  | 'breakthrough-fail'; // 突破失败
+  | 'breakthrough-fail'   // 突破失败
+  | 'encounter-chat'      // Phase F0-α: 碰面闲聊
+  | 'encounter-discuss'   // Phase F0-α: 碰面论道
+  | 'encounter-conflict'  // Phase F0-α: 碰面冲突
+  | 'world-event';        // Phase F0-β: 世界事件
 
 /** 事件极性 — 正面/负面（用于 delta 方向修正） */
 export type SoulEventPolarity = 'positive' | 'negative';
@@ -113,7 +117,37 @@ export const SOUL_EVENT_POLARITY: Record<SoulEventType, SoulEventPolarity> = {
   'explore-return':      'positive',
   'breakthrough-success': 'positive',
   'breakthrough-fail':   'negative',
+  // Phase F0-α: 碰面事件极性
+  'encounter-chat':      'positive',
+  'encounter-discuss':   'positive',
+  'encounter-conflict':  'negative',
+  // Phase F0-β: 世界事件（默认 positive；实际极性由 metadata.polarity 运行时覆盖）
+  'world-event':         'positive',
 };
+
+// ===== AI 评估结果 =====
+
+// ===== 弟子短期情绪状态（Phase F） =====
+
+/**
+ * 弟子短期情绪状态 — 运行时，不持久化
+ *
+ * 由 soul-engine.processSoulEvent 写入，soul-tick 衰减
+ * planIntent → getEnhancedPersonalityWeights 读取
+ *
+ * @see phaseF-PRD.md §3.1 R-F-E1
+ * @see phaseF-TDD.md Step 2.1
+ */
+export interface DiscipleEmotionState {
+  /** 当前主导情绪 */
+  currentEmotion: EmotionTag | null;
+  /** 情绪强度 1~3 */
+  emotionIntensity: 1 | 2 | 3;
+  /** 设置时间戳 */
+  emotionSetAt: number;
+  /** 衰减计数器（soul-tick 每次 +1，到 EMOTION_DECAY_TICKS 时 intensity -1） */
+  decayCounter: number;
+}
 
 // ===== AI 评估结果 =====
 

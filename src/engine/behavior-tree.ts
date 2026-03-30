@@ -14,6 +14,17 @@
 
 import type { LiteDiscipleState, LiteGameState, PersonalityTraits, DiscipleBehavior } from '../shared/types/game-state';
 import { DiscipleBehavior as DB } from '../shared/types/game-state';
+import type { DiscipleEmotionState } from '../shared/types/soul';
+import { getTraitDef } from '../shared/data/trait-registry';
+import { getDiscipleLocation } from '../shared/types/encounter';
+import {
+  EMOTION_BEHAVIOR_MODIFIERS,
+  FRIEND_COOPERATIVE_MULTIPLIER,
+  RIVAL_COMPETITIVE_MULTIPLIER,
+  RIVAL_MEDITATION_MULTIPLIER,
+  COOPERATIVE_BEHAVIORS,
+  COMPETITIVE_BEHAVIORS,
+} from '../shared/data/emotion-behavior-modifiers';
 
 // ===== 行为配置 =====
 
@@ -112,6 +123,99 @@ export function getPersonalityWeights(
 }
 
 /**
+ * 增强版行为权重 — 四层叠加
+ *
+ * Layer 1: 基础五维性格（getPersonalityWeights，不修改）
+ * Layer 2: 特性 behavior-weight 叠加（F1）
+ * Layer 3: 关系标签 friend/rival 同地点效果（F2 + F4）
+ * Layer 4: 短期情绪状态效果（F3）
+ *
+ * 保持纯函数（ADR-D01）：所有输入作为参数传入
+ *
+ * @see phaseF-PRD.md §3.2 F-F-01
+ * @see phaseF-TDD.md Step 2.4
+ */
+export function getEnhancedPersonalityWeights(
+  d: Readonly<LiteDiscipleState>,
+  state: Readonly<LiteGameState>,
+  emotionState: DiscipleEmotionState | null,
+): { behavior: DiscipleBehavior; weight: number }[] {
+
+  // === Layer 1: 基础权重 ===
+  const weights = getPersonalityWeights(d.personality, d.stamina);
+
+  // === Layer 2: 特性叠加（F1） ===
+  for (const w of weights) {
+    let traitModifier = 0;
+    for (const trait of d.traits) {
+      const def = getTraitDef(trait.defId);
+      if (!def) continue;
+      for (const effect of def.effects) {
+        if (effect.type === 'behavior-weight' && effect.target === w.behavior) {
+          traitModifier += effect.value;
+        }
+      }
+    }
+    // 乘法叠加：weight × (1 + Σ effects)
+    w.weight = Math.max(0, w.weight * (1 + traitModifier));
+  }
+
+  // === Layer 3: 关系标签效果（F2 + F4） ===
+  const myLocation = getDiscipleLocation(d.behavior);
+  let hasFriendNearby = false;
+  let hasRivalNearby = false;
+
+  for (const other of state.disciples) {
+    if (other.id === d.id) continue;
+    if (getDiscipleLocation(other.behavior) !== myLocation) continue;
+    const edge = state.relationships.find(
+      r => r.sourceId === d.id && r.targetId === other.id,
+    );
+    if (!edge) continue;
+    if (edge.tags.includes('friend')) hasFriendNearby = true;
+    if (edge.tags.includes('rival')) hasRivalNearby = true;
+  }
+
+  if (hasFriendNearby) {
+    for (const w of weights) {
+      if ((COOPERATIVE_BEHAVIORS as readonly string[]).includes(w.behavior)) {
+        w.weight *= FRIEND_COOPERATIVE_MULTIPLIER;
+      }
+    }
+  }
+  if (hasRivalNearby) {
+    for (const w of weights) {
+      if ((COMPETITIVE_BEHAVIORS as readonly string[]).includes(w.behavior)) {
+        w.weight *= RIVAL_COMPETITIVE_MULTIPLIER;
+      }
+      if (w.behavior === DB.MEDITATE) {
+        w.weight *= RIVAL_MEDITATION_MULTIPLIER;
+      }
+    }
+  }
+
+  // === Layer 4: 情绪状态效果（F3） ===
+  if (emotionState?.currentEmotion && emotionState.currentEmotion !== 'neutral') {
+    const modifiers = EMOTION_BEHAVIOR_MODIFIERS[emotionState.currentEmotion];
+    if (modifiers) {
+      for (const w of weights) {
+        const mod = modifiers[w.behavior as DiscipleBehavior];
+        if (mod !== undefined) {
+          w.weight *= mod;
+        }
+      }
+    }
+  }
+
+  // 最终保证非负
+  for (const w of weights) {
+    w.weight = Math.max(0, w.weight);
+  }
+
+  return weights;
+}
+
+/**
  * 加权随机选择行为
  */
 export function weightedRandomPick(
@@ -171,6 +275,7 @@ export function planIntent(
   d: Readonly<LiteDiscipleState>,
   deltaS: number,
   _state: Readonly<LiteGameState>,
+  emotionState?: DiscipleEmotionState | null,
 ): BehaviorIntent[] {
   // deltaS=0 防御 (R6-D1 WARN)
   if (deltaS <= 0) return [];
@@ -210,7 +315,9 @@ export function planIntent(
       });
 
       // 行为结束后立刻进入 IDLE → 发起新决策
-      const weights = getPersonalityWeights(d.personality, d.stamina);
+      const weights = emotionState !== undefined
+        ? getEnhancedPersonalityWeights(d, _state, emotionState)
+        : getPersonalityWeights(d.personality, d.stamina);
       const chosen = weightedRandomPick(weights);
       const duration = getBehaviorDuration(chosen);
 
@@ -226,7 +333,9 @@ export function planIntent(
     // 行为未结束 → continue（体力变化已在上面处理）
   } else {
     // IDLE 状态 → 发起新决策
-    const weights = getPersonalityWeights(d.personality, d.stamina);
+    const weights = emotionState !== undefined
+      ? getEnhancedPersonalityWeights(d, _state, emotionState)
+      : getPersonalityWeights(d.personality, d.stamina);
     const chosen = weightedRandomPick(weights);
     const duration = getBehaviorDuration(chosen);
 

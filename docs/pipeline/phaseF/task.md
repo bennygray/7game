@@ -1,0 +1,15 @@
+- `[x]` Step 1: 编码实施
+  - `[x]` 1.1 新增 `src/shared/data/emotion-behavior-modifiers.ts`
+  - `[x]` 1.2 修改 `src/shared/types/soul.ts` (+DiscipleEmotionState)
+  - `[x]` 1.3 修改 `src/engine/behavior-tree.ts` (+getEnhancedPersonalityWeights)
+  - `[x]` 1.4 修改 `src/engine/soul-engine.ts` (+recordEmotion +decayEmotion)
+  - `[x]` 1.5 修改 `src/engine/tick-pipeline.ts` (TickContext +emotionMap)
+  - `[x]` 1.6 修改 `src/engine/idle-engine.ts` (+emotionMap 实例属性)
+  - `[x]` 1.7 修改 `src/engine/handlers/disciple-tick.handler.ts`
+  - `[x]` 1.8 修改 `src/engine/handlers/soul-tick.handler.ts`
+  - `[x]` 1.9 修改 `src/engine/handlers/soul-event.handler.ts`
+- `[x]` Step 2: 验证脚本 `scripts/verify-phaseF.ts` — 12/12 passed
+- `[x]` Step 3: 全局回归 — 64/64 passed + tsc 0 errors
+- `[x]` Step 4: 交接文档更新
+  - `[x]` layers.md (+emotion-behavior-modifiers.ts, Data 14→15)
+  - `[x]` handoff.md (Phase F 完成)

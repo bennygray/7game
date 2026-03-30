@@ -20,12 +20,16 @@ graph LR
         P400["400 WORLD_UPDATE<br>(合并在 300)"]
         P500["500 SYSTEM_TICK"]
         P600["600 DISCIPLE_AI"]
+        P605["605 WORLD_EVENT<br>(Phase F0-β)"]
+        P610["610 ENCOUNTER<br>(Phase F0-α)"]
         P625["625 SOUL_EVAL<br>(Phase E)"]
         P650["650 DIALOGUE<br>(Phase D)"]
         P700["700 POST_PRODUCTION"]
     end
-    P100 --> P200 --> P300 --> P500 --> P600 --> P625 --> P650 --> P700
+    P100 --> P200 --> P300 --> P500 --> P600 --> P605 --> P610 --> P625 --> P650 --> P700
     style P400 fill:#f5f5f5,stroke-dasharray: 5 5
+    style P605 fill:#fce4ec
+    style P610 fill:#e3f2fd
     style P625 fill:#fff3e0
     style P650 fill:#e8f5e9
 ```
@@ -40,6 +44,8 @@ export const TickPhase = {
   WORLD_UPDATE:     400,  // 当前合并在 core-production handler
   SYSTEM_TICK:      500,
   DISCIPLE_AI:      600,
+  WORLD_EVENT:      605,  // Phase F0-β: 世界事件抽取
+  ENCOUNTER:        610,  // Phase F0-α: 碰面检定 (ADR-F0α-01)
   SOUL_EVAL:        625,  // Phase E: 灵魂事件评估
   DIALOGUE:         650,  // Phase D: 弟子间对话触发
   POST_PRODUCTION:  700,
@@ -62,6 +68,8 @@ export const TickPhase = {
 | 8 | `soul-event` | 625 | 0 | `handlers/soul-event.handler.ts` | soul-engine + EventBus | Phase E |
 | 9 | `dialogue-tick` | 650 | 0 | `handlers/dialogue-tick.handler.ts` | dialogue-coordinator | Phase D |
 | 10 | `cultivate-boost` | 700 | 0 | `handlers/cultivate-boost.handler.ts` | pill-consumer | Phase C |
+| 11 | `encounter-tick` | 610 | 0 | `handlers/encounter-tick.handler.ts` | encounter-engine | Phase F0-α |
+| 12 | `world-event-tick` | 605 | 0 | `handlers/world-event-tick.handler.ts` | storyteller | Phase F0-β |
 
 ### Handler 拆分判定标准
 
@@ -126,3 +134,5 @@ export interface TickContext {
 | 2026-03-28 | Phase 4 重构: 硬编码 → TickPipeline + 7 Handler，移除"当前硬编码"章节 |
 | 2026-03-28 | Phase D: +DIALOGUE=650 阶段 +dialogue-tick handler; disciple-tick 重构为 Intent 模式; TickContext +dialogueTriggers +logger |
 | 2026-03-29 | Phase E: +SOUL_EVAL=625 阶段; +soul-tick(500:10) +soul-event(625:0) Handler; TickContext +eventBus; auto-breakthrough 接入 EventBus; Handler 8→10 |
+| 2026-03-30 | Phase F0-α: +ENCOUNTER=610 阶段; +encounter-tick(610:0) Handler; Handler 10→11 |
+| 2026-03-30 | Phase F0-β: +WORLD_EVENT=605 阶段; +world-event-tick(605:0) Handler; Handler 11→12 |

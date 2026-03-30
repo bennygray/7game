@@ -46,7 +46,7 @@ export const soulEventHandler: TickHandler = {
 
     for (const event of toProcess) {
       try {
-        processSoulEvent(event, ctx.state, ctx.logger);
+        processSoulEvent(event, ctx.state, ctx.logger, undefined, ctx.emotionMap);
       } catch (err) {
         ctx.logger.warn(
           'DISCIPLE' as 'DISCIPLE',

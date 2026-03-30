@@ -13,6 +13,7 @@
 | **v2** | B-α | `disciples[].farmPlots`, `disciples[].currentRecipeId`, `pills[]`, `sect.tributePills` | `fields`, `alchemy` | `migrateV1toV2()` |
 | **v3** | C | `breakthroughBuff`, `cultivateBoostBuff`, `lifetimeStats.pillsConsumed`, `lifetimeStats.breakthroughFailed` | — | `migrateV2toV3()` |
 | **v4** | E | `disciples[].moral`, `disciples[].initialMoral`, `disciples[].traits`, `RelationshipEdge.affinity`, `RelationshipEdge.tags`, `RelationshipEdge.lastInteraction` | `RelationshipEdge.value` | `migrateV3toV4()` |
+| **v5** | F0-α | `sect.ethos`, `sect.discipline` | — | `migrateV4toV5()` |
 
 ---
 
@@ -23,14 +24,15 @@ graph LR
     V1["v1 存档"] -->|migrateV1toV2| V2["v2 存档"]
     V2 -->|migrateV2toV3| V3["v3 存档"]
     V3 -->|migrateV3toV4| V4["v4 存档"]
-    V4 -->|defaults 兜底| FINAL["最终 LiteGameState"]
+    V4 -->|migrateV4toV5| V5["v5 存档"]
+    V5 -->|defaults 兜底| FINAL["最终 LiteGameState"]
     style FINAL fill:#d4edda
-    style V4 fill:#fff3e0
+    style V5 fill:#fff3e0
 ```
 
-1. **链式迁移**：`if (version < 2) → migrateV1toV2()`，`if (version < 3) → migrateV2toV3()`，`if (version < 4) → migrateV3toV4()`
+1. **链式迁移**：`if (version < 2) → migrateV1toV2()`，`if (version < 3) → migrateV2toV3()`，`if (version < 4) → migrateV3toV4()`，`if (version < 5) → migrateV4toV5()`
 2. **defaults 兜底**：迁移后用 `createDefaultLiteGameState()` 的属性做浅合并，补全任何缺失字段
-3. **版本号强制更新**：最终 `result.version = SAVE_VERSION (4)`
+3. **版本号强制更新**：最终 `result.version = SAVE_VERSION (5)`
 
 ---
 
@@ -86,3 +88,4 @@ fields[], alchemy{}
 |------|---------|
 | 2026-03-28 | 从 MASTER-ARCHITECTURE.md §5 拆出 |
 | 2026-03-29 | Phase E: +v4 变更链（moral/traits/affinity/tags/lastInteraction）+ migrateV3toV4 |
+| 2026-03-30 | Phase F0-α: +v5 变更链（sect.ethos/sect.discipline）+ migrateV4toV5 |

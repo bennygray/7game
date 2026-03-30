@@ -24,7 +24,7 @@
 import type { LiteGameState, LiteDiscipleState, RelationshipEdge } from '../shared/types/game-state';
 import type {
   SoulEvaluationResult, EmotionTag, SoulRole,
-  RelationshipTag,
+  RelationshipTag, DiscipleEmotionState,
 } from '../shared/types/soul';
 import { RELATIONSHIP_TAG_THRESHOLDS, EMOTION_LABEL } from '../shared/types/soul';
 import type { SoulEvent } from './event-bus';
@@ -37,6 +37,7 @@ import {
   fallbackGenerateThought,
 } from '../shared/data/emotion-pool';
 import { getTraitDef, ACQUIRED_TRAITS } from '../shared/data/trait-registry';
+import { EMOTION_DECAY_TICKS } from '../shared/data/emotion-behavior-modifiers';
 import type { GameLogger } from '../shared/types/logger';
 import { LogCategory } from '../shared/types/logger';
 
@@ -301,7 +302,11 @@ let decayAccumulatorSec = 0;
  * - 每 DECAY_INTERVAL_SEC 执行一次衰减
  * - 每 tick 道德漂移
  */
-export function soulTickUpdate(state: LiteGameState, deltaS: number): void {
+export function soulTickUpdate(
+  state: LiteGameState,
+  deltaS: number,
+  emotionMap?: Map<string, DiscipleEmotionState>,
+): void {
   // 道德自然漂移（每 tick 执行）
   driftMoral(state);
 
@@ -314,6 +319,11 @@ export function soulTickUpdate(state: LiteGameState, deltaS: number): void {
 
   // 后天特性检测（每 tick）
   checkAcquiredTraits(state);
+
+  // Phase F: 情绪衰减
+  if (emotionMap) {
+    decayEmotions(emotionMap);
+  }
 }
 
 // ===== AI 评估流水线（soul-event.handler 调用） =====
@@ -336,6 +346,7 @@ export function processSoulEvent(
   state: LiteGameState,
   logger: GameLogger,
   onSoulLog?: (msg: string) => void,
+  emotionMap?: Map<string, DiscipleEmotionState>,
 ): void {
   const actor = state.disciples.find(d => d.id === event.actorId);
   if (!actor) return;
@@ -380,6 +391,57 @@ export function processSoulEvent(
 
     if (onSoulLog) {
       onSoulLog(logLine);
+    }
+
+    // Phase F: 记录情绪到 emotionMap
+    if (emotionMap) {
+      recordEmotion(emotionMap, disciple.id, result);
+    }
+  }
+}
+// ===== Phase F: 情绪记录与衰减 =====
+
+/**
+ * 记录弟子情绪（soul-engine 评估后调用）
+ *
+ * 策略：last-write-wins（新情绪覆盖旧情绪）
+ * @see phaseF-PRD.md §3.2 F-F-03
+ */
+function recordEmotion(
+  emotionMap: Map<string, DiscipleEmotionState>,
+  discipleId: string,
+  result: SoulEvaluationResult,
+): void {
+  emotionMap.set(discipleId, {
+    currentEmotion: result.emotion,
+    emotionIntensity: result.intensity,
+    emotionSetAt: Date.now(),
+    decayCounter: 0,
+  });
+}
+
+/**
+ * 衰减所有弟子情绪（soul-tick 每次调用）
+ *
+ * 每次 soul-tick 增加 decayCounter；
+ * 到达 EMOTION_DECAY_TICKS 时 intensity -1，重置 counter；
+ * intensity 降到 0 时清除情绪。
+ *
+ * @see phaseF-PRD.md §3.2 F-F-02
+ */
+function decayEmotions(emotionMap: Map<string, DiscipleEmotionState>): void {
+  for (const [discipleId, emo] of emotionMap) {
+    if (!emo.currentEmotion) continue;
+
+    emo.decayCounter++;
+    if (emo.decayCounter >= EMOTION_DECAY_TICKS) {
+      emo.decayCounter = 0;
+      emo.emotionIntensity = (emo.emotionIntensity - 1) as 1 | 2 | 3;
+
+      if (emo.emotionIntensity <= 0) {
+        // 情绪完全衰减
+        emotionMap.delete(discipleId);
+      }
     }
   }
 }

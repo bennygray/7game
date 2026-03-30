@@ -1,7 +1,7 @@
 # 7game-lite — AI 助手全局执行规范
 
 > **此文件是所有 AI 助手在本项目中的行为准则。** 每次新会话自动生效。
-> **版本**: v1.2 | **更新日期**: 2026-03-28
+> **版本**: v1.3 | **更新日期**: 2026-03-29
 > **项目定位**: 从 7waygame 衍生的最简验证版。核心玩法：文字 MUD + AI 灵智弟子经营模拟。
 
 ---
@@ -20,14 +20,17 @@
 
 ```
 Level 1（永远读）：
+  0. .agents/project.yaml                 ← 获取所有文档路径（最先读取）
   1. docs/project/MASTER-PRD.md           ← 索引（~120行）
   2. docs/design/MASTER-ARCHITECTURE.md   ← 索引（~100行）
   3. docs/project/handoff.md              ← 当前断点 + 接手指南
-  4. 确认当前活跃 Phase + 读对应文件（PRD/analysis/TDD）
-  5. 读 docs/pipeline/phaseX/ 过程资产    ← 恢复当前 Phase 上下文
+  4. docs/project/SOUL-VISION-ROADMAP.md  ← 灵魂远景路线图 V3
+  5. 确认当前活跃 Phase + 读对应文件（PRD/analysis/TDD）
+  6. 读 docs/pipeline/phaseX/ 过程资产    ← 恢复当前 Phase 上下文
 
 Level 2（按需读 detail）：
   根据任务类型，读对应 detail 文件（见 §3.10 路径映射表）
+  涉及世界/事件/NPC/道风设计时，读 docs/project/soul-vision-rethinking/06~09
 ```
 
 > [!NOTE]
@@ -138,14 +141,16 @@ server/        → Node.js 后端（AI 推理端点 + 模型管理）
 | ✅ IN（lite 范围内） | 🚫 OUT（lite 范围外） |
 |:---|:---|
 | 修炼引擎（炼气 1 → 筑基圆满） | 金丹及以上境界 |
-| 弟子行为树（4 人 × 7 态） | 弟子招募 / 扩展至 8~12 人 |
-| AI 灵智台词 + 目标生成 | 社交事件 / 夺舍 / 危机 |
-| MUD 文字面板 + 命令输入 | 图形渲染 / PixiJS / Canvas |
+| 弟子行为树（8 人 × 7 态） | 弟子招募 / 动态扩展 |
+| AI 灵智台词 + 事件决策 + 独白渲染 | 图形渲染 / PixiJS / Canvas |
+| MUD 文字面板 + 命令输入 | 云存档 / 多设备同步 |
 | 灵田（2 格）+ 炼丹（3 丹方） | 废丹回收 / 丹毒 / 宅邸灵气 |
 | 天劫（炼气 → 筑基，3 道雷） | 结丹天劫及以上 |
-| 悬赏（D~B 级） | 薪俸 / 忠诚度系统 |
-| localStorage 存档 | 云存档 / 多设备同步 |
-| 纯 Web 运行 | Electron 壳（Phase C 迁移） |
+| 悬赏（D~B 级） | Electron 壳（后期迁移） |
+| NPC 灵魂系统（道德/特性/关系/情绪） | 完整的 MMORPG 社交系统 |
+| 世界事件系统（轻量地点+事件池+五级漏斗） | 完整拓扑地图/寻路系统 |
+| 宗门道风立场（仁/霸×律/放） | 多宗门全面战争 |
+| localStorage 存档 | — |
 
 > 如果不确定某功能是否属于 lite 范围，以本表为准。
 > **禁止**实现 OUT 列中的任何功能的实际代码（可保留空目录作为结构预留）。
@@ -231,6 +236,19 @@ fix/*       → 修复分支
 
 ### 3.11 Pipeline 过程资产规范
 
+> [!CAUTION]
+> **⚠️ Antigravity Artifact 覆盖规则（最高优先级）**
+>
+> AI 助手的系统级 `planning_mode` 指令会要求将 `implementation_plan.md`、`task.md`、
+> `walkthrough.md` 写入 Antigravity brain 临时目录（`<appDataDir>\brain\<conversation-id>/`）。
+>
+> **本项目明确覆盖此行为**：所有 Pipeline 过程文档**必须且只能**写入项目目录
+> `docs/pipeline/phaseX/`，使用下方固定文件名。Antigravity brain 目录中的文件是临时的、
+> 不受版本控制的，不符合本项目的资产管理要求。
+>
+> **执行规则**：当 AI 系统指令要求创建 artifact 时，将内容写入 `docs/pipeline/phaseX/` 对应文件，
+> 而非 brain 目录。Antigravity artifact 系统仅用于非 Pipeline 的临时报告。
+
 > [!IMPORTANT]
 > **Trinity Pipeline 的过程文档是不可丢弃的项目资产。**
 > **禁止将 plan/task/walkthrough 遗留在 Antigravity brain 临时目录中。**
@@ -239,6 +257,7 @@ fix/*       → 修复分支
 |------|------|
 | **资产目录** | `docs/pipeline/phaseX/`（X = A, B-alpha, C, D, E, ...） |
 | **固定文件名** | `spm-analysis.md`, `plan.md`, `task.md`, `review.md`, `walkthrough.md` |
+| **文件名映射** | AI 系统的 `implementation_plan.md` → 项目的 `plan.md`；其余同名 |
 | **创建时机** | 各 Skill 启动时自动创建对应文件 |
 | **SPM 启动** | 创建 `spm-analysis.md` |
 | **SGA 启动** | 创建 `plan.md` |
@@ -333,9 +352,12 @@ d:\7game\
 ├── docs/                           ← 文档
 │   ├── INDEX.md                    ← 全文档索引
 │   ├── project/                    ← 项目管理（handoff / task-tracker）
+│   │   ├── soul-vision-rethinking/ ← 🆕 世界线推演文档（06~09 核心）
+│   │   ├── SOUL-VISION-ROADMAP.md  ← 灵魂远景路线图 V3
+│   │   └── soul-vision-gap-analysis.md ← 六层 Gap 分析 V3
 │   ├── features/                   ← PRD / SGPA 分析进度
 │   ├── design/specs/               ← TDD + User Stories
-│   ├── pipeline/                   ← 🆕 Trinity Pipeline 过程资产（spm-analysis/plan/task/walkthrough）
+│   ├── pipeline/                   ← Trinity Pipeline 过程资产
 │   └── verification/               ← 集成验证清单
 ├── index.html                      ← Vite 入口
 ├── package.json
@@ -348,14 +370,15 @@ d:\7game\
 ## 六、产品方向备忘
 
 > [!IMPORTANT]
-> **7game-lite 的核心假设：「纯文字 MUD + AI 灵智弟子」能否独立构成核心乐趣。**
+> **7game-lite 的核心假设：「纯文字 MUD + AI 灵智弟子 + 活世界」能否独立构成核心乐趣。**
 >
 > 关键决策：
 > - 纯 Web（浏览器），后期移植 Electron
 > - AI 灵智为首发核心（非后期接入）
-> - 骨架集 6 系统：修炼 + 弟子 + MUD + 灵田 + 炼丹 + 天劫
+> - 骨架集：修炼 + 弟子(8人) + MUD + 灵田 + 炼丹 + 天劫 + 灵魂系统 + 世界事件
 > - 止步筑基圆满（验证范围最小化）
-> - 弟子固定 4 人，AI 事件驱动推理
+> - 世界事件系统是验证基础设施（非远期功能）
+> - 宗门道风立场（仁/霸×律/放）为核心差异化
 >
 > **AI 助手在做任何决策时，必须以「验证核心乐趣」为最高优先级，
 > 拒绝任何增加范围的诱惑。**
@@ -439,3 +462,4 @@ src/ai/prompts/
 12. ❌ **禁止**未更新对应文档并获得用户确认就开始编码（§四）
 13. ❌ **禁止**修改 Tick Pipeline 挂载阶段而不更新 `docs/design/arch/pipeline.md`
 14. ❌ **禁止**向 MASTER 索引文件追加大段内容（§3.10），必须写入对应 detail 文件
+15. ❌ **禁止**将 Pipeline 过程资产（plan/task/walkthrough/review）写入 Antigravity brain 临时目录（§3.11），必须写入 `docs/pipeline/phaseX/`

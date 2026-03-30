@@ -32,10 +32,28 @@
 | 文件 | 用途 |
 |------|------|
 | `project/handoff.md` | 会话交接文档（当前断点 + 接手指南 + 关键决策） |
-| `project/SOUL-VISION-ROADMAP.md` | 灵魂远景路线图（Phase F~J 战略规划） |
+| `project/SOUL-VISION-ROADMAP.md` | 灵魂远景路线图（Phase F0~J 战略规划 V3） |
+| `project/soul-vision-gap-analysis.md` | 六层灵魂循环 Gap 分析（V3） |
 | `project/task-tracker.md` | 全局进度追踪（Phase 状态 + 累计统计） |
 | `project/tech-debt.md` | 技术债务登记簿（架构妥协 + 清偿跟踪） |
 | `project/feature-backlog.md` | 需求债务登记簿（降级/暂缓/裁剪需求） |
+
+## 世界线推演（Soul Vision Rethinking）
+
+> 探索性设计文档，用于讨论世界事件系统、NPC 交互、宗门道风等远景设计。
+> 结论已沉淀到 `SOUL-VISION-ROADMAP.md` 和 `soul-vision-gap-analysis.md`。
+
+| 文件 | 内容 |
+|------|------|
+| `project/soul-vision-rethinking/01-market-research-and-gap-analysis.md` | 市场调研 + 初始 Gap 分析 |
+| `project/soul-vision-rethinking/02-architecture-and-model-constraints.md` | 架构约束 + 模型能力边界 |
+| `project/soul-vision-rethinking/03-hybrid-decision-architecture.md` | 混合决策架构推演 |
+| `project/soul-vision-rethinking/04-hybrid-decision-test-plan.md` | 混合决策测试计划 |
+| `project/soul-vision-rethinking/05-poc-2c-findings-and-conclusion.md` | PoC-2c~2e 验证结论 |
+| `project/soul-vision-rethinking/06-spm-world-director-exploration.md` | 世界线推演核心（MUD调研 + 四维决策 + 验证阻塞诊断） |
+| `project/soul-vision-rethinking/07-spm-event-density-severity.md` | 五级事件漏斗 + Storyteller 节奏设计 |
+| `project/soul-vision-rethinking/08-spm-ai-capacity-estimation.md` | T1/T2 NPC 双层架构 + AI 容量估算 |
+| `project/soul-vision-rethinking/09-spm-sect-alignment.md` | 宗门道风(仁/霸)×门规(律/放)立场系统 |
 
 ## Trinity 分析进度
 

@@ -1,19 +1,23 @@
 # 7game-lite — 会话交接文档
 
-> **上次更新**：2026-03-29 | **上次会话主题**：Roadmap V3 审阅修复 + 文档对齐冲刺
-> **当前活跃 Phase**：Phase E (v0.5) ✅ 完成 → 准备启动 Phase F0-α
-> **Phase 状态**：Roadmap V3.1 定案，下一步进入 Phase F0-α（碰面世界）
+> **上次更新**：2026-03-30 | **上次会话主题**：Phase F 灵魂闭环实施
+> **当前活跃 Phase**：Phase F (v0.8) ✅ 完成
+> **Phase 状态**：Phase F 已交付，存档保持 v5，12 个 Handler，12 条 F 专项 + 64 条回归全通过
 
 ---
 
 ## 当前断点
 
-- Phase E 的 SPM GATE 1、SGA GATE 2、SGE GATE 3 均已通过
-- **世界线推演已完成**（06~09 号文档），所有结论已沉淀到 Roadmap V3.1 和 Gap Analysis V3
-- **Roadmap V3.1 审阅修复已完成**：F0 拆分为 F0-α/F0-β；Phase F 并行策略精确化；Phase G 重排；工时修正
-- **MASTER-PRD 升级到 v2.0**：对齐新愿景 + 版本路线 + 弟子数量 + 经济系统暂缓
-- **下一步**：启动 Phase F0-α 规划（地点标签 / 碰面引擎 / 宗门道风），同时可并行启动 Phase F 的 F1+F2
-- 回归验证：64/64 通过（含 v3→v4 迁移链 8 条新增断言）
+- Phase F 的 SPM GATE 1、SGA GATE 2、SGE GATE 3 均已通过
+- **新增系统**：灵魂闭环（四层行为权重叠加）
+  - Layer 1: 基础五维性格权重（不变）
+  - Layer 2: 特性 behavior-weight 乘法叠加（14 条效果）
+  - Layer 3: 关系标签 friend/rival 同地点乘数（3 条规则）
+  - Layer 4: 短期情绪状态→行为权重（11 条映射 + 衰减）
+- **运行时状态**：emotionMap（IdleEngine 实例属性，ADR-F-01），不持久化
+- **存档 v5 不变**（无新持久化字段）
+- **下一步**：启动 Phase G（AI 觉醒）或 Phase F0-γ
+- 回归验证：64/64 通过 + 12 条专项验证通过
 
 ## 世界线推演关键定案（2026-03-29 晚间）
 

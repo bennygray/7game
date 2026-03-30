@@ -22,7 +22,7 @@ import { createDefaultLiteGameState } from '../shared/types/game-state';
 import { generateInnateTraits } from '../shared/data/trait-registry';
 
 const SAVE_KEY = '7game-lite-save';
-const SAVE_VERSION = 4;
+const SAVE_VERSION = 5;
 
 /** 保存游戏状态到 localStorage */
 export function saveGame(state: LiteGameState): boolean {
@@ -151,6 +151,21 @@ function migrateV3toV4(raw: Record<string, unknown>): void {
 }
 
 /**
+ * v4 → v5 显式迁移 (Phase F0-α)
+ *
+ * - SectState 增 ethos / discipline（默认 0 = 中庸）
+ */
+function migrateV4toV5(raw: Record<string, unknown>): void {
+  const sect = raw['sect'] as Record<string, unknown> | undefined;
+  if (sect && typeof sect === 'object') {
+    if (sect['ethos'] === undefined) sect['ethos'] = 0;
+    if (sect['discipline'] === undefined) sect['discipline'] = 0;
+  }
+  raw['version'] = 5;
+  console.log('[SaveManager] v4 → v5 迁移完成');
+}
+
+/**
  * 迁移旧存档：逐版本号升级 + 默认值填充
  */
 function migrateSave(raw: Record<string, unknown>): LiteGameState {
@@ -165,6 +180,9 @@ function migrateSave(raw: Record<string, unknown>): LiteGameState {
   }
   if ((raw['version'] as number) < 4) {
     migrateV3toV4(raw);
+  }
+  if ((raw['version'] as number) < 5) {
+    migrateV4toV5(raw);
   }
 
   // 兜底：用 defaults 补全可能缺失的字段（安全网）
