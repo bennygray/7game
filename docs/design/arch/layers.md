@@ -99,3 +99,4 @@ graph TB
 | 2026-03-28 | Phase D Hotfix: BehaviorIntent 新增 timerDelta 字段; SmartLLMAdapter 移除自动重试改为手动 tryConnect; FallbackLLMAdapter 对话改 2 轮; 弟子 4→8 人 + 新性格(孤傲/恐懦); reset 命令实装 |
 | 2026-03-29 | Phase E: Data +3 (soul.ts, trait-registry.ts, emotion-pool.ts), Engine +3 (event-bus, soul-engine, soul-tick.handler, soul-event.handler), AI +1 (soul-prompt-builder); GameState v3→v4; Data 11→14, Engine 19→22, AI 4+→5+ |
 | 2026-03-30 | Phase F: Data +1 (emotion-behavior-modifiers.ts), soul.ts +DiscipleEmotionState; Data 14→15; behavior-tree +getEnhancedPersonalityWeights; tick-pipeline TickContext +emotionMap; idle-engine +emotionMap |
+| 2026-03-30 | Phase H-α: Data +1 (zone-descriptions.ts); Presentation 拆分出 ui/mud-formatter.ts; Presentation 1→2 文件; 零 Engine/Pipeline 变更 |

@@ -1,14 +1,31 @@
 # 7game-lite — 会话交接文档
 
-> **上次更新**：2026-03-30 | **上次会话主题**：Phase F 灵魂闭环实施
-> **当前活跃 Phase**：Phase F (v0.8) ✅ 完成
-> **Phase 状态**：Phase F 已交付，存档保持 v5，12 个 Handler，12 条 F 专项 + 64 条回归全通过
+> **上次更新**：2026-03-30 | **上次会话主题**：Phase H-α MUD 世界呼吸异常
+> **当前活跃 Phase**：Phase H-α ✅ 完成
+> **Phase 状态**：SPM+SGA+SGE 全流程通过，存档 v5，12 个 Handler，64条回归全通过
 
 ---
 
 ## 当前断点
 
-- Phase F 的 SPM GATE 1、SGA GATE 2、SGE GATE 3 均已通过
+- Phase H-α 的 SPM GATE 1、SGA GATE 2、SGE GATE 3 均已通过，已 USER 浏览器手动验证
+- **下一步**：根据 Roadmap V3.1，下一个 Phase 为 Phase G（AI 觉醒）
+- 回归验证：64/64 通过
+
+### Phase H-α 已交付 — MUD 世界呼吸如异
+
+| 系统 | 状态 | 验证 |
+|------|------|---------|
+| `look` 命令（宗门总览 + 弟子档案） | ✅ | USER 浏览器手动验证 |
+| 日志分级显示（EventSeverity → 颜色） | ✅ | 代码审查 + regression |
+| 固定状态栏（sticky header） | ✅ | USER 浏览器手动验证 |
+| 环境呼吸（25~45s 随机触发） | ✅ | 代码审查 |
+
+- 零引擎改动，零存档迁移
+- 新增文件：`zone-descriptions.ts`（Data）+ `ui/mud-formatter.ts`（Presentation）
+
+### Phase F 已交付 — 灵魂闭环
+
 - **新增系统**：灵魂闭环（四层行为权重叠加）
   - Layer 1: 基础五维性格权重（不变）
   - Layer 2: 特性 behavior-weight 乘法叠加（14 条效果）
@@ -16,8 +33,34 @@
   - Layer 4: 短期情绪状态→行为权重（11 条映射 + 衰减）
 - **运行时状态**：emotionMap（IdleEngine 实例属性，ADR-F-01），不持久化
 - **存档 v5 不变**（无新持久化字段）
-- **下一步**：启动 Phase G（AI 觉醒）或 Phase F0-γ
-- 回归验证：64/64 通过 + 12 条专项验证通过
+- 专项验证：12/12 通过
+
+### Phase F0-α 已交付 — 碰面世界
+
+| 系统 | 状态 | 验证结果 |
+|------|------|---------|
+| 地点标签系统（7 个 Zone） | ✅ | 行为→地点映射全覆盖 |
+| 碰面检定引擎（encounter-tick） | ✅ | 同地碰面→关系/性格→结果判定 |
+| 宗门道风系统（ethos×discipline 双轴） | ✅ | 开局三选一 + 持久化 |
+| 存档 v5 迁移（migrateV4toV5） | ✅ | v1→v2→v3→v4→v5 迁移链 |
+| SoulEventType +3（encounter 相关） | ✅ | EventBus + emotion-pool 接入 |
+| 碰面文案模板（encounter-templates） | ✅ | 3 类碰面结果 × Fallback 文案 |
+
+- 专项验证：52/52 通过
+
+### Phase F0-β 已交付 — 活世界
+
+| 系统 | 状态 | 验证结果 |
+|------|------|---------|
+| 世界事件类型系统（world-event.ts） | ✅ | 5 级事件定义 |
+| 世界事件注册表（12 事件 × 36 文案） | ✅ | 事件池完整 |
+| Storyteller 节奏器 | ✅ | 戏剧张力指数 + 波峰波谷控制 |
+| world-event-tick Handler（605:0） | ✅ | Pipeline 集成 |
+| emotion-pool + soul-prompt-builder 扩展 | ✅ | world-event 情绪映射 |
+
+- 专项验证：108/108 通过
+- BUG-01 修复：Storyteller lastStormTimestamp 初始值
+- BUG-02 修复：soul-prompt-builder 缺少 world-event 映射
 
 ## 世界线推演关键定案（2026-03-29 晚间）
 
@@ -57,6 +100,7 @@
 | 2026-03-29 | **Roadmap V3.1 审阅修复** | F0→F0-α/F0-β；Phase F 并行策略；Phase G 重排；工时修正 |
 | 2026-03-29 | **MASTER-PRD v2.0** | 宪法文档对齐新愿景，天劫/悬赏/丹毒标记暂缓 |
 | 2026-03-29 | **文档对齐冲刺** | systems.md/feature-backlog/game-state.ts 同步修复 |
+| 2026-03-30 | **Phase F/F0-α/F0-β 交付** | 灵魂闭环 + 碰面世界 + 活世界一日交付 |
 
 ## 接手指南
 

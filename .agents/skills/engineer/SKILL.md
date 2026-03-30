@@ -118,6 +118,10 @@ trigger: >
 
 编码和验证完成后，更新以下文档（按 AGENTS.md 写入路径映射表）：
 
+- [ ] **必更新** → 更新 `${paths.task_tracker}`（Phase 状态总览 + 累计统计）
+- [ ] **必更新** → 更新 `${paths.handoff}`（当前断点 + 已交付表格）
+- [ ] 如涉及 Roadmap Phase 完成 → 更新 `${paths.roadmap}`（标记 Phase ✅）
+- [ ] 如涉及 Gap 分析层级变化 → 更新 `soul-vision-gap-analysis.md`（层百分比更新）
 - [ ] 新增资源/系统 → 更新 `${paths.prd_economy}` + `${paths.prd_systems}`
 - [ ] 新增公式 → 更新 `${paths.prd_formulas}`
 - [ ] 新增代码文件 → 更新 `${paths.arch_layers}`
