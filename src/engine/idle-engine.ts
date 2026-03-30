@@ -5,8 +5,9 @@
  * Phase D: +对话系统集成 +Logger 集成 +Intent 模式
  * Phase E: +灵魂系统（EventBus + soul-tick + soul-event）
  * Phase F0-α: +碰面系统（encounter-tick）
+ * Phase G: +异步 AI 缓冲区（async-ai-buffer + ai-result-apply）
  *
- * Pipeline 执行顺序（12 个 Handler）：
+ * Pipeline 执行顺序（13 个 Handler）：
  *   100 BUFF_COUNTDOWN  — boost-countdown: 修速丹 buff 倒计时
  *   200 PRE_PRODUCTION   — breakthrough-aid: 自动服破镜丹
  *   200 PRE_PRODUCTION   — auto-breakthrough: 自动突破检测+执行
@@ -16,6 +17,7 @@
  *   600 DISCIPLE_AI      — disciple-tick: 弟子行为树 tick（Phase D Intent 模式）
  *   610 ENCOUNTER        — encounter-tick: 碰面检定引擎（Phase F0-α）
  *   625 SOUL_EVAL        — soul-event: 灵魂事件评估（Phase E）
+ *   625 SOUL_EVAL(5)     — ai-result-apply: AI 结果异步应用（Phase G）
  *   650 DIALOGUE         — dialogue-tick: 弟子间对话触发（Phase D）
  *   700 POST_PRODUCTION  — cultivate-boost: 自动服修速丹
  *
@@ -61,6 +63,8 @@ import { soulTickHandler } from './handlers/soul-tick.handler';
 import { soulEventHandler } from './handlers/soul-event.handler';
 import { encounterTickHandler } from './handlers/encounter-tick.handler';
 import { worldEventTickHandler } from './handlers/world-event-tick.handler';
+import { aiResultApplyHandler } from './handlers/ai-result-apply.handler';
+import { AsyncAIBuffer } from './async-ai-buffer';
 
 /** Tick 回调：引擎每次 tick 后通知上层 */
 export type TickCallback = (state: LiteGameState, deltaS: number) => void;
@@ -107,6 +111,9 @@ export class IdleEngine {
   /** Phase F: 弟子情绪运行时状态 (ADR-F-01) */
   private emotionMap: Map<string, DiscipleEmotionState> = new Map();
 
+  /** Phase G: 异步 AI 缓冲区 */
+  private asyncAIBuffer = new AsyncAIBuffer();
+
   /** Tick 间隔（毫秒） */
   static readonly TICK_INTERVAL_MS = 1000;
 
@@ -133,6 +140,7 @@ export class IdleEngine {
     this.pipeline.register(worldEventTickHandler); // Phase F0-β: 605 世界事件
     this.pipeline.register(encounterTickHandler); // Phase F0-α: 610 碰面检定
     this.pipeline.register(soulEventHandler);    // Phase E: 625 灵魂事件评估
+    this.pipeline.register(aiResultApplyHandler); // Phase G: 625:5 AI 结果异步应用
     this.pipeline.register(dialogueTickHandler);
     this.pipeline.register(cultivateBoostHandler);
   }
@@ -214,6 +222,7 @@ export class IdleEngine {
       breakthroughCooldown: this.breakthroughCooldown,
       eventBus: new EventBus(),   // Phase E: 每 tick 创建新实例，生命周期与 tick 绑定
       emotionMap: this.emotionMap, // Phase F: 弟子情绪运行时状态 (ADR-F-01)
+      asyncAIBuffer: this.asyncAIBuffer, // Phase G: 异步 AI 缓冲区
     };
 
     // 执行 Pipeline（12 个 Handler 按 phase+order 顺序执行）

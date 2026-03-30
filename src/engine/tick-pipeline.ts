@@ -20,6 +20,7 @@ import type { DialogueTrigger } from '../shared/types/dialogue';
 import type { GameLogger } from '../shared/types/logger';
 import type { EventBus } from './event-bus';
 import type { DiscipleEmotionState } from '../shared/types/soul';
+import type { AsyncAIBuffer } from './async-ai-buffer';
 
 /** 突破事件回调（定义在 tick-pipeline 以避免循环依赖） */
 export type BreakthroughCallback = (
@@ -96,6 +97,8 @@ export interface TickContext {
   eventBus: EventBus;
   /** Phase F: 弟子情绪运行时状态 (ADR-F-01) */
   emotionMap: Map<string, DiscipleEmotionState>;
+  /** Phase G: 异步 AI 缓冲区（fire-and-forget + deferred correction） */
+  asyncAIBuffer?: AsyncAIBuffer;
 }
 
 // ===== TickPipeline 类 =====

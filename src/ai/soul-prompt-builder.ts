@@ -64,6 +64,83 @@ export const SOUL_EVAL_JSON_SCHEMA = {
   required: ['emotion', 'intensity', 'relationshipDeltas', 'innerThought'],
 };
 
+// ===== G5: 宗门道风描述 =====
+
+/** 宗门上下文（用于 prompt 注入） */
+export interface SectContext {
+  name: string;
+  ethos: number;      // [-100, +100]: -100=仁道 ↔ +100=霸道
+  discipline: number; // [-100, +100]: -100=放任 ↔ +100=律法
+}
+
+/**
+ * 将宗门数值映射为自然语言道风描述
+ *
+ * @see SOUL-VISION-ROADMAP.md Phase G, G5
+ */
+export function describeEthos(ethos: number, discipline: number): string {
+  const parts: string[] = [];
+
+  // 道风轴
+  if (ethos > 50) {
+    parts.push('宗门崇尚强者，弱肉强食');
+  } else if (ethos > 20) {
+    parts.push('宗门风气偏向刚猛');
+  } else if (ethos < -50) {
+    parts.push('宗门以仁义为本，扶危济困');
+  } else if (ethos < -20) {
+    parts.push('宗门风气偏向温和');
+  }
+
+  // 门规轴
+  if (discipline > 50) {
+    parts.push('门规森严，不容逾矩');
+  } else if (discipline > 20) {
+    parts.push('门规较为严格');
+  } else if (discipline < -50) {
+    parts.push('门风自由，弟子各行其是');
+  } else if (discipline < -20) {
+    parts.push('门规较为宽松');
+  }
+
+  return parts.length > 0 ? parts.join('，') : '宗门风气中正平和';
+}
+
+// ===== G3: 道德描述 =====
+
+/**
+ * 将弟子道德双轴映射为自然语言描述
+ *
+ * @see SOUL-VISION-ROADMAP.md Phase G, G3
+ */
+export function describeMoral(goodEvil: number, lawChaos: number): string {
+  const parts: string[] = [];
+
+  // 善恶轴
+  if (goodEvil > 50) {
+    parts.push('你心怀正义，以善为本');
+  } else if (goodEvil > 20) {
+    parts.push('你心性偏善');
+  } else if (goodEvil < -50) {
+    parts.push('你内心阴暗，行事不择手段');
+  } else if (goodEvil < -20) {
+    parts.push('你心性偏恶');
+  }
+
+  // 秩序轴
+  if (lawChaos > 50) {
+    parts.push('恪守规矩');
+  } else if (lawChaos > 20) {
+    parts.push('倾向守序');
+  } else if (lawChaos < -50) {
+    parts.push('无视规矩，随心所欲');
+  } else if (lawChaos < -20) {
+    parts.push('略显散漫');
+  }
+
+  return parts.length > 0 ? parts.join('，') : '';
+}
+
 // ===== Prompt 构建 =====
 
 export interface SoulPromptInput {
@@ -74,6 +151,8 @@ export interface SoulPromptInput {
   actorRealm: string;
   candidates: EmotionTag[];
   otherDiscipleIds: string[];
+  /** Phase G5: 宗门上下文（可选） */
+  sectContext?: SectContext;
 }
 
 /**
@@ -87,13 +166,23 @@ export interface SoulPromptInput {
  * 5. 输出格式说明
  */
 export function buildSoulEvalPrompt(input: SoulPromptInput): string {
-  const { event, subject, role, actorName, candidates } = input;
+  const { event, subject, role, actorName, candidates, sectContext } = input;
 
-  // 特性ai提示词
+  // G6: 特性 ai 提示词
   const traitHints = subject.traits
     .map(t => getTraitDef(t.defId)?.aiHint)
     .filter(Boolean)
     .join('；');
+
+  // G5: 宗门道风描述
+  const ethosDesc = sectContext
+    ? describeEthos(sectContext.ethos, sectContext.discipline)
+    : '';
+
+  // G3: 道德描述
+  const moralDesc = subject.moral
+    ? describeMoral(subject.moral.goodEvil, subject.moral.lawChaos)
+    : '';
 
   const candidateList = candidates
     .map(e => `${e}(${EMOTION_LABEL[e] ?? e})`)
@@ -101,7 +190,13 @@ export function buildSoulEvalPrompt(input: SoulPromptInput): string {
 
   const eventDescription = getEventDescription(event.type, role, actorName, subject.name);
 
-  const prompt = `你是修仙宗门弟子「${subject.name}」，性格${subject.personalityName}。${traitHints ? '性格特点：' + traitHints + '。' : ''}
+  // 构建身份段落
+  let identity = `你是修仙宗门弟子「${subject.name}」，性格${subject.personalityName}。`;
+  if (traitHints) identity += `性格特点：${traitHints}。`;
+  if (moralDesc) identity += `${moralDesc}。`;
+  if (ethosDesc) identity += `你所在的宗门：${ethosDesc}。`;
+
+  const prompt = `${identity}
 
 刚才发生了：${eventDescription}
 

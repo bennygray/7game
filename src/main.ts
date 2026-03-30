@@ -23,6 +23,8 @@ import { escapeHtml } from './engine/disciple-generator';
 import { getBehaviorLabel } from './engine/behavior-tree';
 import { createLLMAdapter, type GenerateRequest } from './ai/llm-adapter';
 import { createDefaultAISoulContext, addShortTermMemory } from './shared/types/ai-soul';
+import { SoulEvaluator } from './ai/soul-evaluator';
+import { initSoulEventEvaluator } from './engine/handlers/soul-event.handler';
 import { SEED_BY_ID } from './shared/data/seed-table';
 import { RECIPE_BY_ID } from './shared/data/recipe-table';
 import { getSpiritVeinDensity } from './shared/data/realm-table';
@@ -291,6 +293,16 @@ function handleCommand(cmd: string): void {
           }
         });
       }
+      // Phase G: 同时连接 SoulEvaluator（灵魂 AI 评估）
+      {
+        const soulEval = new SoulEvaluator();
+        soulEval.tryConnect().then((ok) => {
+          if (ok) {
+            initSoulEventEvaluator(soulEval);
+            addMudLog('<span style="color:#50fa7b">[系统] ✓ 灵魂 AI 评估已激活（Lv.2+ 事件将使用 AI）</span>');
+          }
+        });
+      }
       break;
 
     case 'reset':
@@ -460,6 +472,17 @@ if ('tryConnect' in llmAdapter) {
   (llmAdapter as any).tryConnect().then((ok: boolean) => {
     if (ok) {
       addMudLog('<span style="color:#50fa7b">[系统] ✓ AI 后端已连接，弟子台词切换到 AI 模式</span>');
+    }
+  });
+}
+
+// Phase G: 自动尝试连接 SoulEvaluator（静默）
+{
+  const soulEval = new SoulEvaluator();
+  soulEval.tryConnect().then((ok) => {
+    if (ok) {
+      initSoulEventEvaluator(soulEval);
+      addMudLog('<span style="color:#50fa7b">[系统] ✓ 灵魂 AI 评估已激活</span>');
     }
   });
 }
