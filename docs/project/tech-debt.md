@@ -24,6 +24,10 @@
 | TD-012 | 关系系统数值参数（衰减率 ×0.98、标签乘数 ×1.3/×1.5/×0.5、衰减下限 5）均为设计估算值，未经 Monte Carlo 模拟验证。需编写 `scripts/simulate-relationship.ts` 进行参数敏感度分析 | Phase E PRD USER 反馈 | P2 | soul-engine, relationship-handler | Phase E Story #5 验证阶段 |
 | TD-013 | `trait-registry.ts` 的 `generateInnateTraits` 函数中 0.8 概率常量（生成 1 个特性的概率）和 `disciple-generator.ts` 的 400 道德相似度归一化分母未命名为常量 | Phase E SGE Review — R7-D2 WARN | P4 | trait-registry.ts, disciple-generator.ts | 下次触及时 |
 | TD-014 | `sympathy-handler.ts` 候选池数据清理逻辑中存在硬编码的清理阈值 0.15 | Phase E SGE Review — R7-D3 WARN | P4 | sympathy-handler.ts | 下次触及时 |
+| TD-015 | 已有三个专用日志回调（farmLogs/systemLogs/discipleEvents）可逐步迁移到统一管线（onMudLog），消除冗余回调 | Phase H-β ADR-Hβ-01 | P3 | idle-engine.ts, main.ts | 后续 Phase 触及时 |
+| TD-016 | MUD 显示类功能缺少自动化验证（当前为浏览器手动验证），未来可引入 E2E 测试框架 | Phase H-β SGA Review R4-D5/R6-D4 WARN | P3 | 测试框架 | 后续 Phase |
+| TD-020 | 裁决系统缺少自动化验证脚本（ethosShift clamp、timeout 逻辑），可通过 mock inGameWorldTime 实现 | Phase H-γ SGE Review R6-D4 WARN | P3 | ruling 系统, scripts/ | 后续 Phase |
+| TD-021 | `createRuling` 中事件文案渲染逻辑与 `world-event-tick.handler.ts:renderEventText` 高度相似（{D}/{D2} 模板替换），可抽取共享函数 | Phase H-γ SGE Review R7-D4 WARN | P4 | idle-engine.ts, world-event-tick.handler.ts | 下次触及时 |
 
 ---
 

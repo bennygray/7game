@@ -1,16 +1,47 @@
 # 7game-lite — 会话交接文档
 
-> **上次更新**：2026-03-30 | **上次会话主题**：Phase G AI 觉醒
-> **当前活跃 Phase**：Phase G ✅ 完成
+> **上次更新**：2026-03-31 | **上次会话主题**：Phase H-γ 掌门裁决
+> **当前活跃 Phase**：Phase H-γ ✅ 完成
 > **Phase 状态**：SPM+SGA+SGE 全流程通过，存档 v5 不变，13 个 Handler，64条回归全通过
 
 ---
 
 ## 当前断点
 
-- Phase G 的 SPM GATE 1、SGA GATE 2、SGE GATE 3 均已通过
+- Phase H-γ 的 SPM GATE 1、SGA GATE 2、SGE GATE 3 均已通过
 - **下一步**：待 USER 确认后进入下一 Phase（Roadmap 参考）
 - 回归验证：64/64 通过
+
+### Phase H-γ 已交付 — 掌门裁决
+
+| 系统 | 状态 | 验证 |
+|------|------|---------|
+| 裁决类型系统（ruling.ts：RulingDef/ActiveRuling/RulingResolution） | ✅ | tsc 零错误 |
+| 裁决注册表（12 定义：3 专属 WE-B04 + 9 通用池） | ✅ | tsc 零错误 |
+| TickContext.pendingStormEvent 信号（ADR-Hγ-01） | ✅ | regression 64/64 |
+| world-event-tick STORM 标记 | ✅ | regression 64/64 |
+| IdleEngine 裁决管理（create/resolve/timeout/applyDrift） | ✅ | regression 64/64 |
+| judge 命令 + MUD 裁决窗口/结果渲染 | ✅ | 待浏览器手动验证 |
+
+- 2 新文件 + 5 修改文件，零存档迁移
+- TD-020/TD-021 新增
+- FB-011 已清偿（玩家干预权 — judge 命令裁决 STORM 事件）
+- ADR-Hγ-01（pendingStormEvent 信号方案）、ADR-Hγ-02（ActiveRuling 不持久化）
+
+### Phase H-β 已交付 — 世界缝合
+
+| 系统 | 状态 | 验证 |
+|------|------|---------|
+| S0 统一日志管线（flush→onMudLog→routeLogEntryToMud） | ✅ | regression 64/64 + tsc 零错误 |
+| S1 碰面事件 MUD 可见（自动，零额外代码） | ✅ | 待浏览器手动验证 |
+| S2 AI 独白 MUD 可见（自动，零额外代码） | ✅ | 待浏览器手动验证 |
+| S3 inspect 命令（弟子灵魂档案：情绪/道德/特性/关系） | ✅ | 待浏览器手动验证 |
+| S4 sect 命令（宗门道风总览 + ASCII 刻度尺） | ✅ | 待浏览器手动验证 |
+
+- 4 文件修改，+231 行，零存档迁移
+- TD-015/TD-016 新增
+- FB-005 部分清偿（inspect 命令提供弟子关系查看入口）
+- ADR-Hβ-01（统一管线方案选择）、ADR-Hβ-02（flush 持久化兼容策略）
 
 ### Phase G 已交付 — AI 觉醒
 
@@ -131,6 +162,6 @@
 | 风险 | 严重度 | 说明 |
 |------|:------:|------|
 | 关系数值参数未经模拟验证 | 中 | TD-012，需 Monte Carlo 模拟 |
-| AI 路径接入需处理 async 竞态 | 中 | 已升级为 Phase G 的 G0（最高优先级子项） |
-| 13 条技术债务活跃 | 低 | 见 tech-debt.md |
+| 17 条技术债务活跃 | 低 | 见 tech-debt.md（TD-020/021 新增于 H-γ） |
 | 经济系统三件套暂缓 | 低 | 天劫/悬赏/丹毒已注册为 FB-013~015，不影响灵魂/世界验证 |
+| 旧回调管线冗余 | 低 | TD-015：farmLogs/systemLogs/discipleEvents 可迁移到统一管线 |

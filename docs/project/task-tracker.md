@@ -1,6 +1,6 @@
 # 7game-lite — 全局进度追踪
 
-> **最后更新**：2026-03-30
+> **最后更新**：2026-03-31
 
 ---
 
@@ -20,15 +20,17 @@
 | F0-β | v0.6 | 活世界（事件池·漏斗·Storyteller） | ✅ | ✅ | ✅ | 🟢 完成 |
 | H-α | v0.2 | MUD世界呈现（look/分级日志/sticky状态栏/环境呼吸） | ✅ | ✅ | ✅ | 🟢 完成 |
 | G | v0.4.2 | AI觉醒（async缓冲/情绪接入/独白/双阶段决策/反派修复） | ✅ | ✅ | ✅ | 🟢 完成 |
+| H-β | v0.4.5 | 世界缝合（统一日志管线/inspect/sect命令） | ✅ | ✅ | ✅ | 🟢 完成 |
+| H-γ | v0.4.6 | 掌门裁决（STORM裁决窗口/judge命令/道风漂移） | ✅ | ✅ | ✅ | 🟢 完成 |
 
 ---
 
 ## 当前 Phase 详情
 
-**Phase G 已完成** — AI 觉醒
+**Phase H-γ 已完成** — 掌门裁决
 
 - SPM GATE 1 ✅ → SGA GATE 2 ✅ → SGE GATE 3 ✅
-- 25/26 AC 通过（1 AC P95 需实游验证）
+- 6 个 Story 全部交付（S1 触发 + S2 裁决 + S3 超时 + S4 漂移验证 + S5 选项匹配 + S6 回归）
 - **下一步**：待用户确认后进入下一 Phase
 
 ---
@@ -37,11 +39,11 @@
 
 | 指标 | 数值 |
 |------|------|
-| 已实现系统 | 19 个（修炼、弟子×8、MUD、灵田、炼丹、突破、灵脉、丹药消费、AI对话、结构化日志、Intent、Tick Pipeline、灵魂事件总线、灵魂评估引擎、碰面引擎、世界事件系统、Storyteller、MUD世界呈现、AI觉醒系统） |
+| 已实现系统 | 21 个（修炼、弟子×8、MUD、灵田、炼丹、突破、灵脉、丹药消费、AI对话、结构化日志、Intent、Tick Pipeline、灵魂事件总线、灵魂评估引擎、碰面引擎、世界事件系统、Storyteller、MUD世界呈现、AI觉醒系统、统一日志管线、掌门裁决系统） |
 | 回归测试 | 64 组全通过 |
 | 专项验证 | Phase E 47 + Phase F 12 + Phase F0-α 52 + Phase F0-β 108 = **219 条** |
-| 技术债务 | TD-001~TD-014（2 个已清偿：TD-001 Pipeline 重构、TD-003 Intent；TD-006 部分清偿） |
-| 需求债务 | FB-001~FB-015（2 个已清偿：FB-001 弟子对话、FB-004 关系系统；FB-010/FB-012 部分清偿） |
+| 技术债务 | TD-001~TD-021（2 个已清偿：TD-001 Pipeline 重构、TD-003 Intent；TD-006 部分清偿） |
+| 需求债务 | FB-001~FB-015（3 个已清偿：FB-001 弟子对话、FB-004 关系系统、FB-011 玩家干预权；FB-005/FB-010/FB-012 部分清偿） |
 | GameState 版本 | v5（Phase G 零存档迁移） |
 | Tick Handler 数量 | 13 个 |
 | 弟子数量 | 8 人（4 初始 + 4 Phase D 新增） |
@@ -65,6 +67,8 @@
 | F0-β | [spm-analysis](../pipeline/phaseF0-beta/spm-analysis.md) | — | — | — | [task](../pipeline/phaseF0-beta/task.md) |
 | H-α | [PRD](../features/phaseH-alpha-PRD.md) | [TDD](../design/specs/phaseH-alpha-TDD.md) | — | — | [task](../pipeline/phaseH-alpha/task.md) |
 | G | [PRD](../features/phaseG-PRD.md) | [TDD](../design/specs/phaseG-TDD.md) | [stories](../design/specs/phaseG-user-stories.md) | — | [spm](../pipeline/phaseG/spm-analysis.md) [plan](../pipeline/phaseG/plan.md) [review](../pipeline/phaseG/review.md) [walk](../pipeline/phaseG/walkthrough.md) |
+| H-β | [PRD](../features/phaseH-beta-PRD.md) | [TDD](../design/specs/phaseH-beta-TDD.md) | [stories](../design/specs/phaseH-beta-user-stories.md) | — | [spm](../pipeline/phaseH-beta/spm-analysis.md) [plan](../pipeline/phaseH-beta/plan.md) [review](../pipeline/phaseH-beta/review.md) |
+| H-γ | [PRD](../features/phaseH-gamma-PRD.md) | [TDD](../design/specs/phaseH-gamma-TDD.md) | [stories](../design/specs/phaseH-gamma-user-stories.md) | — | [spm](../pipeline/phaseH-gamma/spm-analysis.md) [review](../pipeline/phaseH-gamma/review.md) |
 
 ---
 
@@ -78,3 +82,5 @@
 | 2026-03-30 | **文档同步修复**：Phase F/F0-α/F0-β 标记完成(✅)；累计统计更新(v5/17系统/12 handler/219专项)；文档索引补全 F/F0-α/F0-β |
 | 2026-03-30 | **Phase H-α 完成**：look命令+分级日志+固定状态栏+环境呼吸；已实现系统 17→18；TD-015 新增；文档索引更新 |
 | 2026-03-30 | **Phase G 完成**：AI觉醒（async缓冲+情绪接入+独白+双阶段决策+反派修复）；Handler 12→13；已实现系统 18→19；TD-006 部分清偿；FB-010/012 部分清偿；Roadmap V3.3 |
+| 2026-03-30 | **Phase H-β 完成**：世界缝合（统一日志管线+inspect/sect命令）；已实现系统 19→20；TD-015/016 新增；FB-005 部分清偿 |
+| 2026-03-31 | **Phase H-γ 完成**：掌门裁决（STORM裁决窗口+judge命令+道风漂移）；已实现系统 20→21；TD-020/021 新增；FB-011 已清偿 |

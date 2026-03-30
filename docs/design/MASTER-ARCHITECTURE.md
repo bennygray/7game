@@ -1,6 +1,6 @@
 # 7game-lite — 全局架构文档 (MASTER-ARCHITECTURE)
 
-> **版本**：v1.4 | **最后更新**：2026-03-30
+> **版本**：v1.6 | **最后更新**：2026-03-31
 > **文档角色**：宪法层索引 — 所有 Phase 的架构总纲
 > **存档版本**：v5（Phase F0-α）
 > **阅读策略**：本文件为索引，永远在 Bootstrap 时读取。按需阅读 detail 文件。
@@ -13,10 +13,21 @@
 
 | 层级 | 职责 | 文件数 |
 |------|------|:------:|
-| ① Data (`shared/`) | 类型 + 公式 + 数据表 | 14 |
+| ① Data (`shared/`) | 类型 + 公式 + 数据表 | 16 |
 | ② Engine (`engine/`) | Tick / 行为树 / 存档 / 灵魂 / AI 缓冲 | 25 |
 | ③ AI (`ai/`) | LLM 适配 / prompt / 灵魂评估 / AI 决策 | 8+ |
-| ④ Presentation (`main.ts`) | MUD 面板 / 命令系统 | 1 |
+| ④ Presentation (`main.ts` + `ui/`) | MUD 面板 / 命令系统 / 格式化工具 | 2 |
+
+### 跨层通信路径
+
+| 编号 | 通信路径 | 方向 | 说明 |
+|------|---------|------|------|
+| C-1 | `TickPipeline.execute(ctx)` | Engine→Handler | 13 个 Handler 顺序执行 |
+| C-2 | `ctx.farmLogs/systemLogs/discipleEvents` | Engine→Presentation | 专用回调管线（Phase A~D，TD-015 待迁移） |
+| C-3 | `ctx.logger.flush()→onMudLog` | Engine→Presentation | **统一日志管线**（Phase H-β ADR-Hβ-01） |
+| C-4 | `DialogueCoordinator` | Engine→AI→Presentation | 异步对话（Phase D） |
+| C-5 | `AsyncAIBuffer.drain()` | Engine→AI | 异步 AI 结果应用（Phase G） |
+| C-6 | `onRulingCreated/onRulingResolved` | Engine→Presentation | 裁决窗口/裁决结算回调（Phase H-γ） |
 
 ### 跨层通信禁令
 
@@ -116,3 +127,5 @@ export const mySystemHandler: TickHandler = {
 | 2026-03-28 | v1.2 | Phase 4 重构完成: §3→Handler 架构, §6.1→当前为 Pipeline 模式, Engine 8→15 文件 |
 | 2026-03-29 | v1.3 | Phase E: 存档 v3→v4, Data 11→14, Engine 19→22, AI 4+→5+, Handler 8→10 |
 | 2026-03-30 | v1.4 | Phase G: Engine 22→25 (+async-ai-buffer, ai-result-apply.handler, action-executor), AI 5+→8+ (+soul-evaluator, few-shot-examples, action-pool-builder), Handler 12→13 |
+| 2026-03-30 | v1.5 | Phase H-β: +跨层通信路径表（C-1~C-5），记录统一日志管线（ADR-Hβ-01/02）；Presentation 层 1→2 文件（+ui/mud-formatter.ts） |
+| 2026-03-31 | v1.6 | Phase H-γ: Data 14→16（+ruling.ts, +ruling-registry.ts）；新增通信路径 C-6（裁决回调 onRulingCreated/onRulingResolved） |
