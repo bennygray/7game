@@ -70,6 +70,7 @@ export const TickPhase = {
 | 10 | `cultivate-boost` | 700 | 0 | `handlers/cultivate-boost.handler.ts` | pill-consumer | Phase C |
 | 11 | `encounter-tick` | 610 | 0 | `handlers/encounter-tick.handler.ts` | encounter-engine | Phase F0-α |
 | 12 | `world-event-tick` | 605 | 0 | `handlers/world-event-tick.handler.ts` | storyteller | Phase F0-β |
+| 13 | `ai-result-apply` | 625 | 5 | `handlers/ai-result-apply.handler.ts` | async-ai-buffer + soul-engine | Phase G |
 
 ### Handler 拆分判定标准
 
@@ -115,8 +116,10 @@ export interface TickContext {
   discipleEvents: DiscipleBehaviorEvent[]; // 弟子行为事件
   onBreakthrough: BreakthroughCallback | null; // 突破回调
   breakthroughCooldown: number;            // 突破冷却计数器 (TD-001)
+  emotionMap: Map<string, DiscipleEmotionState>; // Phase F: 短期情绪状态
   eventBus: EventBus;                      // Phase E: 灵魂事件总线 (ADR-E03)
   logger: GameLogger;                      // Phase D: 结构化日志
+  asyncAIBuffer?: AsyncAIBuffer;           // Phase G: 异步 AI 缓冲区
 }
 ```
 
@@ -136,3 +139,4 @@ export interface TickContext {
 | 2026-03-29 | Phase E: +SOUL_EVAL=625 阶段; +soul-tick(500:10) +soul-event(625:0) Handler; TickContext +eventBus; auto-breakthrough 接入 EventBus; Handler 8→10 |
 | 2026-03-30 | Phase F0-α: +ENCOUNTER=610 阶段; +encounter-tick(610:0) Handler; Handler 10→11 |
 | 2026-03-30 | Phase F0-β: +WORLD_EVENT=605 阶段; +world-event-tick(605:0) Handler; Handler 11→12 |
+| 2026-03-30 | Phase G: +ai-result-apply(625:5) Handler; TickContext +asyncAIBuffer; Handler 12→13 |

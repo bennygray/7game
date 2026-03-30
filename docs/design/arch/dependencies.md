@@ -33,6 +33,9 @@
 | **disciple-generator** | W | — | — | — | — | — | — | — |
 | **storyteller** | R | — | — | — | — | — | — | — |
 | **handlers/world-event-tick** | R | — | — | — | — | — | — | — |
+| **async-ai-buffer** | — | — | — | — | — | — | — | — |
+| **handlers/ai-result-apply** | R/W | — | — | — | — | — | — | — |
+| **action-executor** | — | — | — | — | — | — | — | — |
 
 ---
 
@@ -55,6 +58,10 @@
 | **breakthrough-engine** | — | — | — | — | — | — | R |
 | **storyteller** | — | — | — | — | — | — | — |
 | **handlers/world-event-tick** | — | R | — | — | — | — | — |
+| **async-ai-buffer** | — | — | — | — | — | — | — |
+| **handlers/ai-result-apply** | — | R | — | — | — | — | — |
+| **handlers/soul-event** (G扩展) | — | R | — | — | — | — | — |
+| **action-executor** | — | — | — | — | — | — | — |
 
 ---
 
@@ -88,3 +95,4 @@
 | 2026-03-28 | Phase 4 重构: 新增 tick-pipeline + 6 个 handler 文件的依赖关系 |
 | 2026-03-28 | Phase D: 新增 intent-executor, dialogue-coordinator, game-logger, dialogue-tick handler 依赖 |
 | 2026-03-30 | Phase F0-β: 新增 storyteller, world-event-tick handler, world-event-registry 依赖 |
+| 2026-03-30 | Phase G: +async-ai-buffer, ai-result-apply.handler, action-executor (Engine); soul-event.handler AI 路由扩展; soul-evaluator→prompt-builder/few-shot/action-pool 依赖 |

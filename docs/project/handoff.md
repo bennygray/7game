@@ -1,16 +1,33 @@
 # 7game-lite — 会话交接文档
 
-> **上次更新**：2026-03-30 | **上次会话主题**：Phase H-α MUD 世界呼吸异常
-> **当前活跃 Phase**：Phase H-α ✅ 完成
-> **Phase 状态**：SPM+SGA+SGE 全流程通过，存档 v5，12 个 Handler，64条回归全通过
+> **上次更新**：2026-03-30 | **上次会话主题**：Phase G AI 觉醒
+> **当前活跃 Phase**：Phase G ✅ 完成
+> **Phase 状态**：SPM+SGA+SGE 全流程通过，存档 v5 不变，13 个 Handler，64条回归全通过
 
 ---
 
 ## 当前断点
 
-- Phase H-α 的 SPM GATE 1、SGA GATE 2、SGE GATE 3 均已通过，已 USER 浏览器手动验证
-- **下一步**：根据 Roadmap V3.1，下一个 Phase 为 Phase G（AI 觉醒）
+- Phase G 的 SPM GATE 1、SGA GATE 2、SGE GATE 3 均已通过
+- **下一步**：待 USER 确认后进入下一 Phase（Roadmap 参考）
 - 回归验证：64/64 通过
+
+### Phase G 已交付 — AI 觉醒
+
+| 系统 | 状态 | 验证 |
+|------|------|---------|
+| AsyncAIBuffer（异步 AI 缓冲区） | ✅ | 代码审查 + regression |
+| AI 情绪评估接入（severity 路由） | ✅ | 代码审查 |
+| 宗门道风 Prompt 注入 | ✅ | 代码审查 |
+| 特性 aiHint 注入 | ✅ | 代码审查 |
+| 反派偏置修复（三管齐下） | ✅ | 代码审查 |
+| Lv.2 AI 独白渲染 | ✅ | 代码审查 |
+| Lv.3 AI 双阶段行为决策 | ✅ | 代码审查（P95 需实游验证） |
+| ai-result-apply handler (625:5) | ✅ | regression 64/64 |
+
+- 6 新文件 + 6 修改文件，零存档迁移
+- Handler 12→13，TickContext +asyncAIBuffer
+- TD-006 部分清偿（AI 延迟通过异步缓冲区解决）
 
 ### Phase H-α 已交付 — MUD 世界呼吸如异
 

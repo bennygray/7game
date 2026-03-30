@@ -14,8 +14,8 @@
 | 层级 | 职责 | 文件数 |
 |------|------|:------:|
 | ① Data (`shared/`) | 类型 + 公式 + 数据表 | 14 |
-| ② Engine (`engine/`) | Tick / 行为树 / 存档 / 灵魂 | 22 |
-| ③ AI (`ai/`) | LLM 适配 / prompt / 灵魂评估 | 5+ |
+| ② Engine (`engine/`) | Tick / 行为树 / 存档 / 灵魂 / AI 缓冲 | 25 |
+| ③ AI (`ai/`) | LLM 适配 / prompt / 灵魂评估 / AI 决策 | 8+ |
 | ④ Presentation (`main.ts`) | MUD 面板 / 命令系统 | 1 |
 
 ### 跨层通信禁令
@@ -115,3 +115,4 @@ export const mySystemHandler: TickHandler = {
 | 2026-03-28 | v1.1 | 模块化拆分：§1→layers.md, §2→gamestate.md, §3→pipeline.md, §4→dependencies.md, §5→schema.md |
 | 2026-03-28 | v1.2 | Phase 4 重构完成: §3→Handler 架构, §6.1→当前为 Pipeline 模式, Engine 8→15 文件 |
 | 2026-03-29 | v1.3 | Phase E: 存档 v3→v4, Data 11→14, Engine 19→22, AI 4+→5+, Handler 8→10 |
+| 2026-03-30 | v1.4 | Phase G: Engine 22→25 (+async-ai-buffer, ai-result-apply.handler, action-executor), AI 5+→8+ (+soul-evaluator, few-shot-examples, action-pool-builder), Handler 12→13 |
