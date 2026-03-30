@@ -1,8 +1,8 @@
 # 7game-lite — 全局架构文档 (MASTER-ARCHITECTURE)
 
-> **版本**：v1.6 | **最后更新**：2026-03-31
+> **版本**：v1.7 | **最后更新**：2026-03-31
 > **文档角色**：宪法层索引 — 所有 Phase 的架构总纲
-> **存档版本**：v5（Phase F0-α）
+> **存档版本**：v5（Phase F0-α 新增，Phase H-γ 未变）
 > **阅读策略**：本文件为索引，永远在 Bootstrap 时读取。按需阅读 detail 文件。
 
 ---
@@ -13,10 +13,10 @@
 
 | 层级 | 职责 | 文件数 |
 |------|------|:------:|
-| ① Data (`shared/`) | 类型 + 公式 + 数据表 | 16 |
+| ① Data (`shared/`) | 类型 + 公式 + 数据表 | 22 |
 | ② Engine (`engine/`) | Tick / 行为树 / 存档 / 灵魂 / AI 缓冲 | 25 |
 | ③ AI (`ai/`) | LLM 适配 / prompt / 灵魂评估 / AI 决策 | 8+ |
-| ④ Presentation (`main.ts` + `ui/`) | MUD 面板 / 命令系统 / 格式化工具 | 2 |
+| ④ Presentation (`main.ts` + `ui/` + `styles/`) | MUD 面板 / 命令系统 / 日志管理 / 浮层面板 / 格式化 | 8 |
 
 ### 跨层通信路径
 
@@ -50,7 +50,7 @@
 
 ## §3 引擎 Tick Pipeline → [detail](arch/pipeline.md)
 
-> 10 个 Handler 注册表 + TickPipeline 架构 + 新系统接入协议。新系统挂载时必读。
+> 13 个 Handler 注册表 + TickPipeline 架构 + 新系统接入协议。新系统挂载时必读。
 
 ---
 
@@ -129,3 +129,4 @@ export const mySystemHandler: TickHandler = {
 | 2026-03-30 | v1.4 | Phase G: Engine 22→25 (+async-ai-buffer, ai-result-apply.handler, action-executor), AI 5+→8+ (+soul-evaluator, few-shot-examples, action-pool-builder), Handler 12→13 |
 | 2026-03-30 | v1.5 | Phase H-β: +跨层通信路径表（C-1~C-5），记录统一日志管线（ADR-Hβ-01/02）；Presentation 层 1→2 文件（+ui/mud-formatter.ts） |
 | 2026-03-31 | v1.6 | Phase H-γ: Data 14→16（+ruling.ts, +ruling-registry.ts）；新增通信路径 C-6（裁决回调 onRulingCreated/onRulingResolved） |
+| 2026-03-31 | v1.7 | Phase X-γ: Presentation 7→8（+ui/panel-manager.ts）；面板系统 + BUG-Xγ-01内存修复 + 可点击弟子名 |

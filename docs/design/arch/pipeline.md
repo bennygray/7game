@@ -120,11 +120,13 @@ export interface TickContext {
   eventBus: EventBus;                      // Phase E: 灵魂事件总线 (ADR-E03)
   logger: GameLogger;                      // Phase D: 结构化日志
   asyncAIBuffer?: AsyncAIBuffer;           // Phase G: 异步 AI 缓冲区
+  pendingStormEvent?: WorldEventPayload;   // Phase H-γ: STORM 事件信号（world-event-tick 设置）
 }
 ```
 
 > ⚠️ **TD-001**: `breakthroughCooldown` 通过 TickContext 暴露是已知技术债务。
 > **ADR-E03**: `eventBus` 每 tick 新建，生命周期与 tick 绑定。
+> **ADR-Hγ-01**: `pendingStormEvent` 由 world-event-tick 写入，IdleEngine 消费后创建裁决窗口。
 > 详见 `docs/project/tech-debt.md`。
 
 ---
@@ -140,3 +142,4 @@ export interface TickContext {
 | 2026-03-30 | Phase F0-α: +ENCOUNTER=610 阶段; +encounter-tick(610:0) Handler; Handler 10→11 |
 | 2026-03-30 | Phase F0-β: +WORLD_EVENT=605 阶段; +world-event-tick(605:0) Handler; Handler 11→12 |
 | 2026-03-30 | Phase G: +ai-result-apply(625:5) Handler; TickContext +asyncAIBuffer; Handler 12→13 |
+| 2026-03-31 | Phase H-γ: TickContext +pendingStormEvent; 裁决系统文档对齐 |

@@ -28,6 +28,9 @@
 | TD-016 | MUD 显示类功能缺少自动化验证（当前为浏览器手动验证），未来可引入 E2E 测试框架 | Phase H-β SGA Review R4-D5/R6-D4 WARN | P3 | 测试框架 | 后续 Phase |
 | TD-020 | 裁决系统缺少自动化验证脚本（ethosShift clamp、timeout 逻辑），可通过 mock inGameWorldTime 实现 | Phase H-γ SGE Review R6-D4 WARN | P3 | ruling 系统, scripts/ | 后续 Phase |
 | TD-021 | `createRuling` 中事件文案渲染逻辑与 `world-event-tick.handler.ts:renderEventText` 高度相似（{D}/{D2} 模板替换），可抽取共享函数 | Phase H-γ SGE Review R7-D4 WARN | P4 | idle-engine.ts, world-event-tick.handler.ts | 下次触及时 |
+| TD-022 | `engine-bindings.ts:scheduleAmbientBreath` 使用递归 setTimeout 无清理机制。当前全页刷新无影响，Electron 迁移时需实现 clearTimeout 或 AbortController | Phase X-α SGE Review R6-D4 WARN | P4 | engine-bindings.ts | Electron 迁移时 |
+| **BUG-Xγ-01** | ~~`log-manager.ts:renderLines()` 每次 addMainLog 全量 innerHTML 替换 200 行 DOM，导致每秒 ~3000 节点创建/销毁，内存线性暴涨直至系统死机~~ | Phase X-α 引入 — USER 报告 P0 | **P0** | log-manager.ts | ✅ **Phase X-γ 已清偿** |
+| TD-023 | z-index 层级管理：flash-overlay(9999) / cmd-area(1000) / panel-overlay(900)。当前手动管理，未来可引入 z-index 常量表 | Phase X-γ ADR-Xγ-01 | P4 | mud-theme.css | 后续 Phase |
 
 ---
 

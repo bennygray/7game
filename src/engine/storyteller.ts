@@ -52,8 +52,8 @@ const BASE_PROBABILITY: Record<EventSeverity, number> = {
   [Sev.CALAMITY]: 0.00,  // F0-β 禁止触发
 };
 
-/** Lv.3 风暴后的喘息期（秒） */
-const STORM_COOLDOWN_S = 300;
+/** Lv.3 风暴后的喘息期（毫秒，实时 5 分钟） */
+const STORM_COOLDOWN_MS = 300_000;
 
 /** 事件历史上限 */
 const MAX_HISTORY = 20;
@@ -70,7 +70,7 @@ export class Storyteller {
   constructor() {
     this.state = {
       tensionIndex: INITIAL_TENSION,
-      lastStormTimestamp: -STORM_COOLDOWN_S,  // 初始不处于喘息期
+      lastStormTimestamp: -STORM_COOLDOWN_MS,  // 初始不处于喘息期
       eventHistory: [],
     };
   }
@@ -93,9 +93,9 @@ export class Storyteller {
     if (this.accumulator < CHECK_INTERVAL_S) return null;
     this.accumulator -= CHECK_INTERVAL_S;
 
-    // 3. 喘息期检查（Lv.3+ 后静默 N 秒）
-    const now = gameState.inGameWorldTime;
-    if (now - this.state.lastStormTimestamp < STORM_COOLDOWN_S) return null;
+    // 3. 喘息期检查（Lv.3+ 后实时静默 5 分钟）
+    const nowMs = Date.now();
+    if (nowMs - this.state.lastStormTimestamp < STORM_COOLDOWN_MS) return null;
 
     // 4. 概率骰子
     const roll = Math.random();
@@ -134,7 +134,7 @@ export class Storyteller {
       polarity: picked.polarity,
       involvedDiscipleIds: involvedIds,
       location: picked.scope === 'sect' ? null : '宗门',
-      timestamp: now,
+      timestamp: nowMs,
     };
 
     // 10. 更新内部状态
@@ -144,7 +144,7 @@ export class Storyteller {
       100,
     );
     if (finalSeverity >= Sev.STORM) {
-      this.state.lastStormTimestamp = now;
+      this.state.lastStormTimestamp = nowMs;
     }
     this.state.eventHistory.push(payload);
     if (this.state.eventHistory.length > MAX_HISTORY) {

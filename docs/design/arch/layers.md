@@ -9,8 +9,17 @@
 
 ```mermaid
 graph TB
-    subgraph Presentation["④ Presentation Layer<br>src/main.ts"]
-        MAIN["main.ts<br>MUD 命令 + 日志 + UI"]
+    subgraph Presentation["④ Presentation Layer<br>src/"]
+        MAIN["main.ts<br>初始化 + 启动"]
+        subgraph UI["ui/"]
+            LAYOUT["layout.ts<br>DOM 布局"]
+            LOGMGR["log-manager.ts<br>双区日志"]
+            CMD["command-handler.ts<br>命令系统"]
+            BIND["engine-bindings.ts<br>回调路由"]
+            FMT["mud-formatter.ts<br>格式化"]
+            PANEL["panel-manager.ts<br>浮层面板"]
+        end
+        CSS["styles/mud-theme.css"]
     end
     subgraph AI["③ AI Layer<br>src/ai/"]
         LLM["llm-adapter.ts"]
@@ -85,7 +94,7 @@ graph TB
 | **① Data** | 类型定义 + 公式 + 数据表（所有层的只读依赖） | 15 | `game-state.ts`, `ai-soul.ts`, `dialogue.ts`, `logger.ts`, `soul.ts`, `idle-formulas.ts`, `realm-formulas.ts`, `alchemy-formulas.ts`, `realm-display.ts`, `realm-table.ts`, `recipe-table.ts`, `seed-table.ts`, `trait-registry.ts`, `emotion-pool.ts`, `emotion-behavior-modifiers.ts` |
 | **② Engine** | 游戏引擎逻辑（tick / 行为树 / 存档 / 日志 / 对话 / 灵魂 / AI 缓冲） | 25 | `idle-engine.ts`, `tick-pipeline.ts`, `event-bus.ts`, `soul-engine.ts`, `async-ai-buffer.ts`, `action-executor.ts`, `handlers/boost-countdown.handler.ts`, `handlers/breakthrough-aid.handler.ts`, `handlers/auto-breakthrough.handler.ts`, `handlers/farm-tick.handler.ts`, `handlers/soul-tick.handler.ts`, `handlers/disciple-tick.handler.ts`, `handlers/soul-event.handler.ts`, `handlers/ai-result-apply.handler.ts`, `handlers/dialogue-tick.handler.ts`, `handlers/cultivate-boost.handler.ts`, `behavior-tree.ts`, `intent-executor.ts`, `dialogue-coordinator.ts`, `game-logger.ts`, `farm-engine.ts`, `alchemy-engine.ts`, `breakthrough-engine.ts`, `pill-consumer.ts`, `save-manager.ts`, `disciple-generator.ts` |
 | **③ AI** | AI 适配层（LLM 调用 / prompt 构建 / fallback / 灵魂评估 / AI 决策） | 8+ | `llm-adapter.ts`, `prompt-builder.ts`, `soul-prompt-builder.ts`, `soul-evaluator.ts`, `few-shot-examples.ts`, `action-pool-builder.ts`, `prompts/` 目录, `fallback-lines.ts`, `bystander-lines.ts` |
-| **④ Presentation** | DOM 组件 / 命令系统 / MUD 面板 | 1 | `main.ts`（含 UI 初始化、命令系统、引擎回调、AI 集成） |
+| **④ Presentation** | DOM 布局 / 命令系统 / 日志管理 / 浮层面板 / 引擎回调路由 / MUD 格式化 | 8 | `main.ts`（初始化+启动）, `ui/layout.ts`, `ui/log-manager.ts`, `ui/panel-manager.ts`, `ui/command-handler.ts`, `ui/engine-bindings.ts`, `ui/mud-formatter.ts`, `styles/mud-theme.css` |
 
 ---
 
@@ -101,3 +110,5 @@ graph TB
 | 2026-03-30 | Phase F: Data +1 (emotion-behavior-modifiers.ts), soul.ts +DiscipleEmotionState; Data 14→15; behavior-tree +getEnhancedPersonalityWeights; tick-pipeline TickContext +emotionMap; idle-engine +emotionMap |
 | 2026-03-30 | Phase H-α: Data +1 (zone-descriptions.ts); Presentation 拆分出 ui/mud-formatter.ts; Presentation 1→2 文件; 零 Engine/Pipeline 变更 |
 | 2026-03-30 | Phase G: Engine +3 (async-ai-buffer, ai-result-apply.handler, action-executor); AI +3 (soul-evaluator, few-shot-examples, action-pool-builder); Engine 22→25, AI 5+→8+ |
+| 2026-03-31 | Phase X-α: main.ts 巨石拆分（606→114行）；Presentation +5 新文件（layout.ts, log-manager.ts, command-handler.ts, engine-bindings.ts, styles/mud-theme.css）；所有内联 style→CSS class；日志分区（主事件流+系统消息条）；Presentation 1→7 文件 |
+| 2026-03-31 | Phase X-γ: +panel-manager.ts（浮层面板）；Presentation 7→8 文件；log-manager 内存修复（BUG-Xγ-01）|

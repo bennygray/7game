@@ -64,8 +64,17 @@
 | `features/7game-lite-phaseC-analysis.md` | Phase C ✅ | 突破+灵脉+丹药使用 |
 | `features/phaseD-PRD.md` | Phase D ✅ (Trinity SPM) | AI对话+日志+Intent重构 |
 | `features/phaseE-PRD.md` | Phase E ✅ (Trinity SPM GATE 1 通过) | NPC灵魂系统（道德×特性×关系×AI事件评估） |
+| `features/phaseF-PRD.md` | Phase F ✅ | 灵魂闭环（特性×情绪×关系→行为权重） |
+| `features/phaseF0-alpha-PRD.md` | Phase F0-α ✅ | 碰面世界（地点·碰面·道风） |
+| `features/phaseF0-beta-PRD.md` | Phase F0-β ✅ | 活世界（事件池·五级漏斗·Storyteller） |
+| `features/phaseG-PRD.md` | Phase G ✅ | AI觉醒（async缓冲·情绪接入·独白·双阶段决策） |
+| `features/phaseH-alpha-PRD.md` | Phase H-α ✅ | MUD世界呈现（look/分级日志/状态栏/环境呼吸） |
+| `features/phaseH-beta-PRD.md` | Phase H-β ✅ | 世界缝合（统一日志管线/inspect/sect命令） |
+| `features/phaseH-gamma-PRD.md` | Phase H-γ ✅ | 掌门裁决（STORM裁决窗口/judge命令/道风漂移） |
 
 ## 设计文档
+
+### User Stories
 
 | 文件 | 用途 |
 |------|------|
@@ -74,8 +83,26 @@
 | `design/specs/7game-lite-user-stories-phaseC.md` | Phase C User Stories (5 条) |
 | `design/specs/7game-lite-user-stories-phaseD.md` | Phase D User Stories (5 条) |
 | `design/specs/7game-lite-user-stories-phaseE.md` | Phase E User Stories (5 条) |
+| `design/specs/phaseF-user-stories.md` | Phase F User Stories |
+| `design/specs/phaseF0-alpha-user-stories.md` | Phase F0-α User Stories |
+| `design/specs/phaseF0-beta-user-stories.md` | Phase F0-β User Stories |
+| `design/specs/phaseG-user-stories.md` | Phase G User Stories |
+| `design/specs/phaseH-beta-user-stories.md` | Phase H-β User Stories |
+| `design/specs/phaseH-gamma-user-stories.md` | Phase H-γ User Stories |
+
+### 技术设计文档 (TDD)
+
+| 文件 | 用途 |
+|------|------|
 | `design/specs/phaseD-TDD.md` | Phase D 技术设计文档 (Trinity SGA+SGE) |
 | `design/specs/phaseE-TDD.md` | Phase E 技术设计文档 (Trinity SGA) |
+| `design/specs/phaseF-TDD.md` | Phase F 技术设计文档 |
+| `design/specs/phaseF0-alpha-TDD.md` | Phase F0-α 技术设计文档 |
+| `design/specs/phaseF0-beta-TDD.md` | Phase F0-β 技术设计文档 |
+| `design/specs/phaseG-TDD.md` | Phase G 技术设计文档 |
+| `design/specs/phaseH-alpha-TDD.md` | Phase H-α 技术设计文档 |
+| `design/specs/phaseH-beta-TDD.md` | Phase H-β 技术设计文档 |
+| `design/specs/phaseH-gamma-TDD.md` | Phase H-γ 技术设计文档 |
 
 ## 验证记录
 
@@ -105,7 +132,14 @@
 | B-α | — | ✅ [`plan.md`](pipeline/phaseB-alpha/plan.md) | — | — | — |
 | C | — | ✅ [`plan.md`](pipeline/phaseC/plan.md) | — | — | — |
 | D | — | — | — | — | — |
-| **E** | ✅ [`spm-analysis.md`](pipeline/phaseE/spm-analysis.md) | 待创建 | 待创建 | ✅ [`review.md`](pipeline/phaseE/review.md) | 待创建 |
+| **E** | ✅ [`spm-analysis.md`](pipeline/phaseE/spm-analysis.md) | — | — | ✅ [`review.md`](pipeline/phaseE/review.md) | — |
+| **F** | ✅ [`spm-analysis.md`](pipeline/phaseF/spm-analysis.md) | — | ✅ [`task.md`](pipeline/phaseF/task.md) | — | — |
+| **F0-α** | ✅ [`spm-analysis.md`](pipeline/phaseF0-alpha/spm-analysis.md) | — | ✅ [`task.md`](pipeline/phaseF0-alpha/task.md) | — | — |
+| **F0-β** | ✅ [`spm-analysis.md`](pipeline/phaseF0-beta/spm-analysis.md) | — | ✅ [`task.md`](pipeline/phaseF0-beta/task.md) | — | — |
+| **H-α** | — | — | ✅ [`task.md`](pipeline/phaseH-alpha/task.md) | — | — |
+| **G** | ✅ [`spm-analysis.md`](pipeline/phaseG/spm-analysis.md) | ✅ [`plan.md`](pipeline/phaseG/plan.md) | — | ✅ [`review.md`](pipeline/phaseG/review.md) | ✅ [`walkthrough.md`](pipeline/phaseG/walkthrough.md) |
+| **H-β** | ✅ [`spm-analysis.md`](pipeline/phaseH-beta/spm-analysis.md) | ✅ [`plan.md`](pipeline/phaseH-beta/plan.md) | — | ✅ [`review.md`](pipeline/phaseH-beta/review.md) | ✅ [`walkthrough.md`](pipeline/phaseH-beta/walkthrough.md) |
+| **H-γ** | ✅ [`spm-analysis.md`](pipeline/phaseH-gamma/spm-analysis.md) | — | — | ✅ [`review.md`](pipeline/phaseH-gamma/review.md) | ✅ [`walkthrough.md`](pipeline/phaseH-gamma/walkthrough.md) |
 
 ---
 
@@ -118,3 +152,4 @@
 | D+（过程资产） | Pipeline 五文件 | `pipeline/phaseX/{spm-analysis,plan,task,review,walkthrough}.md` |
 
 > 详见 `MASTER-PRD.md` §7 文档格式说明。
+

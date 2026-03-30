@@ -146,7 +146,7 @@ export class IdleEngine {
     // Phase D: 初始化对话协调器
     this.dialogueCoordinator = new DialogueCoordinator(llmAdapter ?? null, logger);
 
-    // 初始化 Pipeline 并注册所有 Handler（12 个）
+    // 初始化 Pipeline 并注册所有 Handler（13 个）
     this.pipeline = new TickPipeline();
     this.pipeline.register(boostCountdownHandler);
     this.pipeline.register(breakthroughAidHandler);
@@ -299,7 +299,7 @@ export class IdleEngine {
       asyncAIBuffer: this.asyncAIBuffer, // Phase G: 异步 AI 缓冲区
     };
 
-    // 执行 Pipeline（12 个 Handler 按 phase+order 顺序执行）
+    // 执行 Pipeline（13 个 Handler 按 phase+order 顺序执行）
     this.pipeline.execute(ctx);
 
     // 回写引擎级状态（TD-001: 通过 ctx 共享的 breakthroughCooldown）
@@ -379,8 +379,8 @@ export class IdleEngine {
     '无人做出决断，弟子们只得各自应对。',
   ];
 
-  /** 裁决窗口时长（秒），与 STORM_COOLDOWN_S 一致 */
-  private static readonly RULING_TIMEOUT_S = 300;
+  /** 裁决窗口时长（毫秒），实时 5 分钟 */
+  private static readonly RULING_TIMEOUT_MS = 300_000;
 
   /**
    * 创建裁决窗口（STORM 事件触发时调用）
@@ -415,14 +415,14 @@ export class IdleEngine {
       mudText: def.mudText,
     }));
 
-    const now = this.state.inGameWorldTime;
+    const now = Date.now();
     this.activeRuling = {
       eventPayload: payload,
       eventName,
       eventText,
       options,
       createdAt: now,
-      expiresAt: now + IdleEngine.RULING_TIMEOUT_S,
+      expiresAt: now + IdleEngine.RULING_TIMEOUT_MS,
       resolved: false,
     };
 
@@ -434,7 +434,7 @@ export class IdleEngine {
    */
   private checkRulingTimeout(): void {
     if (!this.activeRuling || this.activeRuling.resolved) return;
-    if (this.state.inGameWorldTime < this.activeRuling.expiresAt) return;
+    if (Date.now() < this.activeRuling.expiresAt) return;
 
     // 超时：等概率随机选择
     const options = this.activeRuling.options;

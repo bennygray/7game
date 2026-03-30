@@ -1,0 +1,737 @@
+/**
+ * mud-theme.css — 七道修仙 MUD 全局主题
+ *
+ * Phase X-α: 将所有内联 style 抽离为 CSS 变量 + class 体系
+ * ADR-Xα-01: 所有 class 使用 mud- 前缀
+ *
+ * 颜色变量 → 组件 class → 严重度 class → 布局 class
+ */
+
+/* ===========================
+   CSS 变量（主题令牌）
+   =========================== */
+:root {
+  /* 背景 */
+  --mud-bg:           #1a1a2e;
+  --mud-bg-dark:      #0d0d1a;
+  --mud-bg-panel:     #0d0d2a;
+  --mud-bg-bar:       #0a0a1e;
+
+  /* 文字 */
+  --mud-text:         #c8b88b;
+  --mud-text-dim:     #8a8a6a;
+  --mud-text-mute:    #4a4a4a;
+  --mud-text-bright:  #e8d8ab;
+
+  /* 语义色 */
+  --mud-accent:       #7a8aba;
+  --mud-accent-dim:   #4a5a8a;
+  --mud-gold:         #ffd700;
+  --mud-red:          #ff4444;
+  --mud-green:        #50fa7b;
+  --mud-cyan:         #8bc8c8;
+  --mud-amber:        #c8a858;
+  --mud-sage:         #6a8a6a;
+  --mud-lavender:     #9a8ac8;
+
+  /* 边框 */
+  --mud-border:       #333344;
+  --mud-border-dim:   #222233;
+
+  /* 严重度颜色 */
+  --mud-severity-breath:    #4a4a4a;
+  --mud-severity-ripple:    #8a8a6a;
+  --mud-severity-splash:    #c8b88b;
+  --mud-severity-storm:     #ffd700;
+  --mud-severity-calamity:  #ff4444;
+
+  /* 字体 */
+  --mud-font:         'Courier New', 'SimHei', monospace;
+  --mud-font-size:    14px;
+  --mud-line-height:  1.6;
+
+  /* 布局尺寸 */
+  --status-bar-height:  36px;
+  --cmd-area-height:    46px;
+  --system-bar-max:     120px;
+}
+
+/* ===========================
+   全局重置
+   =========================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--mud-bg);
+  color: var(--mud-text);
+  font-family: var(--mud-font);
+  font-size: var(--mud-font-size);
+  overflow: hidden;
+}
+
+#app {
+  height: 100%;
+}
+
+/* ===========================
+   容器布局（Flexbox 全屏）
+   ADR-Xα-02 布局结构
+   =========================== */
+.mud-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--mud-bg);
+}
+
+/* ===========================
+   状态栏（顶部）
+   =========================== */
+.mud-status-bar {
+  flex-shrink: 0;
+  height: var(--status-bar-height);
+  background: var(--mud-bg-panel);
+  border-bottom: 1px solid var(--mud-border);
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: var(--mud-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: none;
+}
+
+.mud-status-bar b {
+  color: var(--mud-amber);
+}
+
+/* ===========================
+   ASCII 标题区
+   =========================== */
+.mud-title-area {
+  flex-shrink: 0;
+  padding: 8px 16px 0;
+  color: var(--mud-text-dim);
+  font-size: var(--mud-font-size);
+  line-height: 1.4;
+}
+
+/* ===========================
+   主事件流（中央，flex-grow）
+   =========================== */
+.mud-main-log {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 16px;
+  line-height: var(--mud-line-height);
+  /* 自定义滚动条 */
+  scrollbar-width: thin;
+  scrollbar-color: var(--mud-border) transparent;
+}
+
+.mud-main-log::-webkit-scrollbar {
+  width: 4px;
+}
+.mud-main-log::-webkit-scrollbar-track {
+  background: transparent;
+}
+.mud-main-log::-webkit-scrollbar-thumb {
+  background: var(--mud-border);
+  border-radius: 2px;
+}
+
+.mud-main-log .mud-line {
+  display: block;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ===========================
+   系统消息条（可折叠）
+   ADR-Xα-02
+   =========================== */
+.mud-system-bar {
+  flex-shrink: 0;
+  background: var(--mud-bg-bar);
+  border-top: 1px solid var(--mud-border-dim);
+  overflow: hidden;
+  transition: max-height 0.2s ease;
+  max-height: var(--system-bar-max);
+}
+
+.mud-system-bar.mud-collapsed {
+  max-height: 24px;
+}
+
+.mud-system-bar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 16px;
+  font-size: 11px;
+  color: var(--mud-text-mute);
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid var(--mud-border-dim);
+}
+
+.mud-system-bar__header:hover {
+  color: var(--mud-text-dim);
+}
+
+.mud-system-bar__toggle {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 10px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.mud-system-bar__content {
+  padding: 4px 16px;
+  font-size: 12px;
+  line-height: 1.5;
+  max-height: calc(var(--system-bar-max) - 24px);
+  overflow-y: auto;
+}
+
+.mud-system-bar .mud-line {
+  display: block;
+  white-space: pre-wrap;
+}
+
+/* ===========================
+   命令输入区（底部）
+   =========================== */
+.mud-cmd-area {
+  flex-shrink: 0;
+  height: var(--cmd-area-height);
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  background: var(--mud-bg-dark);
+  border-top: 1px solid var(--mud-border);
+  gap: 8px;
+}
+
+.mud-cmd-prompt {
+  color: var(--mud-accent);
+  font-size: var(--mud-font-size);
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.mud-cmd-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--mud-text);
+  font-family: var(--mud-font);
+  font-size: var(--mud-font-size);
+  outline: none;
+  caret-color: var(--mud-gold);
+}
+
+.mud-cmd-input::placeholder {
+  color: var(--mud-text-mute);
+}
+
+/* ===========================
+   严重度着色 class
+   PRD S-04 / ADR-Xα-01
+   =========================== */
+.mud-severity-breath   { color: var(--mud-severity-breath); }
+.mud-severity-ripple   { color: var(--mud-severity-ripple); }
+.mud-severity-splash   { color: var(--mud-severity-splash); }
+.mud-severity-storm    { color: var(--mud-severity-storm); }
+.mud-severity-calamity { color: var(--mud-severity-calamity); }
+
+/* STORM+ 框线装饰 */
+.mud-storm-frame {
+  color: var(--mud-severity-storm);
+}
+
+/* SPLASH 「」装饰（通过 JS 拼接，不用 CSS 伪元素，因 innerHTML 渲染） */
+
+/* ===========================
+   语义文字 class
+   =========================== */
+.mud-text-gold    { color: var(--mud-gold); }
+.mud-text-cyan    { color: var(--mud-cyan); }
+.mud-text-red     { color: var(--mud-red); }
+.mud-text-green   { color: var(--mud-green); }
+.mud-text-dim     { color: var(--mud-text-dim); }
+.mud-text-mute    { color: var(--mud-text-mute); }
+.mud-text-amber   { color: var(--mud-amber); }
+.mud-text-sage    { color: var(--mud-sage); }
+.mud-text-accent  { color: var(--mud-accent); }
+.mud-text-bright  { color: var(--mud-text-bright); }
+
+/* 命令回显 */
+.mud-cmd-echo { color: var(--mud-accent-dim); }
+
+/* 区域分隔线 */
+.mud-separator { color: var(--mud-text); }
+
+/* 弟子档案区块标题 */
+.mud-section-title { color: var(--mud-accent); }
+
+/* 弟子名/地点高亮 */
+.mud-disciple-name { color: var(--mud-accent); }
+.mud-realm-name    { color: var(--mud-amber); }
+.mud-zone-name     { color: var(--mud-accent); }
+.mud-zone-desc     { color: var(--mud-text-mute); }
+
+/* 关系/道德标签 */
+.mud-tag-positive { color: var(--mud-green); }
+.mud-tag-negative { color: var(--mud-red); }
+.mud-tag-neutral  { color: var(--mud-text-dim); }
+
+/* ===========================
+   滚动行为
+   =========================== */
+.mud-main-log,
+.mud-system-bar__content {
+  scroll-behavior: smooth;
+}
+
+/* ===========================
+   突破闪烁效果（Phase X-β PRD §2.5）
+   =========================== */
+
+/* 闪烁 Overlay 基础样式 */
+.mud-flash-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;   /* V-03: 不阻塞交互 */
+  z-index: 9999;
+  opacity: 0;
+}
+
+/* 突破成功 — 金色闪烁 2s (V-01) */
+.mud-flash-gold {
+  background: var(--mud-gold);
+  animation: mud-flash-gold 2s ease-out forwards;
+}
+
+/* 突破失败 — 红色闪烁 1s (V-02) */
+.mud-flash-red {
+  background: var(--mud-red);
+  animation: mud-flash-red 1s ease-out forwards;
+}
+
+@keyframes mud-flash-gold {
+  0%   { opacity: 0; }
+  15%  { opacity: 0.4; }
+  30%  { opacity: 0.1; }
+  50%  { opacity: 0.35; }
+  70%  { opacity: 0.05; }
+  100% { opacity: 0; }
+}
+
+@keyframes mud-flash-red {
+  0%   { opacity: 0; }
+  20%  { opacity: 0.3; }
+  50%  { opacity: 0.1; }
+  100% { opacity: 0; }
+}
+
+/* ===========================
+   面板覆盖层（Phase X-γ PRD §2.3~§2.4）
+   ADR-Xγ-01: z-index 层级 — overlay(900) < cmd-area(1000) < flash(9999)
+   =========================== */
+.mud-panel-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mud-panel {
+  background: var(--mud-bg-panel);
+  border: 1px solid var(--mud-border);
+  border-radius: 4px;
+  width: 55%;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  animation: mud-panel-fadein 0.15s ease-out;
+}
+
+.mud-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  height: 36px;
+  border-bottom: 1px solid var(--mud-border-dim);
+  flex-shrink: 0;
+}
+
+.mud-panel__title {
+  color: var(--mud-text-bright);
+  font-size: 13px;
+  font-family: var(--mud-font);
+  user-select: none;
+}
+
+.mud-panel__close {
+  background: none;
+  border: none;
+  color: var(--mud-text-mute);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 4px;
+  line-height: 1;
+}
+
+.mud-panel__close:hover {
+  color: var(--mud-text);
+}
+
+.mud-panel__body {
+  padding: 12px 16px;
+  overflow-y: auto;
+  font-family: var(--mud-font);
+  font-size: var(--mud-font-size);
+  line-height: var(--mud-line-height);
+  color: var(--mud-text);
+  /* 自定义滚动条 */
+  scrollbar-width: thin;
+  scrollbar-color: var(--mud-border) transparent;
+}
+
+.mud-panel__body::-webkit-scrollbar {
+  width: 4px;
+}
+.mud-panel__body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.mud-panel__body::-webkit-scrollbar-thumb {
+  background: var(--mud-border);
+  border-radius: 2px;
+}
+
+.mud-panel__body .mud-line {
+  display: block;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+@keyframes mud-panel-fadein {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ADR-Xγ-01: cmd-area 始终在面板之上 */
+.mud-cmd-area {
+  position: relative;
+  z-index: 1000;
+}
+
+/* ===========================
+   可点击弟子名（Phase X-γ PRD §2.9）
+   =========================== */
+.mud-disciple-link {
+  color: var(--mud-accent);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.mud-disciple-link:hover {
+  text-decoration: underline;
+  color: var(--mud-text-bright);
+}
+
+/* ===========================
+   面板内容排版（Phase X-γ 结构化输出）
+   =========================== */
+
+/* --- 区段 --- */
+.mud-p-section {
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--mud-border-dim);
+}
+.mud-p-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.mud-p-section__head {
+  font-size: 13px;
+  color: var(--mud-gold);
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.mud-p-icon {
+  margin-right: 4px;
+}
+
+/* --- 面板头栏 --- */
+.mud-p-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0 12px;
+  border-bottom: 1px solid var(--mud-border);
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.mud-p-stars {
+  color: var(--mud-gold);
+  font-size: 15px;
+  letter-spacing: 2px;
+}
+
+.mud-p-personality {
+  color: var(--mud-text-bright);
+  font-weight: bold;
+}
+
+.mud-p-divider {
+  color: var(--mud-text-mute);
+  margin: 0 2px;
+}
+
+/* --- 键值对 --- */
+.mud-p-kv {
+  padding: 3px 0 3px 16px;
+  color: var(--mud-text);
+  font-size: 13px;
+}
+
+.mud-p-hint {
+  color: var(--mud-text-dim);
+  font-size: 12px;
+}
+
+/* --- KV 网格（sect 概况等） --- */
+.mud-p-kv-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 16px;
+  padding: 4px 0 4px 16px;
+  font-size: 13px;
+}
+.mud-p-kv-key {
+  color: var(--mud-text-dim);
+}
+.mud-p-kv-val {
+  color: var(--mud-text-bright);
+}
+
+.mud-p-empty {
+  color: var(--mud-text-mute);
+  padding: 2px 0 2px 16px;
+  font-size: 13px;
+  font-style: italic;
+}
+
+/* --- 五维/数值条 --- */
+.mud-p-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 4px 0 0 16px;
+}
+
+.mud-p-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.mud-p-stat-label {
+  color: var(--mud-text-dim);
+  min-width: 32px;
+  text-align: right;
+}
+
+.mud-p-stat-val {
+  color: var(--mud-text-bright);
+  min-width: 28px;
+  text-align: right;
+  font-size: 12px;
+}
+
+/* --- 进度条 --- */
+.mud-p-bar {
+  display: inline-block;
+  width: 100px;
+  height: 8px;
+  background: var(--mud-bg-dark);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  vertical-align: middle;
+}
+
+.mud-p-bar__fill {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.mud-p-bar-high { background: var(--mud-green); opacity: 0.8; }
+.mud-p-bar-mid  { background: var(--mud-amber); opacity: 0.8; }
+.mud-p-bar-low  { background: var(--mud-red);   opacity: 0.8; }
+
+/* --- 双向轴条 --- */
+.mud-p-bar-axis {
+  width: 120px;
+}
+.mud-p-bar__center {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  background: var(--mud-text-mute);
+  z-index: 1;
+}
+.mud-p-axis {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0 4px 16px;
+  font-size: 13px;
+}
+.mud-p-axis-label {
+  color: var(--mud-text-dim);
+  min-width: 28px;
+  text-align: right;
+}
+.mud-p-axis-val {
+  color: var(--mud-text-bright);
+  font-size: 12px;
+  min-width: 32px;
+}
+.mud-p-axis-tag {
+  color: var(--mud-lavender);
+  font-size: 12px;
+}
+
+/* --- 标签（特性/情绪） --- */
+.mud-p-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 4px 0 0 16px;
+}
+
+.mud-p-tag {
+  display: inline-block;
+  padding: 2px 10px;
+  border: 1px solid var(--mud-accent-dim);
+  border-radius: 3px;
+  color: var(--mud-accent);
+  font-size: 12px;
+  background: rgba(122, 138, 186, 0.08);
+}
+
+.mud-p-tag-emotion {
+  border-color: var(--mud-amber);
+  color: var(--mud-amber);
+  background: rgba(200, 168, 88, 0.1);
+}
+
+/* --- 关系行 --- */
+.mud-p-rel-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 0 3px 16px;
+  font-size: 13px;
+}
+.mud-p-rel-arrow {
+  color: var(--mud-text-mute);
+}
+.mud-p-rel-name {
+  min-width: 48px;
+}
+.mud-p-rel-pos  { color: var(--mud-green); font-weight: bold; }
+.mud-p-rel-neg  { color: var(--mud-red);   font-weight: bold; }
+.mud-p-rel-zero { color: var(--mud-text-mute); }
+
+/* --- 宗门总览弟子行 --- */
+.mud-p-disciple-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 0 3px 16px;
+  font-size: 13px;
+}
+.mud-p-disciple-icon { min-width: 20px; text-align: center; }
+.mud-p-disciple-name { color: var(--mud-accent); }
+.mud-p-disciple-meta { color: var(--mud-text-dim); font-size: 12px; }
+.mud-p-disciple-realm { color: var(--mud-lavender); font-size: 12px; }
+.mud-p-disciple-action { color: var(--mud-text-mute); font-size: 12px; }
+
+/* --- 裁决面板 --- */
+.mud-p-ruling-event {
+  background: rgba(255, 215, 0, 0.05);
+  border: 1px solid rgba(255, 215, 0, 0.15);
+  border-radius: 4px;
+  padding: 12px 16px !important;
+  margin-bottom: 14px;
+}
+.mud-p-ruling-title {
+  color: var(--mud-gold);
+  font-size: 15px;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+.mud-p-ruling-desc {
+  color: var(--mud-text);
+  font-size: 13px;
+  line-height: 1.7;
+}
+.mud-p-ruling-option {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 6px 0 6px 16px;
+  font-size: 13px;
+  border-bottom: 1px dotted var(--mud-border-dim);
+}
+.mud-p-ruling-option:last-child { border-bottom: none; }
+.mud-p-ruling-num   { color: var(--mud-gold); font-weight: bold; }
+.mud-p-ruling-label { color: var(--mud-text-bright); }
+.mud-p-ruling-detail { color: var(--mud-text-dim); }
+.mud-p-ruling-footer {
+  margin-top: 8px;
+  padding: 8px 0 0;
+  border-top: 1px solid var(--mud-border-dim);
+  color: var(--mud-text-dim);
+  font-size: 12px;
+}
+.mud-p-ruling-timer {
+  color: var(--mud-red);
+  font-weight: bold;
+}
+

@@ -227,7 +227,7 @@ export interface LifetimeStats {
 
 // ===== 主状态 =====
 
-/** 7game-lite 精简游戏状态 — v4 */
+/** 7game-lite 精简游戏状态 — v5 */
 export interface LiteGameState {
   /** 存档版本号 */
   version: number;
@@ -275,7 +275,7 @@ export interface LiteGameState {
 
 // ===== 工厂函数 =====
 
-/** 创建默认新游戏状态 — v4 */
+/** 创建默认新游戏状态 — v5 */
 export function createDefaultLiteGameState(): LiteGameState {
   const now = Date.now();
   const disciples = generateInitialDisciples();

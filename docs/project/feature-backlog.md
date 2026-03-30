@@ -25,6 +25,8 @@
 | FB-013 | **天劫系统（经济闭环暂缓）**：炼气→筑基天劫机制，原计划 Phase D，因优先级让位于灵魂/世界系统而暂缓 | MASTER-PRD v2.0 对齐 | P3 | breakthrough-engine | Phase H 或 I |
 | FB-014 | **悬赏任务完整实现（经济闭环暂缓）**：D~B 级悬赏完善，骨架已有（bounty-board），包含 FB-002 | MASTER-PRD v2.0 对齐 | P3 | bounty-board | Phase H |
 | FB-015 | **丹毒系统（经济闭环暂缓）**：炼丹副作用系统，原计划 Phase E，因优先级让位而暂缓 | MASTER-PRD v2.0 对齐 | P3 | alchemy-engine, pill-consumer | Phase H 或 I |
+| ~~FB-016~~ | ~~**展现层增强 X-β**：Tab 自动补全弟子名/命令、突破全屏闪烁效果、行为图标前缀、命令别名系统（l=look, i=inspect, s=status）~~ | ~~Phase X-α PRD §5 OUT~~ | ~~P2~~ | ~~ui/command-handler, ui/engine-bindings~~ | ✅ **Phase X-β 已清偿** — Tab补全+别名+图标+闪烁 |
+| FB-017 | **展现层面板 X-γ**：look/inspect 浮层面板（不随日志滚走）、STORM 裁决弹窗居中面板、sect 面板化、ESC 关闭交互 | Phase X-α PRD §5 OUT | P2 | ui/, styles/ | Phase X-γ（依赖 X-β） |
 ---
 
 ## 已清偿
@@ -34,3 +36,4 @@
 | FB-001 | 弟子间对话交互 | 2026-03-28 | Phase D |
 | FB-004 | 关系系统（好感度/仇敌） | 2026-03-29 | Phase E（合并入 NPC 灵魂系统 affinity/tags） |
 | FB-011 | 玩家干预权（掌门裁决弹窗） | 2026-03-31 | Phase H-γ（STORM 裁决窗口 + judge 命令） |
+| FB-016 | 展现层增强 X-β（Tab补全+别名+图标+闪烁） | 2026-03-31 | Phase X-β（命令增强 + 视觉反馈） |
