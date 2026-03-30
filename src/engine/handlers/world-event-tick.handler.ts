@@ -108,6 +108,11 @@ export const worldEventTickHandler: TickHandler = {
       logger.info(LogCategory.WORLD, 'world-event', `【${label}】${text}`, logMeta);
     }
 
+    // Phase H-γ: 标记 STORM 事件供裁决系统消费 (ADR-Hγ-01)
+    if (payload.severity >= EventSeverity.STORM) {
+      ctx.pendingStormEvent = payload;
+    }
+
     // Lv.0 BREATH 不触发 SoulEvent（纯氛围） — PRD §3.2 R-WE01
     if (payload.severity === EventSeverity.BREATH) return;
 

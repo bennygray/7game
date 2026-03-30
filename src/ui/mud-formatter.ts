@@ -27,6 +27,8 @@ import { getBehaviorLabel } from '../engine/behavior-tree';
 import { getRealmDisplayName } from '../shared/formulas/realm-display';
 import { escapeHtml } from '../engine/disciple-generator';
 import { TRAIT_REGISTRY } from '../shared/data/trait-registry';
+import { EMOTION_LABEL, type DiscipleEmotionState } from '../shared/types/soul';
+import type { ActiveRuling, RulingResolution } from '../shared/types/ruling';
 
 
 // ===== 类型 =====
@@ -283,4 +285,163 @@ export function formatStatusBar(state: LiteGameState, auraRate: number): string 
 export function pickAmbientLine(): string {
   const idx = Math.floor(Math.random() * AMBIENT_BREATHING_POOL.length);
   return AMBIENT_BREATHING_POOL[idx];
+}
+
+// ===== inspect 命令（Phase H-β Story #3）=====
+
+/**
+ * 渲染弟子灵魂档案（inspect 命令）
+ * @param d - 弟子状态
+ * @param state - 游戏状态（用于关系查询）
+ * @param emotion - 当前情绪（可选，来自 emotionMap）
+ */
+export function formatDiscipleInspect(
+  d: LiteDiscipleState,
+  state: LiteGameState,
+  emotion?: DiscipleEmotionState,
+): string {
+  const lines: string[] = [];
+
+  // 标题
+  lines.push(`<span style="color:#c8b88b">────────── 灵魂档案：${escapeHtml(d.name)} ──────────</span>`);
+
+  // ◆ 基础
+  const loc = BEHAVIOR_LOCATION_MAP[d.behavior];
+  const locLabel = LOCATION_LABEL[loc];
+  const behaviorLabel = getBehaviorLabel(d.behavior);
+  const realmName = getRealmDisplayName(d.realm, d.subRealm);
+  lines.push(`<span style="color:#7a8aba">◆ 基础</span>`);
+  lines.push(`  ${'★'.repeat(d.starRating)} ${escapeHtml(d.personalityName)} | <span style="color:#c8a858">${escapeHtml(realmName)}</span> | ${escapeHtml(locLabel)}·${escapeHtml(behaviorLabel)}`);
+
+  // ◆ 五维性格
+  const p = d.personality;
+  lines.push(`<span style="color:#7a8aba">◆ 五维性格</span>`);
+  lines.push(`  攻击: ${Math.round(p.aggressive * 100)}  坚韧: ${Math.round(p.persistent * 100)}  善良: ${Math.round(p.kind * 100)}  懒惰: ${Math.round(p.lazy * 100)}  聪慧: ${Math.round(p.smart * 100)}`);
+
+  // ◆ 道德双轴
+  const moralLabel = getMoralLabel(d.moral.goodEvil);
+  const chaosLabel = getChaosLabel(d.moral.lawChaos);
+  lines.push(`<span style="color:#7a8aba">◆ 道德双轴</span>`);
+  lines.push(`  善恶: ${d.moral.goodEvil > 0 ? '+' : ''}${d.moral.goodEvil} (${moralLabel})    律放: ${d.moral.lawChaos > 0 ? '+' : ''}${d.moral.lawChaos} (${chaosLabel})`);
+
+  // ◆ 先天特性
+  lines.push(`<span style="color:#7a8aba">◆ 先天特性</span>`);
+  if (d.traits && d.traits.length > 0) {
+    const traitNames = d.traits.map(t => {
+      const def = TRAIT_REGISTRY.find(r => r.id === t.defId);
+      return `[${escapeHtml(def?.name ?? t.defId)}]`;
+    }).join(' ');
+    lines.push(`  ${traitNames}`);
+  } else {
+    lines.push(`  （无）`);
+  }
+
+  // ◆ 当前情绪
+  lines.push(`<span style="color:#7a8aba">◆ 当前情绪</span>`);
+  if (emotion && emotion.currentEmotion) {
+    const emotionName = EMOTION_LABEL[emotion.currentEmotion] ?? emotion.currentEmotion;
+    const ticksAgo = emotion.decayCounter;
+    lines.push(`  ${emotionName} (强度 ${emotion.emotionIntensity}) — ${ticksAgo} tick 前触发`);
+  } else {
+    lines.push(`  <span style="color:#4a4a4a">平静（无特殊情绪波动）</span>`);
+  }
+
+  // ◆ 人际关系
+  const rels = state.relationships.filter(r => r.sourceId === d.id);
+  if (rels.length > 0) {
+    lines.push(`<span style="color:#7a8aba">◆ 人际关系</span>`);
+    for (const rel of rels) {
+      const other = state.disciples.find(x => x.id === rel.targetId);
+      if (!other) continue;
+      const sign = rel.affinity >= 0 ? '+' : '';
+      const tagsStr = rel.tags && rel.tags.length > 0 ? ` [${rel.tags.join(',')}]` : '';
+      lines.push(`  → ${escapeHtml(other.name)}: 好感 ${sign}${rel.affinity.toFixed(0)}${tagsStr}`);
+    }
+  }
+
+  return lines.join('\n');
+}
+
+// ===== sect 命令（Phase H-β Story #4）=====
+
+/**
+ * 渲染 ASCII 刻度尺：[-100, +100] 范围，20 字符宽
+ */
+function renderGauge(value: number, leftLabel: string, rightLabel: string): string {
+  const pos = Math.round((value + 100) / 200 * 20);
+  const clamped = Math.max(0, Math.min(20, pos));
+  const bar = '─'.repeat(clamped) + '●' + '─'.repeat(20 - clamped);
+  return `${leftLabel} ${bar} ${rightLabel}`;
+}
+
+/**
+ * 渲染宗门道风总览（sect 命令）
+ * @param state - 游戏状态
+ */
+export function formatSectProfile(state: LiteGameState): string {
+  const sect = state.sect;
+  const lines: string[] = [];
+
+  // 标题
+  lines.push(`<span style="color:#c8b88b">────────── 宗门：${escapeHtml(sect.name)} ──────────</span>`);
+
+  // ◆ 等级/声望/灵气
+  lines.push(`<span style="color:#7a8aba">◆ 等级:</span> ${sect.level}级 | 声望: ${sect.reputation} | 灵气浓度: ×${sect.auraDensity.toFixed(2)}`);
+
+  // ◆ 道风双轴
+  const ethosLabel = getEthosLabel(sect.ethos);
+  const discLabel = getDisciplineLabel(sect.discipline);
+  lines.push(`<span style="color:#7a8aba">◆ 道风双轴</span>`);
+  lines.push(`  ${renderGauge(sect.ethos, '仁', '霸')}    道风: ${sect.ethos > 0 ? '+' : ''}${sect.ethos} (${ethosLabel})`);
+  lines.push(`  ${renderGauge(sect.discipline, '放', '律')}    门规: ${sect.discipline > 0 ? '+' : ''}${sect.discipline} (${discLabel})`);
+
+  // ◆ 弟子/丹药
+  lines.push(`<span style="color:#7a8aba">◆ 弟子:</span> ${state.disciples.length}人 | 上缴丹药: ${sect.tributePills}颗`);
+
+  return lines.join('\n');
+}
+
+// ===== judge 命令（Phase H-γ Story #1~#3）=====
+
+/**
+ * 渲染裁决窗口（STORM 事件触发时显示）
+ * @param ruling - 当前活跃裁决
+ * @param remainingSeconds - 剩余秒数
+ */
+export function formatRulingWindow(ruling: ActiveRuling, remainingSeconds: number): string {
+  const lines: string[] = [];
+  const remaining = Math.max(0, Math.round(remainingSeconds));
+  lines.push(`<span style="color:#ffd700">═══════════════════════════════════════</span>`);
+  lines.push(`<span style="color:#ffd700">⚡ 【风暴事件】${escapeHtml(ruling.eventName)}</span>`);
+  lines.push(`<span style="color:#c8b88b">${escapeHtml(ruling.eventText)}</span>`);
+  lines.push('');
+  lines.push(`<span style="color:#ffd700">请掌门裁决：</span>`);
+  for (const opt of ruling.options) {
+    lines.push(`  <span style="color:#c8b88b">[${opt.index}] ${escapeHtml(opt.label)}</span> — ${escapeHtml(opt.description)}`);
+  }
+  lines.push('');
+  lines.push(`<span style="color:#8a8a6a">输入 judge 1/${ruling.options.length} 做出裁决（剩余 ${remaining} 秒）</span>`);
+  lines.push(`<span style="color:#ffd700">═══════════════════════════════════════</span>`);
+  return lines.join('\n');
+}
+
+/**
+ * 渲染裁决结果（judge 命令执行后或超时后显示）
+ * @param resolution - 裁决结果
+ */
+export function formatRulingResult(resolution: RulingResolution): string {
+  const lines: string[] = [];
+  if (resolution.timedOut && resolution.timeoutText) {
+    lines.push(`<span style="color:#8a8a6a">${escapeHtml(resolution.timeoutText)}</span>`);
+  }
+  lines.push(`<span style="color:#c8b88b">⚖ ${escapeHtml(resolution.option.mudText)}</span>`);
+  const ethosDir = resolution.option.ethosShift > 0 ? '偏霸' : resolution.option.ethosShift < 0 ? '偏仁' : '';
+  const discDir = resolution.option.disciplineShift > 0 ? '偏律' : resolution.option.disciplineShift < 0 ? '偏放' : '';
+  const shifts: string[] = [];
+  if (ethosDir) shifts.push(`道风${ethosDir}(${resolution.option.ethosShift > 0 ? '+' : ''}${resolution.option.ethosShift})`);
+  if (discDir) shifts.push(`门规${discDir}(${resolution.option.disciplineShift > 0 ? '+' : ''}${resolution.option.disciplineShift})`);
+  if (shifts.length > 0) {
+    lines.push(`<span style="color:#8a8a6a">  宗门气运微移：${shifts.join('，')}</span>`);
+  }
+  return lines.join('\n');
 }

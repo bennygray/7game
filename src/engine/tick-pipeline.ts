@@ -21,6 +21,7 @@ import type { GameLogger } from '../shared/types/logger';
 import type { EventBus } from './event-bus';
 import type { DiscipleEmotionState } from '../shared/types/soul';
 import type { AsyncAIBuffer } from './async-ai-buffer';
+import type { WorldEventPayload } from '../shared/types/world-event';
 
 /** 突破事件回调（定义在 tick-pipeline 以避免循环依赖） */
 export type BreakthroughCallback = (
@@ -99,6 +100,8 @@ export interface TickContext {
   emotionMap: Map<string, DiscipleEmotionState>;
   /** Phase G: 异步 AI 缓冲区（fire-and-forget + deferred correction） */
   asyncAIBuffer?: AsyncAIBuffer;
+  /** Phase H-γ: 本 tick 触发的 STORM 事件载荷（world-event-tick 设置） */
+  pendingStormEvent?: WorldEventPayload;
 }
 
 // ===== TickPipeline 类 =====

@@ -45,11 +45,14 @@ import {
 } from './breakthrough-engine';
 import { executeBreakthrough } from './breakthrough-engine';
 import { TickPipeline, TickPhase, type TickHandler, type TickContext, type BreakthroughCallback } from './tick-pipeline';
-import type { GameLogger } from '../shared/types/logger';
+import { LogLevel, type LogEntry, type GameLogger } from '../shared/types/logger';
 import type { DialogueExchange } from '../shared/types/dialogue';
 import { DialogueCoordinator } from './dialogue-coordinator';
 import { EventBus } from './event-bus';
 import type { DiscipleEmotionState } from '../shared/types/soul';
+import type { ActiveRuling, RulingOption, RulingResolution } from '../shared/types/ruling';
+import { findRulingOptions } from '../shared/data/ruling-registry';
+import { WORLD_EVENT_REGISTRY } from '../shared/data/world-event-registry';
 
 // Handler 导入
 import { boostCountdownHandler } from './handlers/boost-countdown.handler';
@@ -85,6 +88,15 @@ export type SystemLogCallback = (logs: string[]) => void;
 /** Phase D: 弟子间对话回调 */
 export type DialogueCallback = (exchange: DialogueExchange) => void;
 
+/** Phase H-β: 统一日志管线回调 — 每 tick 传递本轮 LogEntry[] */
+export type MudLogCallback = (entries: LogEntry[]) => void;
+
+/** Phase H-γ: 裁决窗口创建回调 */
+export type RulingCreatedCallback = (ruling: ActiveRuling) => void;
+
+/** Phase H-γ: 裁决结算回调 */
+export type RulingResolvedCallback = (resolution: RulingResolution) => void;
+
 export class IdleEngine {
   private state: LiteGameState;
   private intervalId: ReturnType<typeof setInterval> | null = null;
@@ -95,6 +107,12 @@ export class IdleEngine {
   private onFarmTickLog: FarmTickLogCallback | null = null;
   private onSystemLog: SystemLogCallback | null = null;
   private onDialogue: DialogueCallback | null = null;
+  private onMudLog: MudLogCallback | null = null;
+  private onRulingCreated: RulingCreatedCallback | null = null;
+  private onRulingResolved: RulingResolvedCallback | null = null;
+
+  /** Phase H-γ: 活跃裁决（运行时，不持久化，ADR-Hγ-02） */
+  private activeRuling: ActiveRuling | null = null;
 
   /** CR-A1: 突破冷却计数器，>0 时不允许突破 */
   private breakthroughCooldown: number = 0;
@@ -175,6 +193,62 @@ export class IdleEngine {
     this.onDialogue = cb;
   }
 
+  /** Phase H-β: 注册统一日志管线回调 */
+  setOnMudLog(cb: MudLogCallback): void {
+    this.onMudLog = cb;
+  }
+
+  /** Phase H-γ: 注册裁决创建回调 */
+  setOnRulingCreated(cb: RulingCreatedCallback): void {
+    this.onRulingCreated = cb;
+  }
+
+  /** Phase H-γ: 注册裁决结算回调 */
+  setOnRulingResolved(cb: RulingResolvedCallback): void {
+    this.onRulingResolved = cb;
+  }
+
+  /** Phase H-γ: 获取当前活跃裁决（只读副本） */
+  getActiveRuling(): ActiveRuling | null {
+    return this.activeRuling ? { ...this.activeRuling, options: [...this.activeRuling.options] } : null;
+  }
+
+  /**
+   * Phase H-γ: 玩家裁决 — 选择选项 N
+   * @param optionIndex - 选项序号（1-based）
+   * @returns RulingResolution 如果成功，null 如果无效
+   */
+  resolveRuling(optionIndex: number): RulingResolution | null {
+    if (!this.activeRuling || this.activeRuling.resolved) return null;
+    const option = this.activeRuling.options.find((o) => o.index === optionIndex);
+    if (!option) return null;
+
+    this.activeRuling.resolved = true;
+    this.applyEthosDrift(option);
+
+    const resolution: RulingResolution = {
+      option,
+      timedOut: false,
+      timeoutText: null,
+      newEthos: this.state.sect.ethos,
+      newDiscipline: this.state.sect.discipline,
+    };
+
+    this.activeRuling = null;
+    this.onRulingResolved?.(resolution);
+    return resolution;
+  }
+
+  /**
+   * 查询弟子当前情绪状态（只读副本）
+   * @param discipleId - 弟子 ID
+   * @returns 情绪状态副本，或 undefined（无情绪记录）
+   */
+  getEmotionState(discipleId: string): DiscipleEmotionState | undefined {
+    const state = this.emotionMap.get(discipleId);
+    return state ? { ...state } : undefined;
+  }
+
   /** 启动引擎 */
   start(): void {
     if (this.intervalId !== null) return;
@@ -251,6 +325,21 @@ export class IdleEngine {
       );
     }
 
+    // Phase H-β S0: 统一日志管线 — flush logger 并分发到 MUD
+    const logEntries = ctx.logger.flush();
+    const mudEntries = logEntries.filter(e => e.level > LogLevel.DEBUG);
+    if (mudEntries.length > 0) {
+      this.onMudLog?.(mudEntries);
+    }
+
+    // Phase H-γ: 裁决超时检查
+    this.checkRulingTimeout();
+
+    // Phase H-γ: STORM 事件 → 创建裁决窗口
+    if (ctx.pendingStormEvent && !this.activeRuling) {
+      this.createRuling(ctx.pendingStormEvent);
+    }
+
     // 最终通知上层 tick 完成
     this.onTick?.(this.state, deltaS);
   }
@@ -279,6 +368,107 @@ export class IdleEngine {
       this.state.realm, this.state.subRealm, this.state.daoFoundation,
       density, boostMul,
     );
+  }
+
+  // ===== Phase H-γ: 裁决管理私有方法 =====
+
+  /** 超时 fallback 文案池 */
+  private static readonly TIMEOUT_TEXTS = [
+    '掌门闭关未出，此事由长老代为处置。',
+    '掌门未及时裁决，事态自行平息。',
+    '无人做出决断，弟子们只得各自应对。',
+  ];
+
+  /** 裁决窗口时长（秒），与 STORM_COOLDOWN_S 一致 */
+  private static readonly RULING_TIMEOUT_S = 300;
+
+  /**
+   * 创建裁决窗口（STORM 事件触发时调用）
+   */
+  private createRuling(payload: import('../shared/types/world-event').WorldEventPayload): void {
+    if (this.activeRuling) return;
+
+    // 查找裁决选项
+    const defs = findRulingOptions(payload.eventDefId, payload.polarity);
+    if (defs.length === 0) return;
+
+    // 查找事件名称
+    const eventDef = WORLD_EVENT_REGISTRY.find((d) => d.id === payload.eventDefId);
+    const eventName = eventDef?.name ?? '异事';
+
+    // 渲染事件文案
+    const involvedNames = payload.involvedDiscipleIds
+      .map((id) => this.state.disciples.find((d) => d.id === id)?.name ?? id);
+    let eventText = '宗门发生了一件异事。';
+    if (eventDef && eventDef.templates.length > 0) {
+      const template = eventDef.templates[Math.floor(Math.random() * eventDef.templates.length)];
+      eventText = template.replace(/\{D\}/g, involvedNames[0] ?? '').replace(/\{D2\}/g, involvedNames[1] ?? '');
+    }
+
+    // 构建选项
+    const options: RulingOption[] = defs.map((def, i) => ({
+      index: i + 1,
+      label: def.label,
+      description: def.description,
+      ethosShift: def.ethosShift,
+      disciplineShift: def.disciplineShift,
+      mudText: def.mudText,
+    }));
+
+    const now = this.state.inGameWorldTime;
+    this.activeRuling = {
+      eventPayload: payload,
+      eventName,
+      eventText,
+      options,
+      createdAt: now,
+      expiresAt: now + IdleEngine.RULING_TIMEOUT_S,
+      resolved: false,
+    };
+
+    this.onRulingCreated?.(this.activeRuling);
+  }
+
+  /**
+   * 检查裁决超时（每 tick 调用）
+   */
+  private checkRulingTimeout(): void {
+    if (!this.activeRuling || this.activeRuling.resolved) return;
+    if (this.state.inGameWorldTime < this.activeRuling.expiresAt) return;
+
+    // 超时：等概率随机选择
+    const options = this.activeRuling.options;
+    const chosen = options[Math.floor(Math.random() * options.length)];
+
+    this.activeRuling.resolved = true;
+    this.applyEthosDrift(chosen);
+
+    const timeoutText = IdleEngine.TIMEOUT_TEXTS[
+      Math.floor(Math.random() * IdleEngine.TIMEOUT_TEXTS.length)
+    ];
+
+    const resolution: RulingResolution = {
+      option: chosen,
+      timedOut: true,
+      timeoutText,
+      newEthos: this.state.sect.ethos,
+      newDiscipline: this.state.sect.discipline,
+    };
+
+    this.activeRuling = null;
+    this.onRulingResolved?.(resolution);
+  }
+
+  /**
+   * 执行道风漂移（PRD R-05）
+   */
+  private applyEthosDrift(option: RulingOption): void {
+    this.state.sect.ethos = Math.max(-100, Math.min(100,
+      this.state.sect.ethos + option.ethosShift,
+    ));
+    this.state.sect.discipline = Math.max(-100, Math.min(100,
+      this.state.sect.discipline + option.disciplineShift,
+    ));
   }
 
   /**

@@ -169,6 +169,10 @@ class GameLoggerImpl implements GameLogger {
 
   flush(): LogEntry[] {
     const entries = [...this.buffer];
+    // Phase H-β ADR-Hβ-02: fire-and-forget 写盘，防止 flush 清空后丢失持久化
+    if (entries.length > 0) {
+      writeLogs(entries);
+    }
     this.buffer = [];
     return entries;
   }

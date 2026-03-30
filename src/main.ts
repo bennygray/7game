@@ -38,8 +38,13 @@ import {
   formatSeverityLog,
   formatStatusBar,
   pickAmbientLine,
+  formatDiscipleInspect,
+  formatSectProfile,
+  formatRulingWindow,
+  formatRulingResult,
 } from './ui/mud-formatter';
 import { EventSeverity } from './shared/types/world-event';
+import { LogLevel, type LogEntry } from './shared/types/logger';
 
 // ===== 初始化 =====
 
@@ -177,6 +182,45 @@ function updateLogDisplay(): void {
   logEl.scrollTop = logEl.scrollHeight;
 }
 
+// ===== Phase H-β: 统一日志管线路由 =====
+
+/**
+ * 将 LogEntry 路由到 MUD 显示
+ * 实现 PRD R-S0-01 / R-S0-02 / R-S0-03 映射规则
+ */
+function routeLogEntryToMud(entry: LogEntry): void {
+  // R-S0-01: DEBUG 不显示
+  if (entry.level <= LogLevel.DEBUG) return;
+
+  // R-S0-03: severity 覆写规则
+  let severity: number;
+  const src = entry.source;
+
+  if (src === 'world-event' && entry.data?.severity !== undefined) {
+    severity = entry.data.severity as number;
+  } else if (src === 'encounter') {
+    severity = entry.data?.result === 'chat' ? EventSeverity.RIPPLE : EventSeverity.SPLASH;
+  } else if (src === 'ai-result-apply') {
+    severity = EventSeverity.SPLASH;
+  } else {
+    // R-S0-01: LogLevel → EventSeverity 默认映射
+    switch (entry.level) {
+      case LogLevel.INFO:  severity = EventSeverity.RIPPLE; break;
+      case LogLevel.WARN:  severity = EventSeverity.SPLASH; break;
+      case LogLevel.ERROR: severity = EventSeverity.STORM;  break;
+      default:             severity = EventSeverity.RIPPLE;
+    }
+  }
+
+  // R-S0-02: 已知 source 无前缀，其他加 [{source}] 前缀
+  const knownSources = ['encounter', 'world-event', 'ai-result-apply', 'soul-event'];
+  const text = knownSources.includes(src)
+    ? entry.message
+    : `[${src}] ${entry.message}`;
+
+  addMudLog(formatSeverityLog(severity, text));
+}
+
 // ===== 命令系统 =====
 
 function handleCommand(cmd: string): void {
@@ -213,17 +257,66 @@ function handleCommand(cmd: string): void {
     return;
   }
 
+  // Phase H-β: inspect / i — 弟子灵魂档案
+  if (verb === 'inspect' || verb === 'i') {
+    if (!arg) {
+      addMudLog(`<span style="color:#666">[系统] 用法：inspect <弟子名></span>`);
+      return;
+    }
+    const result = matchDisciple(arg, state.disciples);
+    if (result.type === 'exact') {
+      const emotion = engine.getEmotionState(result.disciple.id);
+      addMudLog(formatDiscipleInspect(result.disciple, state, emotion));
+    } else if (result.type === 'multiple') {
+      addMudLog(`<span style="color:#8bc8c8">[系统] 找到多位弟子：${result.candidates.map(c => escapeHtml(c.name)).join('、')}... 请输入更完整的名字。</span>`);
+    } else {
+      addMudLog(`<span style="color:#666">[系统] 未找到名为「${escapeHtml(arg)}」的弟子。</span>`);
+    }
+    return;
+  }
+
+  // Phase H-β: sect — 宗门道风总览
+  if (verb === 'sect') {
+    addMudLog(formatSectProfile(state));
+    return;
+  }
+
+  // Phase H-γ: judge N — 掌门裁决
+  if (verb === 'judge') {
+    const ruling = engine.getActiveRuling();
+    if (!ruling) {
+      addMudLog(`<span style="color:#666">[系统] 当前没有需要裁决的事件。</span>`);
+      return;
+    }
+    if (!arg) {
+      // 无参数 → 重新显示裁决窗口
+      const remaining = (ruling.expiresAt - Date.now()) / 1000;
+      addMudLog(formatRulingWindow(ruling, remaining));
+      return;
+    }
+    const optIndex = parseInt(arg, 10);
+    if (isNaN(optIndex) || optIndex < 1 || optIndex > ruling.options.length) {
+      addMudLog(`<span style="color:#ff6b6b">[系统] 无效选项，请输入 judge 1~${ruling.options.length}</span>`);
+      return;
+    }
+    engine.resolveRuling(optIndex);
+    return;
+  }
+
   switch (verb) {
     case 'help':
       addMudLog('<span style="color:#8bc8c8">[系统] 可用命令：</span>');
-      addMudLog('  look         — 查看宗门总览（各区弟子分布）');
-      addMudLog('  look <弟子名> — 查看弟子档案（性格/特性/关系）');
-      addMudLog('  status       — 查看宗主状态');
-      addMudLog('  bt           — 尝试突破');
-      addMudLog('  clear        — 清空日志');
-      addMudLog('  reset        — 清除存档（重新开始）');
-      addMudLog('  ai           — 连接 AI 后端');
-      addMudLog('  help         — 显示帮助');
+      addMudLog('  look            — 查看宗门总览（各区弟子分布）');
+      addMudLog('  look <弟子名>    — 查看弟子档案（性格/特性/关系）');
+      addMudLog('  inspect <弟子名> — 查看弟子灵魂档案（情绪/道德/特性）');
+      addMudLog('  sect            — 查看宗门道风总览');
+      addMudLog('  judge <N>       — 裁决风暴事件（输入选项编号）');
+      addMudLog('  status          — 查看宗主状态');
+      addMudLog('  bt              — 尝试突破');
+      addMudLog('  clear           — 清空日志');
+      addMudLog('  reset           — 清除存档（重新开始）');
+      addMudLog('  ai              — 连接 AI 后端');
+      addMudLog('  help            — 显示帮助');
       break;
 
     case 'status':
@@ -390,6 +483,23 @@ engine.setOnDialogue((exchange: DialogueExchange) => {
       addMudLog(`<span style="color:#a8c4d4">  ${triggerName}回应："${escapeHtml(round.line)}"</span>`);
     }
   }
+});
+
+// Phase H-β: 统一日志管线 — 每 tick 分发 LogEntry 到 MUD
+engine.setOnMudLog((entries) => {
+  for (const entry of entries) {
+    routeLogEntryToMud(entry);
+  }
+});
+
+// Phase H-γ: 裁决回调
+engine.setOnRulingCreated((ruling) => {
+  const remaining = (ruling.expiresAt - Date.now()) / 1000;
+  addMudLog(formatRulingWindow(ruling, remaining));
+});
+
+engine.setOnRulingResolved((resolution) => {
+  addMudLog(formatRulingResult(resolution));
 });
 
 engine.setOnDiscipleBehaviorChange((events) => {
