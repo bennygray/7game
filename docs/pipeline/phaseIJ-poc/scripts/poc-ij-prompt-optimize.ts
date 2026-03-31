@@ -849,7 +849,8 @@ function loadV1Metrics(): V1LevelData[] {
   // Use the latest metrics file
   const latest = files.sort().pop()!;
   const raw = readFileSync(join(logsDir, latest), 'utf8');
-  const data = JSON.parse(raw) as V1LevelData[];
+  const parsed = JSON.parse(raw) as V1LevelData[] | { perLevel: V1LevelData[] };
+  const data = Array.isArray(parsed) ? parsed : parsed.perLevel;
   // Filter to only L0/L1/L3
   return data.filter(d => [0, 1, 3].includes(d.level));
 }

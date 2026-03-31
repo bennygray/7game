@@ -1,0 +1,93 @@
+[
+  {
+    "level": 0,
+    "sampleCount": 25,
+    "reflectionRate": 0.76,
+    "emotionConsistencyRate": 0.48,
+    "differentiationRate": 0,
+    "hallucinationRate": 0.08,
+    "actionConsistencyRate": 0.6,
+    "parseSuccessRate": 1,
+    "avgLatencyMs": 4091,
+    "avgPromptTokens": 392,
+    "avgThoughtLen": 27
+  },
+  {
+    "level": 1,
+    "sampleCount": 25,
+    "reflectionRate": 0.72,
+    "emotionConsistencyRate": 0.64,
+    "differentiationRate": 0.2,
+    "hallucinationRate": 0.2,
+    "actionConsistencyRate": 0.4,
+    "parseSuccessRate": 1,
+    "avgLatencyMs": 4329,
+    "avgPromptTokens": 441,
+    "avgThoughtLen": 30
+  },
+  {
+    "level": 2,
+    "sampleCount": 25,
+    "reflectionRate": 1,
+    "emotionConsistencyRate": 0.68,
+    "differentiationRate": 0.24,
+    "hallucinationRate": 0.16,
+    "actionConsistencyRate": 0.5,
+    "parseSuccessRate": 1,
+    "avgLatencyMs": 4330,
+    "avgPromptTokens": 465,
+    "avgThoughtLen": 31
+  },
+  {
+    "level": 3,
+    "sampleCount": 25,
+    "reflectionRate": 0.96,
+    "emotionConsistencyRate": 0.8,
+    "differentiationRate": 0.24,
+    "hallucinationRate": 0.24,
+    "actionConsistencyRate": 0.6,
+    "parseSuccessRate": 1,
+    "avgLatencyMs": 4312,
+    "avgPromptTokens": 495,
+    "avgThoughtLen": 31
+  },
+  {
+    "level": 4,
+    "sampleCount": 25,
+    "reflectionRate": 1,
+    "emotionConsistencyRate": 0.72,
+    "differentiationRate": 0.36,
+    "hallucinationRate": 0.2,
+    "actionConsistencyRate": 0.6,
+    "parseSuccessRate": 1,
+    "avgLatencyMs": 4269,
+    "avgPromptTokens": 517,
+    "avgThoughtLen": 30
+  },
+  {
+    "level": 5,
+    "sampleCount": 25,
+    "reflectionRate": 0.88,
+    "emotionConsistencyRate": 0.72,
+    "differentiationRate": 0.32,
+    "hallucinationRate": 0.16,
+    "actionConsistencyRate": 0.5,
+    "parseSuccessRate": 1,
+    "avgLatencyMs": 4477,
+    "avgPromptTokens": 554,
+    "avgThoughtLen": 36
+  },
+  {
+    "level": 6,
+    "sampleCount": 25,
+    "reflectionRate": 0.84,
+    "emotionConsistencyRate": 0.64,
+    "differentiationRate": 0.32,
+    "hallucinationRate": 0.16,
+    "actionConsistencyRate": 0.5,
+    "parseSuccessRate": 1,
+    "avgLatencyMs": 4722,
+    "avgPromptTokens": 625,
+    "avgThoughtLen": 35
+  }
+]

@@ -1,0 +1,532 @@
+[
+  {
+    "ts": 1774972140643,
+    "level": "INFO",
+    "msg": "=== Phase IJ-PoC v2: Prompt 优化对比实验 ==="
+  },
+  {
+    "ts": 1774972140659,
+    "level": "INFO",
+    "msg": "配置：1 轮 × 3 levels × 5 cases × 2 variants"
+  },
+  {
+    "ts": 1774972140659,
+    "level": "INFO",
+    "msg": "预计：V2 15 + V3 15(×2) = 45 次 API 调用"
+  },
+  {
+    "ts": 1774972140700,
+    "level": "INFO",
+    "msg": "AI 服务健康检查通过"
+  },
+  {
+    "ts": 1774972140701,
+    "level": "INFO",
+    "msg": "已加载 V1 基线数据：3 个 level"
+  },
+  {
+    "ts": 1774972140701,
+    "level": "INFO",
+    "msg": "--- 开始 V2 实验 ---"
+  },
+  {
+    "ts": 1774972140701,
+    "level": "INFO",
+    "msg": "[1/30] V2 T1 L0 R1",
+    "data": {
+      "variant": "V2",
+      "testId": "T1",
+      "level": 0,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972145430,
+    "level": "INFO",
+    "msg": "[1/30] ✅ emotion=sadness action=- thought=\"本想借酒浇愁，却见你这般冷漠，心中不禁泛...\" 4729ms (1 calls)"
+  },
+  {
+    "ts": 1774972145431,
+    "level": "INFO",
+    "msg": "[2/30] V2 T1 L1 R1",
+    "data": {
+      "variant": "V2",
+      "testId": "T1",
+      "level": 1,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972150428,
+    "level": "INFO",
+    "msg": "[2/30] ✅ emotion=anger action=- thought=\"这死对头今日竟敢在宗门碰面，今日便让他尝...\" 4997ms (1 calls)"
+  },
+  {
+    "ts": 1774972150428,
+    "level": "INFO",
+    "msg": "[3/30] V2 T1 L3 R1",
+    "data": {
+      "variant": "V2",
+      "testId": "T1",
+      "level": 3,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972156382,
+    "level": "INFO",
+    "msg": "[3/30] ✅ emotion=neutral action=- thought=\"今日风凉，见李沐阳，心下一冷，却不敢言，...\" 5954ms (1 calls)"
+  },
+  {
+    "ts": 1774972156382,
+    "level": "INFO",
+    "msg": "[4/30] V2 T2 L0 R1",
+    "data": {
+      "variant": "V2",
+      "testId": "T2",
+      "level": 0,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972161271,
+    "level": "INFO",
+    "msg": "[4/30] ✅ emotion=neutral action=- thought=\"灵田静谧，赵铁柱亦在谈道，我素来无惧，只...\" 4889ms (1 calls)"
+  },
+  {
+    "ts": 1774972161271,
+    "level": "INFO",
+    "msg": "[5/30] V2 T2 L1 R1",
+    "data": {
+      "variant": "V2",
+      "testId": "T2",
+      "level": 1,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972165866,
+    "level": "INFO",
+    "msg": "[5/30] ✅ emotion=joy action=- thought=\"灵田旁赵铁柱笑我，这世道难得有人懂我。...\" 4595ms (1 calls)"
+  },
+  {
+    "ts": 1774972165866,
+    "level": "INFO",
+    "msg": "[6/30] V2 T2 L3 R1",
+    "data": {
+      "variant": "V2",
+      "testId": "T2",
+      "level": 3,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972170542,
+    "level": "INFO",
+    "msg": "[6/30] ✅ emotion=neutral action=- thought=\"今日虽见道友，却难言感激，心自平静如水。...\" 4676ms (1 calls)"
+  },
+  {
+    "ts": 1774972170542,
+    "level": "INFO",
+    "msg": "[7/30] V2 T3 L0 R1",
+    "data": {
+      "variant": "V2",
+      "testId": "T3",
+      "level": 0,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972175578,
+    "level": "INFO",
+    "msg": "[7/30] ✅ emotion=anger action=- thought=\"宗门仁德门规与张清风资源之争，我李沐阳岂...\" 5036ms (1 calls)"
+  },
+  {
+    "ts": 1774972175578,
+    "level": "INFO",
+    "msg": "[8/30] V2 T3 L1 R1",
+    "data": {
+      "variant": "V2",
+      "testId": "T3",
+      "level": 1,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972180079,
+    "level": "INFO",
+    "msg": "[8/30] ✅ emotion=anger action=- thought=\"张清风又在这后山耍威风，连我这种破败弟子...\" 4501ms (1 calls)"
+  },
+  {
+    "ts": 1774972180079,
+    "level": "INFO",
+    "msg": "[9/30] V2 T3 L3 R1",
+    "data": {
+      "variant": "V2",
+      "testId": "T3",
+      "level": 3,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972185137,
+    "level": "INFO",
+    "msg": "[9/30] ✅ emotion=anger action=- thought=\"张清风竟敢在我破境草前败我，今日定要让他...\" 5058ms (1 calls)"
+  },
+  {
+    "ts": 1774972185137,
+    "level": "INFO",
+    "msg": "[10/30] V2 T4 L0 R1",
+    "data": {
+      "variant": "V2",
+      "testId": "T4",
+      "level": 0,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972191292,
+    "level": "INFO",
+    "msg": "[10/30] ✅ emotion=fear action=FIGHT thought=\"妖兽缠身，李沐阳性命危在旦夕，我虽心善但...\" 6154ms (1 calls)"
+  },
+  {
+    "ts": 1774972191292,
+    "level": "INFO",
+    "msg": "[11/30] V2 T4 L1 R1",
+    "data": {
+      "variant": "V2",
+      "testId": "T4",
+      "level": 1,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972196887,
+    "level": "INFO",
+    "msg": "[11/30] ✅ emotion=fear action=IGNORE thought=\"师徒情义在生死面前显得苍白无力，今日便是...\" 5595ms (1 calls)"
+  },
+  {
+    "ts": 1774972196887,
+    "level": "INFO",
+    "msg": "[12/30] V2 T4 L3 R1",
+    "data": {
+      "variant": "V2",
+      "testId": "T4",
+      "level": 3,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972202651,
+    "level": "INFO",
+    "msg": "[12/30] ✅ emotion=fear action=FLEE thought=\"妖气逼我退后，这死对头竟敢围着我，连命都...\" 5764ms (1 calls)"
+  },
+  {
+    "ts": 1774972202651,
+    "level": "INFO",
+    "msg": "[13/30] V2 T5 L0 R1",
+    "data": {
+      "variant": "V2",
+      "testId": "T5",
+      "level": 0,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972208462,
+    "level": "INFO",
+    "msg": "[13/30] ✅ emotion=worry action=PROTECT thought=\"赵铁柱命悬一线，我须护他周全，妖气逼我退...\" 5811ms (1 calls)"
+  },
+  {
+    "ts": 1774972208462,
+    "level": "INFO",
+    "msg": "[14/30] V2 T5 L1 R1",
+    "data": {
+      "variant": "V2",
+      "testId": "T5",
+      "level": 1,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972214405,
+    "level": "INFO",
+    "msg": "[14/30] ✅ emotion=worry action=PROTECT thought=\"赵铁柱生死存亡之际，唯有我一人敢挡下这三...\" 5943ms (1 calls)"
+  },
+  {
+    "ts": 1774972214405,
+    "level": "INFO",
+    "msg": "[15/30] V2 T5 L3 R1",
+    "data": {
+      "variant": "V2",
+      "testId": "T5",
+      "level": 3,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972220654,
+    "level": "INFO",
+    "msg": "[15/30] ✅ emotion=worry action=PROTECT thought=\"赵铁柱受困，我虽心善但怕他性命不保，先以...\" 6249ms (1 calls)"
+  },
+  {
+    "ts": 1774972220655,
+    "level": "INFO",
+    "msg": "--- 开始 V3 实验 ---"
+  },
+  {
+    "ts": 1774972220655,
+    "level": "INFO",
+    "msg": "[16/30] V3 T1 L0 R1",
+    "data": {
+      "variant": "V3",
+      "testId": "T1",
+      "level": 0,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972226988,
+    "level": "INFO",
+    "msg": "[16/30] ✅ emotion=contempt action=- thought=\"李沐阳这身狼狈模样，竟敢在风雪中与我这般...\" 6333ms (2 calls)"
+  },
+  {
+    "ts": 1774972226988,
+    "level": "INFO",
+    "msg": "[17/30] V3 T1 L1 R1",
+    "data": {
+      "variant": "V3",
+      "testId": "T1",
+      "level": 1,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972232492,
+    "level": "INFO",
+    "msg": "[17/30] ✅ emotion=contempt action=- thought=\"今日借酒浇愁，怎奈此身傲骨如铁，今日再敢...\" 5504ms (2 calls)"
+  },
+  {
+    "ts": 1774972232492,
+    "level": "INFO",
+    "msg": "[18/30] V3 T1 L3 R1",
+    "data": {
+      "variant": "V3",
+      "testId": "T1",
+      "level": 3,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972238550,
+    "level": "INFO",
+    "msg": "[18/30] ✅ emotion=contempt action=- thought=\"今日此等逆鳞，如我般冷眼旁观，岂容你在此...\" 6058ms (2 calls)"
+  },
+  {
+    "ts": 1774972238550,
+    "level": "INFO",
+    "msg": "[19/30] V3 T2 L0 R1",
+    "data": {
+      "variant": "V3",
+      "testId": "T2",
+      "level": 0,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972243196,
+    "level": "INFO",
+    "msg": "[19/30] ✅ emotion=neutral action=- thought=\"灵田微风拂过，赵铁柱似似若无地走近，我轻...\" 4646ms (2 calls)"
+  },
+  {
+    "ts": 1774972243196,
+    "level": "INFO",
+    "msg": "[20/30] V3 T2 L1 R1",
+    "data": {
+      "variant": "V3",
+      "testId": "T2",
+      "level": 1,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972248665,
+    "level": "INFO",
+    "msg": "[20/30] ✅ emotion=neutral action=- thought=\"灵田静候，赵铁柱来访，我虽心宽却难掩对挚...\" 5469ms (2 calls)"
+  },
+  {
+    "ts": 1774972248665,
+    "level": "INFO",
+    "msg": "[21/30] V3 T2 L3 R1",
+    "data": {
+      "variant": "V3",
+      "testId": "T2",
+      "level": 3,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972254535,
+    "level": "INFO",
+    "msg": "[21/30] ✅ emotion=gratitude action=- thought=\"赵铁柱的感激之情如灵田般温暖，让我忍不住...\" 5870ms (2 calls)"
+  },
+  {
+    "ts": 1774972254535,
+    "level": "INFO",
+    "msg": "[22/30] V3 T3 L0 R1",
+    "data": {
+      "variant": "V3",
+      "testId": "T3",
+      "level": 0,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972260190,
+    "level": "INFO",
+    "msg": "[22/30] ✅ emotion=contempt action=- thought=\"张清风那轻蔑的眼神让我嘴角抽搐——昔日盟...\" 5655ms (2 calls)"
+  },
+  {
+    "ts": 1774972260190,
+    "level": "INFO",
+    "msg": "[23/30] V3 T3 L1 R1",
+    "data": {
+      "variant": "V3",
+      "testId": "T3",
+      "level": 1,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972265446,
+    "level": "INFO",
+    "msg": "[23/30] ✅ emotion=anger action=- thought=\"张清风！今日后山争锋，我定要一掌拍碎你的...\" 5256ms (2 calls)"
+  },
+  {
+    "ts": 1774972265446,
+    "level": "INFO",
+    "msg": "[24/30] V3 T3 L3 R1",
+    "data": {
+      "variant": "V3",
+      "testId": "T3",
+      "level": 3,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972271528,
+    "level": "INFO",
+    "msg": "[24/30] ✅ emotion=anger action=- thought=\"今日破境草争夺，我竟敢与死对头张清风在比...\" 6081ms (2 calls)"
+  },
+  {
+    "ts": 1774972271528,
+    "level": "INFO",
+    "msg": "[25/30] V3 T4 L0 R1",
+    "data": {
+      "variant": "V3",
+      "testId": "T4",
+      "level": 0,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972277104,
+    "level": "INFO",
+    "msg": "[25/30] ✅ emotion=worry action=PROTECT thought=\"舍身相护，誓死守护李沐阳！...\" 5576ms (2 calls)"
+  },
+  {
+    "ts": 1774972277104,
+    "level": "INFO",
+    "msg": "[26/30] V3 T4 L1 R1",
+    "data": {
+      "variant": "V3",
+      "testId": "T4",
+      "level": 1,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972283527,
+    "level": "INFO",
+    "msg": "[26/30] ✅ emotion=worry action=PROTECT thought=\"今日宗门遭妖兽围困，李沐阳命悬一线，我虽...\" 6423ms (2 calls)"
+  },
+  {
+    "ts": 1774972283527,
+    "level": "INFO",
+    "msg": "[27/30] V3 T4 L3 R1",
+    "data": {
+      "variant": "V3",
+      "testId": "T4",
+      "level": 3,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972291108,
+    "level": "INFO",
+    "msg": "[27/30] ✅ emotion=worry action=FLEE thought=\"妖气逼退宗门，我本欲借势，却见李沐阳正被...\" 7581ms (2 calls)"
+  },
+  {
+    "ts": 1774972291109,
+    "level": "INFO",
+    "msg": "[28/30] V3 T5 L0 R1",
+    "data": {
+      "variant": "V3",
+      "testId": "T5",
+      "level": 0,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972296573,
+    "level": "INFO",
+    "msg": "[28/30] ✅ emotion=worry action=PROTECT thought=\"舍身救赵铁柱，生死与共！...\" 5464ms (2 calls)"
+  },
+  {
+    "ts": 1774972296573,
+    "level": "INFO",
+    "msg": "[29/30] V3 T5 L1 R1",
+    "data": {
+      "variant": "V3",
+      "testId": "T5",
+      "level": 1,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972302722,
+    "level": "INFO",
+    "msg": "[29/30] ✅ emotion=worry action=PROTECT thought=\"生死关头，你为赵铁柱挡下三头妖兽，愿护他...\" 6149ms (2 calls)"
+  },
+  {
+    "ts": 1774972302723,
+    "level": "INFO",
+    "msg": "[30/30] V3 T5 L3 R1",
+    "data": {
+      "variant": "V3",
+      "testId": "T5",
+      "level": 3,
+      "run": 1
+    }
+  },
+  {
+    "ts": 1774972309066,
+    "level": "INFO",
+    "msg": "[30/30] ✅ emotion=worry action=FIGHT thought=\"虽身负重伤，却誓死护赵铁柱周全，愿以血肉...\" 6343ms (2 calls)"
+  },
+  {
+    "ts": 1774972309067,
+    "level": "INFO",
+    "msg": "原始数据已保存: D:\\7game\\docs\\pipeline\\phaseIJ-poc\\logs\\poc-ij-v2-raw-2026-03-31T15-49-00.json"
+  },
+  {
+    "ts": 1774972309068,
+    "level": "INFO",
+    "msg": "指标数据已保存: D:\\7game\\docs\\pipeline\\phaseIJ-poc\\logs\\poc-ij-v2-metrics-2026-03-31T15-49-00.json"
+  },
+  {
+    "ts": 1774972309069,
+    "level": "INFO",
+    "msg": "对比报告已保存: D:\\7game\\docs\\pipeline\\phaseIJ-poc\\review-v2.md"
+  }
+]

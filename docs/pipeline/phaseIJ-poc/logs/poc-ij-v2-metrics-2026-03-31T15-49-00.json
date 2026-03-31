@@ -1,0 +1,125 @@
+{
+  "v2": [
+    {
+      "variant": "V2",
+      "level": 0,
+      "relationshipReflectionRate": 0.8,
+      "emotionConsistencyRate": 0.4,
+      "levelDifferentiationRate": 0,
+      "hallucinationRate": 0,
+      "avgLatencyMs": 5324,
+      "parseSuccessRate": 1,
+      "avgPromptTokens": 344,
+      "sampleCount": 5,
+      "avgInnerThoughtLen": 32,
+      "actionConsistencyRate": 0.5
+    },
+    {
+      "variant": "V2",
+      "level": 1,
+      "relationshipReflectionRate": 1,
+      "emotionConsistencyRate": 0.8,
+      "levelDifferentiationRate": 0.6,
+      "hallucinationRate": 0.4,
+      "avgLatencyMs": 5126,
+      "parseSuccessRate": 1,
+      "avgPromptTokens": 413,
+      "sampleCount": 5,
+      "avgInnerThoughtLen": 29,
+      "actionConsistencyRate": 1
+    },
+    {
+      "variant": "V2",
+      "level": 3,
+      "relationshipReflectionRate": 0.8,
+      "emotionConsistencyRate": 0.4,
+      "levelDifferentiationRate": 0.4,
+      "hallucinationRate": 0.2,
+      "avgLatencyMs": 5540,
+      "parseSuccessRate": 1,
+      "avgPromptTokens": 477,
+      "sampleCount": 5,
+      "avgInnerThoughtLen": 35,
+      "actionConsistencyRate": 1
+    }
+  ],
+  "v3": [
+    {
+      "variant": "V3",
+      "level": 0,
+      "relationshipReflectionRate": 1,
+      "emotionConsistencyRate": 0.6,
+      "levelDifferentiationRate": 0,
+      "hallucinationRate": 0,
+      "avgLatencyMs": 5535,
+      "parseSuccessRate": 1,
+      "avgPromptTokens": 314,
+      "sampleCount": 5,
+      "avgInnerThoughtLen": 33,
+      "actionConsistencyRate": 0.5
+    },
+    {
+      "variant": "V3",
+      "level": 1,
+      "relationshipReflectionRate": 1,
+      "emotionConsistencyRate": 0.6,
+      "levelDifferentiationRate": 0.2,
+      "hallucinationRate": 0,
+      "avgLatencyMs": 5760,
+      "parseSuccessRate": 1,
+      "avgPromptTokens": 378,
+      "sampleCount": 5,
+      "avgInnerThoughtLen": 34,
+      "actionConsistencyRate": 0.5
+    },
+    {
+      "variant": "V3",
+      "level": 3,
+      "relationshipReflectionRate": 0.8,
+      "emotionConsistencyRate": 0.8,
+      "levelDifferentiationRate": 0.8,
+      "hallucinationRate": 0.4,
+      "avgLatencyMs": 6387,
+      "parseSuccessRate": 1,
+      "avgPromptTokens": 442,
+      "sampleCount": 5,
+      "avgInnerThoughtLen": 43,
+      "actionConsistencyRate": 1
+    }
+  ],
+  "v1": [
+    {
+      "level": 0,
+      "relationshipReflectionRate": 0.9047619047619048,
+      "emotionConsistencyRate": 0.5238095238095238,
+      "levelDifferentiationRate": 0,
+      "hallucinationRate": 0.09523809523809523,
+      "avgLatencyMs": 5501,
+      "parseSuccessRate": 0.84,
+      "avgPromptTokens": 288,
+      "sampleCount": 21
+    },
+    {
+      "level": 1,
+      "relationshipReflectionRate": 1,
+      "emotionConsistencyRate": 0.625,
+      "levelDifferentiationRate": 0.375,
+      "hallucinationRate": 0.08333333333333333,
+      "avgLatencyMs": 5065,
+      "parseSuccessRate": 0.96,
+      "avgPromptTokens": 313,
+      "sampleCount": 24
+    },
+    {
+      "level": 3,
+      "relationshipReflectionRate": 0.9444444444444444,
+      "emotionConsistencyRate": 0.7777777777777778,
+      "levelDifferentiationRate": 0.4444444444444444,
+      "hallucinationRate": 0.2777777777777778,
+      "avgLatencyMs": 5496,
+      "parseSuccessRate": 0.72,
+      "avgPromptTokens": 361,
+      "sampleCount": 18
+    }
+  ]
+}

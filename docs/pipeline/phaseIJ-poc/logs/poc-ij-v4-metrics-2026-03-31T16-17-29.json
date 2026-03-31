@@ -1,0 +1,41 @@
+[
+  {
+    "level": 0,
+    "sampleCount": 25,
+    "reflectionRate": 0.72,
+    "emotionConsistencyRate": 0.36,
+    "differentiationRate": 0,
+    "hallucinationRate": 0.08,
+    "actionConsistencyRate": 0.6,
+    "parseSuccessRate": 1,
+    "avgLatencyMs": 4424,
+    "avgPromptTokens": 392,
+    "avgThoughtLen": 28
+  },
+  {
+    "level": 1,
+    "sampleCount": 25,
+    "reflectionRate": 0.92,
+    "emotionConsistencyRate": 0.6,
+    "differentiationRate": 0.32,
+    "hallucinationRate": 0.12,
+    "actionConsistencyRate": 0.5,
+    "parseSuccessRate": 1,
+    "avgLatencyMs": 4575,
+    "avgPromptTokens": 441,
+    "avgThoughtLen": 28
+  },
+  {
+    "level": 3,
+    "sampleCount": 25,
+    "reflectionRate": 1,
+    "emotionConsistencyRate": 0.72,
+    "differentiationRate": 0.4,
+    "hallucinationRate": 0.08,
+    "actionConsistencyRate": 0.7,
+    "parseSuccessRate": 1,
+    "avgLatencyMs": 4788,
+    "avgPromptTokens": 495,
+    "avgThoughtLen": 33
+  }
+]
