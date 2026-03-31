@@ -29,6 +29,11 @@ const LLAMA_SERVER_PATH = join(__dirname, 'llama-server', 'llama-server.exe');
 let modelLoaded = false;
 let llamaProcess: ChildProcess | null = null;
 
+/** 崩溃自动重启计数 */
+let restartCount = 0;
+const MAX_RESTARTS = 3;
+const RESTART_DELAY_MS = 5000;
+
 // ===== 占位推理（模型未加载时） =====
 
 const SERVER_TEMPLATES: Record<string, string[]> = {
@@ -132,7 +137,7 @@ function callLlamaServer(systemPrompt: string, userPrompt: string): Promise<stri
       temperature: 0.85,
       top_k: 50,
       top_p: 0.9,
-      presence_penalty: 1.8,
+      presence_penalty: 1.0,
       chat_template_kwargs: { enable_thinking: false },
     });
 
@@ -283,7 +288,28 @@ async function startLlamaServer(): Promise<boolean> {
     llamaProcess.on('exit', (code) => {
       console.log(`[AI Server] llama-server 退出 (code=${code})`);
       modelLoaded = false;
-      if (!started) resolve(false);
+      llamaProcess = null;
+      if (!started) {
+        resolve(false);
+        return;
+      }
+      // 崩溃自动重启
+      if (restartCount < MAX_RESTARTS) {
+        restartCount++;
+        console.log(`[AI Server] 将在 ${RESTART_DELAY_MS / 1000}s 后尝试重启 (${restartCount}/${MAX_RESTARTS})...`);
+        setTimeout(() => {
+          startLlamaServer().then((ok) => {
+            if (ok) {
+              restartCount = 0;
+              console.log('[AI Server] ✓ llama-server 重启成功');
+            }
+          }).catch(() => {
+            console.error('[AI Server] ✗ llama-server 重启失败');
+          });
+        }, RESTART_DELAY_MS);
+      } else {
+        console.error('[AI Server] ✗ llama-server 重启次数已达上限，切换到占位模式');
+      }
     });
 
     // 超时处理
@@ -298,29 +324,57 @@ async function startLlamaServer(): Promise<boolean> {
 
 // ===== HTTP 服务 =====
 
+/** 请求体大小上限（64KB） */
+const MAX_BODY_SIZE = 65536;
+
 function parseBody(req: IncomingMessage): Promise<string> {
   return new Promise((resolve, reject) => {
     let body = '';
-    req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
+    let size = 0;
+    req.on('data', (chunk: Buffer) => {
+      size += chunk.length;
+      if (size > MAX_BODY_SIZE) {
+        req.destroy();
+        reject(new Error('Payload too large'));
+        return;
+      }
+      body += chunk.toString();
+    });
     req.on('end', () => resolve(body));
     req.on('error', reject);
   });
 }
 
-function sendJson(res: ServerResponse, status: number, data: unknown): void {
-  res.writeHead(status, {
+/** 允许的 CORS 来源（仅 localhost） */
+const ALLOWED_ORIGINS = [
+  'http://localhost:5173',   // Vite dev
+  'http://localhost:4173',   // Vite preview
+  'http://localhost:3000',   // 备用
+];
+
+function getCorsHeaders(origin: string | undefined): Record<string, string> {
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
-  });
+  };
+  if (origin && ALLOWED_ORIGINS.includes(origin)) {
+    headers['Access-Control-Allow-Origin'] = origin;
+  }
+  return headers;
+}
+
+function sendJson(res: ServerResponse, status: number, data: unknown, origin?: string): void {
+  res.writeHead(status, getCorsHeaders(origin));
   res.end(JSON.stringify(data));
 }
 
 const server = createServer(async (req, res) => {
+  const origin = req.headers.origin;
+
   // CORS preflight
   if (req.method === 'OPTIONS') {
-    sendJson(res, 204, null);
+    sendJson(res, 204, null, origin);
     return;
   }
 
@@ -330,44 +384,73 @@ const server = createServer(async (req, res) => {
       status: 'ok',
       model: modelLoaded ? 'qwen3.5-0.8b' : 'placeholder',
       modelReady: modelLoaded,
-    });
+    }, origin);
     return;
   }
 
-  // Generate
-  if (req.method === 'POST' && req.url === '/api/generate') {
+  // Infer
+  if (req.method === 'POST' && req.url === '/api/infer') {
     try {
       const rawBody = await parseBody(req);
-      const body = JSON.parse(rawBody) as {
+
+      let parsed: unknown;
+      try {
+        parsed = JSON.parse(rawBody);
+      } catch {
+        sendJson(res, 400, { error: 'Invalid JSON' }, origin);
+        return;
+      }
+
+      // 字段校验
+      const body = parsed as Record<string, unknown>;
+      if (typeof body.discipleName !== 'string' ||
+          typeof body.personalityName !== 'string' ||
+          typeof body.behavior !== 'string') {
+        sendJson(res, 400, { error: 'Missing required fields: discipleName, personalityName, behavior' }, origin);
+        return;
+      }
+
+      const line = await generateWithModel(body as {
         discipleName: string;
         personality: Record<string, number>;
         personalityName: string;
         behavior: string;
         shortTermMemory: string[];
-      };
-
-      const line = await generateWithModel(body);
+      });
 
       console.log(`[AI] ${body.discipleName} (${body.personalityName}) → "${line}"`);
-      sendJson(res, 200, { line });
+      sendJson(res, 200, { line }, origin);
     } catch (err) {
-      console.error('[AI] 请求处理失败:', err);
-      sendJson(res, 500, { error: 'Internal error' });
+      if (err instanceof Error && err.message === 'Payload too large') {
+        sendJson(res, 413, { error: 'Payload too large' }, origin);
+      } else {
+        console.error('[AI] 请求处理失败:', err);
+        sendJson(res, 500, { error: 'Internal error' }, origin);
+      }
     }
     return;
   }
 
-  sendJson(res, 404, { error: 'Not found' });
+  sendJson(res, 404, { error: 'Not found' }, origin);
 });
 
 // ===== 优雅退出 =====
 
 function cleanup() {
+  console.log('[AI Server] 正在关闭...');
   if (llamaProcess) {
     console.log('[AI Server] 关闭 llama-server...');
-    llamaProcess.kill('SIGTERM');
+    // Windows 上 SIGTERM 不可靠，不传参数时 Node.js 使用 TerminateProcess
+    if (process.platform === 'win32') {
+      llamaProcess.kill();
+    } else {
+      llamaProcess.kill('SIGTERM');
+    }
     llamaProcess = null;
   }
+  server.close(() => {
+    console.log('[AI Server] HTTP server 已关闭');
+  });
 }
 
 process.on('SIGINT', () => { cleanup(); process.exit(0); });

@@ -20,6 +20,8 @@ export interface LogManager {
   addMainLog(html: string): void;
   /** 添加到系统消息条（修炼灵气/灵田/soul-engine/环境呼吸） */
   addSystemLog(html: string): void;
+  /** 清空主事件流 DOM（供 clear/reset 命令使用） */
+  clearMainLog(): void;
   /** 初始化（注入 DOM 元素引用） */
   init(mainLogEl: HTMLElement, systemBarEl: HTMLElement): void;
 }
@@ -60,10 +62,14 @@ export function createLogManager(): LogManager {
     if (systemBarEl) appendLine(systemBarEl, html, SYSTEM_LOG_MAX);
   }
 
+  function clearMainLog(): void {
+    if (mainLogEl) mainLogEl.innerHTML = '';
+  }
+
   function init(mainEl: HTMLElement, sysEl: HTMLElement): void {
     mainLogEl   = mainEl;
     systemBarEl = sysEl;
   }
 
-  return { addMainLog, addSystemLog, init };
+  return { addMainLog, addSystemLog, clearMainLog, init };
 }

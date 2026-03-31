@@ -16,8 +16,6 @@ import { getRealmDisplayName } from '../shared/formulas/realm-display';
 import { getSpiritVeinDensity } from '../shared/data/realm-table';
 import { SEED_BY_ID } from '../shared/data/seed-table';
 import { RECIPE_BY_ID } from '../shared/data/recipe-table';
-import { SoulEvaluator } from '../ai/soul-evaluator';
-import { initSoulEventEvaluator } from '../engine/handlers/soul-event.handler';
 import { EventSeverity } from '../shared/types/world-event';
 import {
   formatLookOverview,
@@ -39,6 +37,12 @@ export interface CommandContext {
   llmAdapter: LLMAdapter;
   logManager: LogManager;
   panelManager: PanelManager;  // Phase X-γ: 面板管理器注入
+  /** 重置游戏（标记 resetting + 清存档 + reload） */
+  onReset: () => void;
+  /** 清除存档（委托 save-manager） */
+  clearSave: () => void;
+  /** 连接 AI 后端（共用逻辑，main.ts 启动时也调用） */
+  connectAI: (ctx: CommandContext) => void;
 }
 
 // ===== 命令别名（Phase X-β PRD §2.3）=====
@@ -204,7 +208,7 @@ function getCompletionCandidates(input: string, ctx: CommandContext): string[] {
 // ===== 命令路由 =====
 
 function handleCommand(cmd: string, ctx: CommandContext): void {
-  const { state, engine, llmAdapter, logManager } = ctx;
+  const { state, engine, logManager } = ctx;
   const { addMainLog } = logManager;
 
   const parts = cmd.trim().split(/\s+/);
@@ -344,44 +348,20 @@ function handleCommand(cmd: string, ctx: CommandContext): void {
     }
 
     case 'clear':
-      // 清空主日志（DOM 直接清空）
-      {
-        const mainLogEl = document.getElementById('main-log');
-        if (mainLogEl) mainLogEl.innerHTML = '';
-      }
+      logManager.clearMainLog();
       break;
 
     case 'ai':
       addMainLog(`<span class="mud-text-cyan">[系统] 正在尝试连接 AI 后端...</span>`);
-      if ('tryConnect' in llmAdapter) {
-        (llmAdapter as any).tryConnect().then((ok: boolean) => {
-          if (ok) {
-            addMainLog(`<span class="mud-text-green">[系统] ✓ AI 后端连接成功！弟子台词切换到 AI 模式</span>`);
-          } else {
-            addMainLog(`<span class="mud-text-red">[系统] ✗ AI 后端不可用，请先运行 npm run ai</span>`);
-          }
-        });
-      }
-      {
-        const soulEval = new SoulEvaluator();
-        soulEval.tryConnect().then((ok) => {
-          if (ok) {
-            initSoulEventEvaluator(soulEval);
-            addMainLog(`<span class="mud-text-green">[系统] ✓ 灵魂 AI 评估已激活（Lv.2+ 事件将使用 AI）</span>`);
-          }
-        });
-      }
+      ctx.connectAI(ctx);
       break;
 
     case 'reset': {
-      const mainEl = document.getElementById('main-log');
-      if (mainEl) mainEl.innerHTML = '';
+      logManager.clearMainLog();
       addMainLog(`<span class="mud-text-red">[系统] 存档已清除，正在重新加载...</span>`);
       engine.stop();
-      if (typeof (window as any).__mudReset === 'function') {
-        (window as any).__mudReset();
-      }
-      localStorage.removeItem('7game-lite-save');
+      ctx.onReset();
+      ctx.clearSave();
       setTimeout(() => window.location.reload(), 300);
       break;
     }

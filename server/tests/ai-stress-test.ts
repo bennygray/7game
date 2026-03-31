@@ -34,7 +34,7 @@ function genDisciples(n: number) {
 async function sendOne(d: { name: string; personalityName: string; behavior: string }): Promise<{ name: string; line: string; ms: number; ok: boolean }> {
   const start = Date.now();
   try {
-    const res = await fetch(`${API_BASE}/api/generate`, {
+    const res = await fetch(`${API_BASE}/api/infer`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

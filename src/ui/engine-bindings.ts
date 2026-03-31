@@ -15,7 +15,7 @@ import type { LLMAdapter } from '../ai/llm-adapter';
 import { escapeHtml } from '../engine/disciple-generator';
 import { getBehaviorLabel } from '../engine/behavior-tree';
 import { getRealmDisplayName } from '../shared/formulas/realm-display';
-import { createDefaultAISoulContext, addShortTermMemory } from '../shared/types/ai-soul';
+// Phase X Review P1-04: AI 上下文操作已移至 Engine 层（engine.getOrCreateAIContext / recordAIMemory）
 import { EventSeverity } from '../shared/types/world-event';
 import { LogLevel } from '../shared/types/logger';
 import {
@@ -29,8 +29,34 @@ import {
 import type { LogManager } from './log-manager';
 import type { PanelManager } from './panel-manager';
 
+/** R-01 tick 计数器（由 onTickHandler 使用） */
+let tickCounter = 0;
+
 /**
- * 绑定所有引擎回调，实现消息路由规则 R-01~R-13
+ * R-01 tick 日志处理器（由 main.ts 在统一 setOnTick 中调用）
+ * Phase X Review P3-06 修复：setOnTick 是覆盖语义，不能多次注册
+ */
+export function onTickHandler(
+  engine: IdleEngine,
+  state: LiteGameState,
+  addSystemLog: (html: string) => void,
+): void {
+  tickCounter++;
+  if (tickCounter % 5 === 0) {
+    const rate = engine.getCurrentAuraRate();
+    const wm = state.inGameWorldTime * 12;
+    const y = Math.floor(wm / 12);
+    const m = Math.floor(wm % 12) + 1;
+    addSystemLog(formatSeverityLog(
+      EventSeverity.RIPPLE,
+      `[仙历${y}年${m}月] 宗主打坐入定，灵气 +${(rate * 5).toFixed(1)}`
+    ));
+  }
+}
+
+/**
+ * 绑定所有引擎回调（除 onTick 外），实现消息路由规则 R-02~R-13
+ * 注意：R-01（onTick）由 main.ts 统一绑定，通过 onTickHandler() 调用
  */
 export function bindEngineCallbacks(
   engine: IdleEngine,
@@ -40,24 +66,6 @@ export function bindEngineCallbacks(
   panelManager: PanelManager,
 ): void {
   const { addMainLog, addSystemLog } = logManager;
-
-  let tickCounter = 0;
-
-  // R-01: 修炼灵气 tick 日志 → system-bar（低信息量，系统内部）
-  engine.setOnTick(() => {
-    tickCounter++;
-    if (tickCounter % 5 === 0) {
-      const rate = engine.getCurrentAuraRate();
-      const wm = state.inGameWorldTime * 12;
-      const y = Math.floor(wm / 12);
-      const m = Math.floor(wm % 12) + 1;
-      addSystemLog(formatSeverityLog(
-        EventSeverity.RIPPLE,
-        `[仙历${y}年${m}月] 宗主打坐入定，灵气 +${(rate * 5).toFixed(1)}`
-      ));
-    }
-    // 状态栏更新由 main.ts 绑定后单独处理
-  });
 
   // R-11: 突破 → main-log（高关注事件）+ Phase X-β 闪烁效果
   engine.setOnBreakthrough((_s, btLog) => {
@@ -124,10 +132,11 @@ export function bindEngineCallbacks(
 
       // 计算严重度
       let severity: number;
-      if (src === 'world-event' && entry.data?.severity !== undefined) {
-        severity = entry.data.severity as number;          // R-06
+      if (src === 'world-event' && typeof entry.data?.severity === 'number') {
+        severity = entry.data.severity;                    // R-06
       } else if (src === 'encounter') {
-        severity = entry.data?.result === 'chat' ? EventSeverity.RIPPLE : EventSeverity.SPLASH; // R-05
+        const result = entry.data?.result;
+        severity = (typeof result === 'string' && result === 'chat') ? EventSeverity.RIPPLE : EventSeverity.SPLASH; // R-05
       } else if (src === 'ai-result-apply') {
         severity = EventSeverity.SPLASH;                   // R-07
       } else {
@@ -172,10 +181,8 @@ export function bindEngineCallbacks(
         const icon = getBehaviorIcon(evt.newBehavior);
         addMainLog(`<span class="mud-text-accent">${icon} [${wrapDiscipleName(name, id)}] 开始${getBehaviorLabel(evt.newBehavior)}</span>`);
 
-        if (!state.aiContexts[evt.disciple.id]) {
-          state.aiContexts[evt.disciple.id] = createDefaultAISoulContext();
-        }
-        const ctx = state.aiContexts[evt.disciple.id];
+        // P1-04: AI 上下文通过 Engine 层方法获取/写入
+        const aiCtx = engine.getOrCreateAIContext(evt.disciple.id);
 
         const req = {
           discipleId: evt.disciple.id,
@@ -183,7 +190,7 @@ export function bindEngineCallbacks(
           personality: evt.disciple.personality,
           personalityName: evt.disciple.personalityName,
           behavior: evt.newBehavior,
-          shortTermMemory: ctx.shortTermMemory,
+          shortTermMemory: aiCtx.shortTermMemory,
           starRating: evt.disciple.starRating,
           realm: evt.disciple.realm,
           subRealm: evt.disciple.subRealm,
@@ -191,8 +198,7 @@ export function bindEngineCallbacks(
 
         llmAdapter.generateLine(req).then((line) => {
           addMainLog(`<span class="mud-severity-splash">「[${wrapDiscipleName(name, id)}] 「${escapeHtml(line)}」」</span>`);
-          addShortTermMemory(ctx, `${getBehaviorLabel(evt.newBehavior)}: ${line}`);
-          ctx.lastInferenceTime = Date.now();
+          engine.recordAIMemory(evt.disciple.id, `${getBehaviorLabel(evt.newBehavior)}: ${line}`);
         });
       }
     }

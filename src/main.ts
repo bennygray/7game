@@ -17,20 +17,23 @@
 
 import './styles/mud-theme.css';
 
-import { loadGame, saveGame } from './engine/save-manager';
+import { loadGame, saveGame, clearSave } from './engine/save-manager';
 import { IdleEngine } from './engine/idle-engine';
 import { createLLMAdapter } from './ai/llm-adapter';
 import { SoulEvaluator } from './ai/soul-evaluator';
 import { initSoulEventEvaluator } from './engine/handlers/soul-event.handler';
 import { createLogger } from './engine/game-logger';
-import { getRealmAuraCost, getMaxSubRealm } from './shared/formulas/realm-formulas';
 
 import { initLayout } from './ui/layout';
 import { createLogManager } from './ui/log-manager';
 import { createPanelManager } from './ui/panel-manager';
-import { bindEngineCallbacks } from './ui/engine-bindings';
-import { initCommandSystem } from './ui/command-handler';
+import { bindEngineCallbacks, onTickHandler } from './ui/engine-bindings';
+import { initCommandSystem, type CommandContext } from './ui/command-handler';
 import { formatStatusBar, formatDiscipleInspect } from './ui/mud-formatter';
+
+// ===== 全局状态 =====
+
+let resetting = false;
 
 // ===== 初始化核心实例 =====
 
@@ -62,16 +65,44 @@ function updateDisplay(): void {
   statusBar.innerHTML = formatStatusBar(state, engine.getCurrentAuraRate());
 }
 
-// ===== 引擎回调（含消息路由 R-01~R-13 + 裁决自动推送 L-06/L-07）=====
+// ===== 引擎回调（R-02~R-13 + 裁决自动推送 L-06/L-07）=====
 
 bindEngineCallbacks(engine, state, llmAdapter, logManager, panelManager);
 
-// 追加 tick 后状态栏刷新
-engine.setOnTick(() => updateDisplay());
+// P3-06 修复：setOnTick 是覆盖语义，统一在此处注册，合并 R-01 路由 + 状态栏刷新
+engine.setOnTick(() => {
+  onTickHandler(engine, state, logManager.addSystemLog);
+  updateDisplay();
+});
+
+// ===== AI 连接（共用逻辑，P1-05 去重）=====
+
+function connectAI(ctx: CommandContext): void {
+  ctx.llmAdapter.tryConnect().then((ok) => {
+    if (ok) {
+      ctx.logManager.addMainLog(`<span class="mud-text-green">[系统] ✓ AI 后端连接成功！弟子台词切换到 AI 模式</span>`);
+    } else {
+      ctx.logManager.addMainLog(`<span class="mud-text-red">[系统] ✗ AI 后端不可用，请先运行 npm run ai</span>`);
+    }
+  });
+  const soulEval = new SoulEvaluator();
+  soulEval.tryConnect().then((ok) => {
+    if (ok) {
+      initSoulEventEvaluator(soulEval);
+      ctx.logManager.addMainLog(`<span class="mud-text-green">[系统] ✓ 灵魂 AI 评估已激活（Lv.2+ 事件将使用 AI）</span>`);
+    }
+  });
+}
 
 // ===== 命令系统 =====
 
-initCommandSystem(cmdInput, { state, engine, llmAdapter, logManager, panelManager });
+const cmdCtx: CommandContext = {
+  state, engine, llmAdapter, logManager, panelManager,
+  onReset: () => { resetting = true; },
+  clearSave,
+  connectAI,
+};
+initCommandSystem(cmdInput, cmdCtx);
 
 // ===== 弟子名点击委托（PRD §2.9 CK-02/CK-04，ADR-Xγ-03）=====
 
@@ -100,39 +131,14 @@ logManager.addMainLog(`<span class="mud-text-cyan">[系统] 七道修仙 MUD 灵
 logManager.addMainLog(`<span class="mud-text-cyan">[系统] 引擎 Tick 循环已激活，修炼进行中...</span>`);
 logManager.addMainLog(`<span class="mud-text-mute">[系统] 输入 'help' 查看可用命令 | 'look' 查看宗门总览 | ↑/↓ 翻阅历史</span>`);
 
-// 自动尝试连接 AI 后端（静默）
-if ('tryConnect' in llmAdapter) {
-  (llmAdapter as any).tryConnect().then((ok: boolean) => {
-    if (ok) {
-      logManager.addMainLog(`<span class="mud-text-green">[系统] ✓ AI 后端已连接，弟子台词切换到 AI 模式</span>`);
-    }
-  });
-}
-
-// 自动尝试连接 SoulEvaluator（静默）
-{
-  const soulEval = new SoulEvaluator();
-  soulEval.tryConnect().then((ok) => {
-    if (ok) {
-      initSoulEventEvaluator(soulEval);
-      logManager.addMainLog(`<span class="mud-text-green">[系统] ✓ 灵魂 AI 评估已激活</span>`);
-    }
-  });
-}
+// 自动尝试连接 AI 后端（静默，复用 connectAI）
+connectAI(cmdCtx);
 
 // ===== 自动存档 =====
 
 const AUTO_SAVE_INTERVAL = 30_000;
-let resetting = false;
 
 setInterval(() => { if (!resetting) saveGame(state); }, AUTO_SAVE_INTERVAL);
 window.addEventListener('beforeunload', () => { if (!resetting) saveGame(state); });
 
-// reset 命令需要访问 resetting 标志（通过全局）
-(window as any).__mudReset = () => { resetting = true; };
-
-// 备用工具（防 unused 警告）
-void getRealmAuraCost;
-void getMaxSubRealm;
-
-console.log('[7game-lite] v0.4.9 Phase X-γ 启动完成', state);
+console.log('[7game-lite] v0.4.9 Phase X Review 修复完成', state);

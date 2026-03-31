@@ -33,6 +33,8 @@ export interface LLMAdapter {
   generateLine(req: GenerateRequest): Promise<string>;
   /** Phase D: 弟子间对话生成（最多 2 轮） */
   generateDialogue(req: DialogueRequest): Promise<DialogueRound[]>;
+  /** 手动连接后端，返回是否成功 */
+  tryConnect(): Promise<boolean>;
 }
 
 // ===== HTTP 适配器（调后端 API） =====
@@ -51,7 +53,7 @@ class HttpLLMAdapter implements LLMAdapter {
     const timer = setTimeout(() => controller.abort(), this.timeoutMs);
 
     try {
-      const res = await fetch(`${this.baseUrl}/api/generate`, {
+      const res = await fetch(`${this.baseUrl}/api/infer`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(req),
@@ -71,11 +73,24 @@ class HttpLLMAdapter implements LLMAdapter {
     // HTTP 对话接口预留，当前直接抛出让 SmartAdapter 走 fallback
     throw new Error('HTTP dialogue not implemented');
   }
+
+  async tryConnect(): Promise<boolean> {
+    try {
+      await fetch(`${this.baseUrl}/api/health`, { signal: AbortSignal.timeout(3000) });
+      return true;
+    } catch {
+      return false;
+    }
+  }
 }
 
 // ===== Fallback 适配器（模板台词） =====
 
 class FallbackLLMAdapter implements LLMAdapter {
+  async tryConnect(): Promise<boolean> {
+    return false;
+  }
+
   async generateLine(req: GenerateRequest): Promise<string> {
     return generateFallbackLine(req.behavior, req.personality);
   }
@@ -136,17 +151,14 @@ class SmartLLMAdapter implements LLMAdapter {
 
   /** 手动连接后端（由 main.ts 的 'ai-connect' 命令调用） */
   async tryConnect(): Promise<boolean> {
-    try {
-      await fetch(`${this.http['baseUrl']}/api/health`, {
-        signal: AbortSignal.timeout(3000),
-      });
+    const ok = await this.http.tryConnect();
+    if (ok) {
       this.backendAvailable = true;
       console.log('[LLM] 后端连接成功，切换到 AI 模式');
-      return true;
-    } catch {
+    } else {
       console.log('[LLM] 后端不可用，保持 fallback 模式');
-      return false;
     }
+    return ok;
   }
 
   async generateDialogue(req: DialogueRequest): Promise<DialogueRound[]> {

@@ -35,8 +35,16 @@ function formatSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-function download(url: string, destPath: string): Promise<void> {
+/** 最大重定向次数 */
+const MAX_REDIRECTS = 5;
+
+function download(url: string, destPath: string, depth = 0): Promise<void> {
   return new Promise((resolve, reject) => {
+    if (depth > MAX_REDIRECTS) {
+      reject(new Error(`重定向次数超过上限 (${MAX_REDIRECTS})`));
+      return;
+    }
+
     const getter = url.startsWith('https') ? get : httpGet;
 
     console.log(`[下载] 开始下载: ${url}`);
@@ -46,7 +54,7 @@ function download(url: string, destPath: string): Promise<void> {
       // 处理重定向
       if (res.statusCode && res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
         console.log(`[下载] 重定向到: ${res.headers.location}`);
-        download(res.headers.location, destPath).then(resolve).catch(reject);
+        download(res.headers.location, destPath, depth + 1).then(resolve).catch(reject);
         return;
       }
 

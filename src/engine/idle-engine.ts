@@ -68,6 +68,7 @@ import { encounterTickHandler } from './handlers/encounter-tick.handler';
 import { worldEventTickHandler } from './handlers/world-event-tick.handler';
 import { aiResultApplyHandler } from './handlers/ai-result-apply.handler';
 import { AsyncAIBuffer } from './async-ai-buffer';
+import { createDefaultAISoulContext, addShortTermMemory } from '../shared/types/ai-soul';
 
 /** Tick 回调：引擎每次 tick 后通知上层 */
 export type TickCallback = (state: LiteGameState, deltaS: number) => void;
@@ -368,6 +369,27 @@ export class IdleEngine {
       this.state.realm, this.state.subRealm, this.state.daoFoundation,
       density, boostMul,
     );
+  }
+
+  /**
+   * 获取弟子 AI 上下文（不存在则自动创建）
+   * Phase X Review P1-04: AI 上下文管理由 Engine 层负责，UI 层不得直接写 state
+   */
+  getOrCreateAIContext(discipleId: string): import('../shared/types/ai-soul').AISoulContext {
+    if (!this.state.aiContexts[discipleId]) {
+      this.state.aiContexts[discipleId] = createDefaultAISoulContext();
+    }
+    return this.state.aiContexts[discipleId];
+  }
+
+  /**
+   * 记录 AI 台词到弟子短期记忆
+   * Phase X Review P1-04: AI 上下文写入由 Engine 层封装
+   */
+  recordAIMemory(discipleId: string, memory: string): void {
+    const ctx = this.getOrCreateAIContext(discipleId);
+    addShortTermMemory(ctx, memory);
+    ctx.lastInferenceTime = Date.now();
   }
 
   // ===== Phase H-γ: 裁决管理私有方法 =====
