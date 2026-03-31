@@ -1,0 +1,115 @@
+{
+  "perLevel": [
+    {
+      "level": 0,
+      "relationshipReflectionRate": 0.8,
+      "emotionConsistencyRate": 0.8,
+      "levelDifferentiationRate": 0,
+      "hallucinationRate": 1,
+      "avgLatencyMs": 5628,
+      "parseSuccessRate": 1,
+      "avgPromptTokens": 290,
+      "sampleCount": 5
+    },
+    {
+      "level": 1,
+      "relationshipReflectionRate": 1,
+      "emotionConsistencyRate": 0.4,
+      "levelDifferentiationRate": 0.6,
+      "hallucinationRate": 1,
+      "avgLatencyMs": 4964,
+      "parseSuccessRate": 1,
+      "avgPromptTokens": 316,
+      "sampleCount": 5
+    },
+    {
+      "level": 2,
+      "relationshipReflectionRate": 0.75,
+      "emotionConsistencyRate": 0.5,
+      "levelDifferentiationRate": 0.5,
+      "hallucinationRate": 1,
+      "avgLatencyMs": 5605,
+      "parseSuccessRate": 0.8,
+      "avgPromptTokens": 322,
+      "sampleCount": 4
+    },
+    {
+      "level": 3,
+      "relationshipReflectionRate": 1,
+      "emotionConsistencyRate": 0.6,
+      "levelDifferentiationRate": 0.4,
+      "hallucinationRate": 1,
+      "avgLatencyMs": 5643,
+      "parseSuccessRate": 1,
+      "avgPromptTokens": 369,
+      "sampleCount": 5
+    },
+    {
+      "level": 4,
+      "relationshipReflectionRate": 0.75,
+      "emotionConsistencyRate": 0.75,
+      "levelDifferentiationRate": 0.5,
+      "hallucinationRate": 0.75,
+      "avgLatencyMs": 5522,
+      "parseSuccessRate": 0.8,
+      "avgPromptTokens": 410,
+      "sampleCount": 4
+    },
+    {
+      "level": 5,
+      "relationshipReflectionRate": 1,
+      "emotionConsistencyRate": 0.6666666666666666,
+      "levelDifferentiationRate": 0.6666666666666666,
+      "hallucinationRate": 1,
+      "avgLatencyMs": 7442,
+      "parseSuccessRate": 0.6,
+      "avgPromptTokens": 469,
+      "sampleCount": 3
+    },
+    {
+      "level": 6,
+      "relationshipReflectionRate": 1,
+      "emotionConsistencyRate": 0.3333333333333333,
+      "levelDifferentiationRate": 1,
+      "hallucinationRate": 1,
+      "avgLatencyMs": 6790,
+      "parseSuccessRate": 0.6,
+      "avgPromptTokens": 530,
+      "sampleCount": 3
+    }
+  ],
+  "sweetSpot": {
+    "level": 5,
+    "reasoning": "L5 综合质量分最高（反映率+一致率+差异率-幻觉率），且解析成功率 ≥ 60%"
+  },
+  "tokenBudget": [
+    {
+      "level": 0,
+      "avgTokens": 290
+    },
+    {
+      "level": 1,
+      "avgTokens": 316
+    },
+    {
+      "level": 2,
+      "avgTokens": 322
+    },
+    {
+      "level": 3,
+      "avgTokens": 369
+    },
+    {
+      "level": 4,
+      "avgTokens": 410
+    },
+    {
+      "level": 5,
+      "avgTokens": 469
+    },
+    {
+      "level": 6,
+      "avgTokens": 530
+    }
+  ]
+}
