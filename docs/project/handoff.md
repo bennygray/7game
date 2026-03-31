@@ -1,17 +1,16 @@
 # 7game-lite — 会话交接文档
 
-> **上次更新**：2026-03-31 | **上次会话主题**：Phase Y SGE 实施
-> **当前活跃 Phase**：Phase Y（前后端代码质量治理）✅ 实施完成，待提交
+> **上次更新**：2026-03-31 | **上次会话主题**：Phase Z SGE 实施
+> **当前活跃 Phase**：Phase Z（AI 通信架构统一）✅ 实施完成
 > **Phase 状态**：SPM ✅ SGA ✅ SGE ✅ — 全部交付物已完成
 
 ---
 
 ## 当前断点
 
-- **Phase Y 全部完成** — ESLint 配置 + Hook + SGE Quality Gate + 单元测试 + 代码修复
-- Phase Z SPM 分析完成（SoulEvaluator 架构统一），可启动
-- **下一步**：Phase Z SGA → SGE（AI 通信路径统一）
-- 回归验证：64/64 通过 + UI 测试 65/65 通过 + lint 0 errors
+- **Phase Z 全部完成** — SoulEvaluator 路由统一 + ai-server 结构化补全端点 + 超时放宽
+- 回归验证：64/64 通过 + tsc 零错误 + lint 零新增 error
+- **下一步**：待用户决定下一个 Phase
 
 ### Phase Y 交付物总览
 
@@ -41,11 +40,18 @@
 - **ADR-Y-02**: eslint-plugin-import-x 替代 eslint-plugin-import（flat config 兼容）
 - **ADR-Y-03**: server/tsconfig.json 独立配置（Node.js vs Vite/Browser）
 
-### Phase Z 预告
+### Phase Z 已交付 — AI 通信架构统一
 
-- SoulEvaluator 直连 llama-server:8080 绕过 ai-server（soul-evaluator.ts:67）
-- 需在 ai-server 新增结构化补全端点，统一 AI 通信路径
-- 前置：Phase Y ✅ 已完成
+| 系统 | 状态 | 验证 |
+|------|------|---------|
+| callLlamaServer 通用化（payload 签名） | ✅ | tsc 零错误 |
+| /api/infer 结构化补全分支 | ✅ | tsc 零错误 |
+| SoulEvaluator 路由统一（→ ai-server:3001） | ✅ | grep 确认无 8080/v1 |
+| Call1/Call2 超时放宽（+100ms buffer） | ✅ | regression 64/64 |
+| Timeout (504) 错误处理 | ✅ | tsc 零错误 |
+
+- 2 修改文件，零存档迁移
+- ADR-Z-01（callLlamaServer 通用化），ADR-Z-02（超时放宽策略）
 
 ### Phase X-β 已交付 — 命令增强 + 视觉反馈
 
