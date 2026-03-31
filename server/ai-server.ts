@@ -125,21 +125,27 @@ const PERSONALITY_PROFILES: Record<string, { style: string; examples: string[] }
 
 // ===== 通过 llama-server HTTP API 推理 =====
 
-function callLlamaServer(systemPrompt: string, userPrompt: string): Promise<string> {
+/** llama-server 请求载荷 */
+interface LlamaRequestPayload {
+  model: string;
+  messages: Array<{ role: string; content: string }>;
+  max_tokens: number;
+  temperature: number;
+  top_p: number;
+  response_format?: { type: 'json_schema'; json_schema: { name: string; strict: boolean; schema: object } };
+  chat_template_kwargs?: Record<string, unknown>;
+  top_k?: number;
+  presence_penalty?: number;
+}
+
+/**
+ * 向 llama-server 发送推理请求
+ * @param payload - 完整请求载荷
+ * @param timeoutMs - 超时毫秒数（默认 15000）
+ */
+function callLlamaServer(payload: LlamaRequestPayload, timeoutMs = 15000): Promise<string> {
   return new Promise((resolve, reject) => {
-    const payload = JSON.stringify({
-      model: 'qwen3.5',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt },
-      ],
-      max_tokens: 100,
-      temperature: 0.85,
-      top_k: 50,
-      top_p: 0.9,
-      presence_penalty: 1.0,
-      chat_template_kwargs: { enable_thinking: false },
-    });
+    const body = JSON.stringify(payload);
 
     const req = httpRequest(
       {
@@ -149,17 +155,17 @@ function callLlamaServer(systemPrompt: string, userPrompt: string): Promise<stri
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(payload),
+          'Content-Length': Buffer.byteLength(body),
         },
-        timeout: 15000,
+        timeout: timeoutMs,
       },
       (res) => {
-        let body = '';
-        res.on('data', (chunk: Buffer) => { body += chunk.toString(); });
+        let data = '';
+        res.on('data', (chunk: Buffer) => { data += chunk.toString(); });
         res.on('end', () => {
           try {
-            const data = JSON.parse(body) as { choices?: Array<{ message?: { content?: string } }> };
-            const content = data.choices?.[0]?.message?.content ?? '';
+            const parsed = JSON.parse(data) as { choices?: Array<{ message?: { content?: string } }> };
+            const content = parsed.choices?.[0]?.message?.content ?? '';
             resolve(content);
           } catch {
             reject(new Error('Failed to parse llama-server response'));
@@ -170,7 +176,7 @@ function callLlamaServer(systemPrompt: string, userPrompt: string): Promise<stri
 
     req.on('error', reject);
     req.on('timeout', () => { req.destroy(); reject(new Error('Timeout')); });
-    req.write(payload);
+    req.write(body);
     req.end();
   });
 }
@@ -200,7 +206,19 @@ async function generateWithModel(body: {
   const userPrompt = `说一句话：`;
 
   try {
-    let line = await callLlamaServer(systemPrompt, userPrompt);
+    let line = await callLlamaServer({
+      model: 'qwen3.5',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ],
+      max_tokens: 100,
+      temperature: 0.85,
+      top_k: 50,
+      top_p: 0.9,
+      presence_penalty: 1.0,
+      chat_template_kwargs: { enable_thinking: false },
+    });
 
     // 清理输出
     line = line
@@ -388,7 +406,7 @@ const server = createServer(async (req, res) => {
     return;
   }
 
-  // Infer
+  // Infer（统一端点：按请求体形状检测路由）
   if (req.method === 'POST' && req.url === '/api/infer') {
     try {
       const rawBody = await parseBody(req);
@@ -401,12 +419,65 @@ const server = createServer(async (req, res) => {
         return;
       }
 
-      // 字段校验
       const body = parsed as Record<string, unknown>;
+
+      // ── 新路径：结构化补全（SoulEvaluator） ──
+      if (Array.isArray(body.messages)) {
+        if (!modelLoaded) {
+          sendJson(res, 503, { error: 'Model not ready', code: 'MODEL_NOT_READY' }, origin);
+          return;
+        }
+
+        const messages = body.messages as Array<{ role: string; content: string }>;
+        if (messages.length === 0 || !messages.every(m => typeof m.role === 'string' && typeof m.content === 'string')) {
+          sendJson(res, 400, { error: 'messages must be non-empty array of {role, content}' }, origin);
+          return;
+        }
+
+        const maxTokens = typeof body.max_tokens === 'number' ? body.max_tokens : 200;
+        const temperature = typeof body.temperature === 'number' ? body.temperature : 0.6;
+        const topP = typeof body.top_p === 'number' ? body.top_p : 0.9;
+        const clientTimeout = typeof body.timeout_ms === 'number' ? body.timeout_ms : 5000;
+        const responseFormat = body.response_format as LlamaRequestPayload['response_format'] | undefined;
+
+        const llamaPayload: LlamaRequestPayload = {
+          model: 'qwen3.5',
+          messages,
+          max_tokens: maxTokens,
+          temperature,
+          top_p: topP,
+          chat_template_kwargs: { enable_thinking: false },
+        };
+        if (responseFormat) {
+          llamaPayload.response_format = responseFormat;
+        }
+
+        let content = await callLlamaServer(llamaPayload, clientTimeout + 2000);
+
+        // 清理 <think> 标签
+        content = content.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+
+        // 如果有 response_format，尝试 JSON.parse
+        let parsedContent: unknown = undefined;
+        if (responseFormat) {
+          try {
+            parsedContent = JSON.parse(content);
+          } catch {
+            // JSON 解析失败，返回原始 content，parsed 为 null
+            parsedContent = null;
+          }
+        }
+
+        console.log(`[AI] structured completion → ${content.substring(0, 60)}...`);
+        sendJson(res, 200, { content, parsed: parsedContent }, origin);
+        return;
+      }
+
+      // ── 旧路径：台词生成（SmartLLMAdapter） ──
       if (typeof body.discipleName !== 'string' ||
           typeof body.personalityName !== 'string' ||
           typeof body.behavior !== 'string') {
-        sendJson(res, 400, { error: 'Missing required fields: discipleName, personalityName, behavior' }, origin);
+        sendJson(res, 400, { error: 'Missing required fields: discipleName, personalityName, behavior (or messages[])' }, origin);
         return;
       }
 
@@ -423,9 +494,11 @@ const server = createServer(async (req, res) => {
     } catch (err) {
       if (err instanceof Error && err.message === 'Payload too large') {
         sendJson(res, 413, { error: 'Payload too large' }, origin);
+      } else if (err instanceof Error && err.message === 'Timeout') {
+        sendJson(res, 504, { error: 'Inference timeout', code: 'TIMEOUT' }, origin);
       } else {
         console.error('[AI] 请求处理失败:', err);
-        sendJson(res, 500, { error: 'Internal error' }, origin);
+        sendJson(res, 500, { error: 'Internal error', code: 'INTERNAL' }, origin);
       }
     }
     return;

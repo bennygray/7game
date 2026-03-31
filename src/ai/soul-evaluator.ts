@@ -6,7 +6,7 @@
  *   - evaluateMonologue(): Lv.2 独白渲染 (Call2)
  *   - evaluateDecisionAndMonologue(): Lv.3 双阶段 (Call1+Call2)
  *
- * 使用 /v1/chat/completions 端点（OpenAI 兼容，匹配 llama-server）。
+ * 通过 ai-server:3001 /api/infer 统一端点调用（Phase Z 架构统一）。
  * 所有方法返回 SoulEvaluationResult，由 soul-engine 后处理。
  *
  * @see SOUL-VISION-ROADMAP.md Phase G, G1/G2/G4
@@ -64,7 +64,7 @@ export class SoulEvaluator {
   private connected = false;
   private lastCallTime = 0;
 
-  constructor(baseUrl = 'http://127.0.0.1:8080') {
+  constructor(baseUrl = 'http://localhost:3001') {
     this.baseUrl = baseUrl;
   }
 
@@ -76,7 +76,7 @@ export class SoulEvaluator {
   /** 手动连接后端 */
   async tryConnect(): Promise<boolean> {
     try {
-      const res = await fetch(`${this.baseUrl}/v1/models`, {
+      const res = await fetch(`${this.baseUrl}/api/health`, {
         signal: AbortSignal.timeout(3000),
       });
       if (res.ok) {
@@ -272,7 +272,7 @@ export class SoulEvaluator {
         ],
         schema: decisionSchema,
         schemaName: 'decision',
-        timeoutMs: 800,
+        timeoutMs: 900,
         maxTokens: 50,
       });
 
@@ -317,7 +317,7 @@ export class SoulEvaluator {
         ],
         schema: monologueSchema,
         schemaName: 'monologue_with_emotion',
-        timeoutMs: 700,
+        timeoutMs: 800,
         maxTokens: 150,
       });
 
@@ -344,26 +344,25 @@ export class SoulEvaluator {
 
   // ===== 私有方法 =====
 
-  /** 结构化 LLM 补全调用 */
+  /** 结构化 LLM 补全调用（走 ai-server 统一端点） */
   private async structuredCompletion(config: StructuredCompletionConfig): Promise<unknown> {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), config.timeoutMs);
 
     try {
       const payload = {
-        model: 'default',
         messages: config.messages,
         max_tokens: config.maxTokens ?? 200,
         temperature: 0.6,
         top_p: 0.9,
-        chat_template_kwargs: { enable_thinking: false },
+        timeout_ms: config.timeoutMs,
         response_format: {
           type: 'json_schema',
           json_schema: { name: config.schemaName, strict: true, schema: config.schema },
         },
       };
 
-      const res = await fetch(`${this.baseUrl}/v1/chat/completions`, {
+      const res = await fetch(`${this.baseUrl}/api/infer`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -376,13 +375,15 @@ export class SoulEvaluator {
       }
 
       const data = await res.json() as {
-        choices?: Array<{ message?: { content?: string } }>;
+        content: string;
+        parsed?: unknown;
       };
-      const content = (data?.choices?.[0]?.message?.content ?? '')
-        .replace(/<think>[\s\S]*?<\/think>/g, '')
-        .trim();
 
-      return JSON.parse(content);
+      // 优先使用服务端已解析的 parsed，fallback 自行解析 content
+      if (data.parsed !== undefined && data.parsed !== null) {
+        return data.parsed;
+      }
+      return JSON.parse(data.content);
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') {
         throw new Error('AI call timeout', { cause: err });
