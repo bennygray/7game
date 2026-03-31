@@ -18,8 +18,10 @@ Thumbs.db
 *.swp
 *.swo
 
-# Claude Code worktrees
-.claude/
+# Claude Code — 忽略临时文件，保留需要 git 同步的配置
+.claude/*
+!.claude/agents/
+!.claude/settings.json
 
 # AI Model files (too large for git)
 models/

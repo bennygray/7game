@@ -19,6 +19,11 @@ import time
 import argparse
 from datetime import date
 
+# Windows 终端 GBK 编码兼容
+if sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+
 
 def file_exists(path):
     return os.path.exists(path)
@@ -35,18 +40,21 @@ def has_gate_signature(filepath, gate_num):
 
 
 def review_exists(phase, stage):
-    """检查审查记录是否存在"""
-    pattern = f".reviews/{phase}-{stage}-r*.md"
-    return len(glob.glob(pattern)) > 0
+    """检查审查记录是否存在（支持 pipeline 目录和 .reviews 目录）"""
+    pipeline_files = glob.glob(f"docs/pipeline/{phase}/review*.md")
+    legacy_files = glob.glob(f".reviews/{phase}-{stage}-r*.md")
+    return len(pipeline_files) > 0 or len(legacy_files) > 0
 
 
 def check_review_has_substance(phase, stage):
     """检查审查报告是否包含实质内容（对抗橡皮图章）
-    
+
     如果审查报告中没有任何 WARN、改进建议、或 Devil's Advocate 记录，
     说明审查可能是橡皮图章。
     """
-    files = sorted(glob.glob(f".reviews/{phase}-{stage}-r*.md"))
+    files = sorted(glob.glob(f"docs/pipeline/{phase}/review*.md"))
+    if not files:
+        files = sorted(glob.glob(f".reviews/{phase}-{stage}-r*.md"))
     if not files:
         return False
     with open(files[-1], 'r', encoding='utf-8') as f:
@@ -111,7 +119,7 @@ def report(gate_name, phase, checks):
         print(f"  ❌ {gate_name} FAIL — 以上标记 ❌ 的项目需要完成")
     print(f"{'=' * 60}\n")
 
-    return 0 if all_pass else 1
+    return 0 if all_pass else 2
 
 
 # ===== Gate 检查函数 =====
@@ -158,7 +166,20 @@ def check_gate_3(phase):
 
 
 def detect_phase():
-    """从 pipeline 目录检测最近活跃的 Phase"""
+    """从 handoff.md 或 pipeline 目录检测最近活跃的 Phase"""
+    # 优先从 handoff.md 解析
+    handoff = "docs/project/handoff.md"
+    if os.path.exists(handoff):
+        with open(handoff, 'r', encoding='utf-8') as f:
+            for line in f:
+                m = re.search(r'当前活跃 Phase\*{0,2}[：:]\s*Phase\s+([A-Za-z0-9_-]+)', line)
+                if m:
+                    phase_name = m.group(1)
+                    candidate = f"phase{phase_name}"
+                    if os.path.isdir(f"docs/pipeline/{candidate}"):
+                        return candidate
+
+    # 降级：按 mtime 排序
     pipeline_dir = "docs/pipeline"
     if not os.path.isdir(pipeline_dir):
         return None
@@ -173,13 +194,29 @@ def detect_phase():
     return phases[0]
 
 
+def detect_current_gate(phase):
+    """从签章状态推断当前应检查哪个 Gate"""
+    tdd_path = find_tdd(phase)
+    prd_path = find_prd(phase)
+
+    # 有 TDD 且 Gate 2 已签章 → 当前在 SGE 阶段，检查 Gate 3
+    if tdd_path and has_gate_signature(tdd_path, 2):
+        return 3
+    # 有 PRD 且 Gate 1 已签章 → 当前在 SGA 阶段，检查 Gate 2
+    if prd_path and has_gate_signature(prd_path, 1):
+        return 2
+    # 否则 → 当前在 SPM 阶段，检查 Gate 1
+    return 1
+
+
 # ===== 入口 =====
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Trinity Pipeline Gate 确定性验证")
     parser.add_argument("--phase", required=True, help="Phase 名称（如 phaseZ）或 auto")
     parser.add_argument("--gate", type=int, help="Gate 编号（1/2/3）")
-    parser.add_argument("--from-review", action="store_true", help="自动检测并报告所有 Gate 状态")
+    parser.add_argument("--from-review", action="store_true",
+                        help="自动检测当前 Gate 并验证")
     args = parser.parse_args()
 
     phase = args.phase if args.phase != "auto" else detect_phase()
@@ -194,9 +231,14 @@ if __name__ == "__main__":
     elif args.gate == 3:
         sys.exit(check_gate_3(phase))
     elif args.from_review:
-        check_gate_1(phase)
-        check_gate_2(phase)
-        check_gate_3(phase)
+        gate = detect_current_gate(phase)
+        print(f"  🔍 自动检测：当前处于 Gate {gate}")
+        if gate == 1:
+            sys.exit(check_gate_1(phase))
+        elif gate == 2:
+            sys.exit(check_gate_2(phase))
+        else:
+            sys.exit(check_gate_3(phase))
     else:
         print("请指定 --gate N 或 --from-review")
         sys.exit(1)

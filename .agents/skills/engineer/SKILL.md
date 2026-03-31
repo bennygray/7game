@@ -169,7 +169,21 @@ AI 推理:
 
 ### 执行流程
 
-引用 `_shared/review-protocol.md` 四层防线协议执行。
+调用 `@doc-reviewer` 在独立上下文中执行审查：
+
+```
+@doc-reviewer 审查 Phase [X] Gate 3。
+TDD: ${paths.specs_dir}/[name]-TDD.md
+User Stories: ${paths.specs_dir}/[name]-user-stories.md
+变更文件: [列出本次变更的文件]
+角色配置:
+  必选: R1(魔鬼PM) R6(找茬QA) R7(资深程序员)
+  适配: [参照上方角色适配规则表]
+```
+
+> doc-reviewer 在独立上下文中加载 `_shared/review-protocol.md` 和对应 `personas/*.md`，
+> 执行四层防线（L1→L2→L3）+ Devil's Advocate。
+> 审查报告由父 agent 写入 `${paths.pipeline_dir}/phaseX/review-g3.md`。
 
 ---
 

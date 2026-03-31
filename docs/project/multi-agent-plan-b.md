@@ -1,3 +1,5 @@
+> **SUPERSEDED** — 本方案已被 `trinity-guardian-plan.md` 方案 B 取代。保留为历史参考。
+
 # 多智能体审查系统 - 方案 B：Claude Code 原生方案
 
 > **创建日期**：2026-03-31 | **版本**：v1

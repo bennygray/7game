@@ -113,7 +113,20 @@ SGA 的 Review 角色均为"挑刺者"——专注于发现架构缺陷而非业
 
 ### 执行流程
 
-引用 `_shared/review-protocol.md` 四层防线协议执行。
+调用 `@doc-reviewer` 在独立上下文中执行审查：
+
+```
+@doc-reviewer 审查 Phase [X] Gate 2。
+TDD: ${paths.specs_dir}/[name]-TDD.md
+PRD: ${paths.features_dir}/[name]-PRD.md
+角色配置:
+  必选: R4(项目经理) R5(偏执架构师) R6(找茬QA)
+  适配: [参照上方角色适配规则表]
+```
+
+> doc-reviewer 在独立上下文中加载 `_shared/review-protocol.md` 和对应 `personas/*.md`，
+> 执行四层防线（L1→L2→L3）+ Devil's Advocate。
+> 审查报告由父 agent 写入 `${paths.pipeline_dir}/phaseX/review-g2.md`。
 
 ---
 

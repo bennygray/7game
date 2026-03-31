@@ -10,9 +10,15 @@ Hook 触发：Stop → python scripts/doc-integrity-check.py
 """
 
 import os
+import sys
 import subprocess
 import time
 from datetime import date
+
+# Windows 终端 GBK 编码兼容
+if sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    sys.stderr.reconfigure(encoding='utf-8', errors='replace')
 
 
 def get_git_changes():

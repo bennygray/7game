@@ -1,0 +1,23 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "command": "npx eslint --no-error-on-unmatched-pattern \"$CLAUDE_FILE_PATH\" 2>/dev/null || true"
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "doc-reviewer",
+        "type": "command",
+        "command": "python scripts/gate-check.py --phase auto --from-review"
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "python scripts/doc-integrity-check.py"
+      }
+    ]
+  }
+}

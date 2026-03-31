@@ -1,7 +1,7 @@
 # Trinity Guardian — 治理执行强化系统
 
 > **创建日期**：2026-04-01 | **版本**：v1.0
-> **状态**：规划完成，待 M0 环境验证
+> **状态**：方案 B 实施完成，待端到端验证
 > **定位**：跨 Phase 基础设施 — 强化 Trinity Pipeline 的执行纪律
 > **目标**：文档执行率 40% → 80%+，Party Review 从橡皮图章变为真正独立审查
 > **技术栈**：Claude Code Subagent + Hooks + Python 确定性检查
@@ -85,7 +85,8 @@ d:\7game\
 | 3 | `scripts/gate-check.py` | 确定性 Gate 验证器 | ~180 |
 | 4 | `scripts/doc-integrity-check.py` | 文档完整性检查器（Stop Hook 调用） | ~110 |
 
-全部文件已创建在项目目录中，git push 后即可在 Claude Code 环境使用。
+方案 B 调整：doc-reviewer 改为引用现有 review-protocol + personas（合并而非叠加）。
+核心文件已部署：`.claude/agents/doc-reviewer.md` + `scripts/gate-check.py` + `.claude/settings.json`。
 
 ---
 
