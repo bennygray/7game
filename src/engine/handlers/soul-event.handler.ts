@@ -91,7 +91,7 @@ export const soulEventHandler: TickHandler = {
         }
       } catch (err) {
         ctx.logger.warn(
-          'DISCIPLE' as 'DISCIPLE',
+          'DISCIPLE' as const,
           'soul-event.handler',
           `灵魂事件处理失败: ${err instanceof Error ? err.message : String(err)}`,
           { eventType: event.type, actorId: event.actorId },

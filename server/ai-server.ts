@@ -158,8 +158,8 @@ function callLlamaServer(systemPrompt: string, userPrompt: string): Promise<stri
         res.on('data', (chunk: Buffer) => { body += chunk.toString(); });
         res.on('end', () => {
           try {
-            const data = JSON.parse(body);
-            const content = data?.choices?.[0]?.message?.content ?? '';
+            const data = JSON.parse(body) as { choices?: Array<{ message?: { content?: string } }> };
+            const content = data.choices?.[0]?.message?.content ?? '';
             resolve(content);
           } catch {
             reject(new Error('Failed to parse llama-server response'));

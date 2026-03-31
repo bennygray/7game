@@ -384,8 +384,8 @@ export class SoulEvaluator {
 
       return JSON.parse(content);
     } catch (err) {
-      if ((err as Error).name === 'AbortError') {
-        throw new Error('AI call timeout');
+      if (err instanceof Error && err.name === 'AbortError') {
+        throw new Error('AI call timeout', { cause: err });
       }
       this.connected = false;
       throw err;

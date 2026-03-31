@@ -96,7 +96,7 @@ export function executeIntents(
 
         // 2. FARM/ALCHEMY 副作用
         const farmAlchemyLogs: string[] = [];
-        let outcomeTag: string | null = null;
+        let outcomeTag: string | null;
 
         if (intent.oldBehavior === 'farm') {
           farmAlchemyLogs.push(...harvestAll(disciple, state));
