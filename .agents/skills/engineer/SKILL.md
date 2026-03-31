@@ -98,6 +98,55 @@ trigger: >
 
 ---
 
+## Code Quality Gate（编码完成后逐项检查）
+
+### 前端 Quality Gate
+
+类型安全:
+- [ ] `npm run lint` 零 error
+- [ ] 零 `as any` / `as unknown`（如需强转，声明专用接口或类型守卫）
+- [ ] 零 `(window as any)` 全局挂载（通过依赖注入）
+
+边界合规:
+- [ ] UI 层（src/ui/）零 GameState 直接写入（只读访问 + Engine API 调用）
+- [ ] UI 层零 `document.getElementById` 直接调用（通过 layout.ts 注入引用）
+- [ ] UI 层零 `localStorage` / `fetch` 直接调用（通过注入服务）
+
+状态管理:
+- [ ] 模块级 `let` 变量 = 0（用闭包封装或 Context 注入）
+- [ ] 所有 setTimeout/setInterval 有 dispose 清理路径
+
+一致性:
+- [ ] 同类功能使用同一实现模式（如别名统一走映射表）
+- [ ] 格式化逻辑统一在 mud-formatter.ts（不内联在 command-handler switch 中）
+
+测试:
+- [ ] 新增纯函数有对应单元测试
+- [ ] `npm run test:regression` 通过
+
+### 后端 Quality Gate
+
+架构合规:
+- [ ] 前端 AI 调用全部走 ai-server (port 3001)，不直连 llama-server
+- [ ] 端点命名与 CLAUDE.md `/api/infer` 规范一致
+- [ ] CORS 仅允许 localhost origin
+- [ ] server/ 不导入 src/ui/ 或 src/engine/
+
+稳定性:
+- [ ] 子进程有崩溃自动恢复逻辑
+- [ ] HTTP server 有 graceful shutdown
+- [ ] 请求体有大小限制
+
+输入校验:
+- [ ] POST 端点校验必需字段，缺失返回 400
+- [ ] JSON.parse 失败返回 400（不是 500）
+
+AI 推理:
+- [ ] 推理超时有 fallback
+- [ ] Prompt 不硬编码（在 src/ai/prompts/ 或 ai-server 常量区）
+
+---
+
 ## Party Review Gate
 
 ### 角色配置

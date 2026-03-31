@@ -1,16 +1,51 @@
 # 7game-lite — 会话交接文档
 
-> **上次更新**：2026-03-31 | **上次会话主题**：Phase X-β 命令增强
-> **当前活跃 Phase**：Phase X-β ✅ 完成
-> **Phase 状态**：SPM+SGA+SGE 全流程通过，存档 v5 不变，13 个 Handler 不变，64条回归全通过
+> **上次更新**：2026-03-31 | **上次会话主题**：Phase Y SGE 实施
+> **当前活跃 Phase**：Phase Y（前后端代码质量治理）✅ 实施完成，待提交
+> **Phase 状态**：SPM ✅ SGA ✅ SGE ✅ — 全部交付物已完成
 
 ---
 
 ## 当前断点
 
-- Phase X-β 的 SPM GATE 1、SGA GATE 2、SGE GATE 3 均已通过
-- **下一步**：Phase X-γ（面板系统）或 Phase I（深度世界）
-- 回归验证：64/64 通过
+- **Phase Y 全部完成** — ESLint 配置 + Hook + SGE Quality Gate + 单元测试 + 代码修复
+- Phase Z SPM 分析完成（SoulEvaluator 架构统一），可启动
+- **下一步**：Phase Z SGA → SGE（AI 通信路径统一）
+- 回归验证：64/64 通过 + UI 测试 65/65 通过 + lint 0 errors
+
+### Phase Y 交付物总览
+
+| 交付物 | 说明 | 文件 | 状态 |
+|--------|------|------|:----:|
+| Y-1 ESLint 配置 | flat config + strictTypeChecked + 5 zone 边界 | `eslint.config.js` | ✅ |
+| Y-2 npm lint 脚本 | `lint` / `lint:fix` / `test:ui` | `package.json` | ✅ |
+| Y-3 Claude Code Hook | PostToolUse 自动 lint on Edit/Write | `.claude/settings.json` | ✅ |
+| Y-4+Y-10 SGE Quality Gate | 前端 + 后端 Code Quality Checklist | `.agents/skills/engineer/SKILL.md` | ✅ |
+| Y-5 前端存量修复 | Phase X-α 已修复全部 P0+P1（零 as any） | — | ✅ (已修) |
+| Y-6 mud-formatter 单元测试 | 65 组断言（8 个纯函数） | `scripts/verify-ui-formatter.ts` | ✅ |
+| Y-7+Y-8 后端修复 | V0.4.9 已修 11/15 项 | — | ✅ (V0.4.9) |
+| Y-9 ESLint 后端覆盖 | server/ 专用配置块 + 独立 tsconfig | `server/tsconfig.json` | ✅ |
+| 代码修复 | 4 个 lint error（unsafe-*, prefer-as-const, useless-assign, preserve-caught-error） | 4 files | ✅ |
+
+### ESLint 规则配置
+
+| 级别 | 规则 | 严重度 |
+|------|------|:---:|
+| 🔴 MUST | `no-explicit-any` + `no-unsafe-*` ×5 + `import-x/no-restricted-paths` (5 zone) | error |
+| 🟡 SHOULD | `cognitive-complexity` ≤15 + `no-identical-functions` + `assign-timer-id` | warn |
+| 🟢 NICE | `no-magic-numbers` (ignore 0,1,-1,2,100) | warn |
+
+### ADR 决策
+
+- **ADR-Y-01**: ESLint v9 flat config + strictTypeChecked + projectService
+- **ADR-Y-02**: eslint-plugin-import-x 替代 eslint-plugin-import（flat config 兼容）
+- **ADR-Y-03**: server/tsconfig.json 独立配置（Node.js vs Vite/Browser）
+
+### Phase Z 预告
+
+- SoulEvaluator 直连 llama-server:8080 绕过 ai-server（soul-evaluator.ts:67）
+- 需在 ai-server 新增结构化补全端点，统一 AI 通信路径
+- 前置：Phase Y ✅ 已完成
 
 ### Phase X-β 已交付 — 命令增强 + 视觉反馈
 

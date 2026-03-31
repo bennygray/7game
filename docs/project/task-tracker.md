@@ -23,18 +23,20 @@
 | H-β | v0.4.5 | 世界缝合（统一日志管线/inspect/sect命令） | ✅ | ✅ | ✅ | 🟢 完成 |
 | H-γ | v0.4.6 | 掌门裁决（STORM裁决窗口/judge命令/道风漂移） | ✅ | ✅ | ✅ | 🟢 完成 |
 | X-α/β/γ | v0.4.8 | 掌门视界（MUD重构+命令增强+面板系统+内存修复） | ✅ | ✅ | ✅ | 🟢 完成 |
-| Y | — | 前后端代码质量治理（ESLint+Hook+SGE增强+前后端存量修复） | ✅ | ⬜ | ⬜ | 🟡 SPM 完成 |
-| Z | — | AI通信架构统一（SoulEvaluator→ai-server 通信路径重构） | ✅ | ⬜ | ⬜ | 🟡 SPM 完成 |
+| Y | v0.4.10 | 前后端代码质量治理（ESLint+Hook+SGE增强+单元测试） | ✅ | ✅ | ✅ | 🟢 完成 |
+| Z | — | AI通信架构统一（SoulEvaluator→ai-server 通信路径重构） | ✅ | ⬜ | ⬜ | 🟡 SPM 完成，待 Phase Y |
 
 ---
 
 ## 当前 Phase 详情
 
-**Phase H-γ 已完成** — 掌门裁决
+**Phase Y 完成** — 前后端代码质量治理
 
 - SPM GATE 1 ✅ → SGA GATE 2 ✅ → SGE GATE 3 ✅
-- 6 个 Story 全部交付（S1 触发 + S2 裁决 + S3 超时 + S4 漂移验证 + S5 选项匹配 + S6 回归）
-- **下一步**：待用户确认后进入下一 Phase
+- V0.4.9 后端前置修复 11/15 项 + V0.4.10 ESLint/Hook/Quality Gate/单元测试
+- 交付：`eslint.config.js` + `server/tsconfig.json` + `.claude/settings.json` + `scripts/verify-ui-formatter.ts` + SGE SKILL.md Quality Gate
+- 验证：lint 0 errors / regression 64/64 / UI tests 65/65 / tsc 0 errors
+- **下一步**：Phase Z（AI 通信架构统一）
 
 ---
 
@@ -44,6 +46,7 @@
 |------|------|
 | 已实现系统 | 21 个（修炼、弟子×8、MUD、灵田、炼丹、突破、灵脉、丹药消费、AI对话、结构化日志、Intent、Tick Pipeline、灵魂事件总线、灵魂评估引擎、碰面引擎、世界事件系统、Storyteller、MUD世界呈现、AI觉醒系统、统一日志管线、掌门裁决系统） |
 | 回归测试 | 64 组全通过 |
+| UI 单元测试 | 65 组全通过（Phase Y 新增） |
 | 专项验证 | Phase E 47 + Phase F 12 + Phase F0-α 52 + Phase F0-β 108 = **219 条** |
 | 技术债务 | TD-001~TD-021（2 个已清偿：TD-001 Pipeline 重构、TD-003 Intent；TD-006 部分清偿） |
 | 需求债务 | FB-001~FB-015（3 个已清偿：FB-001 弟子对话、FB-004 关系系统、FB-011 玩家干预权；FB-005/FB-010/FB-012 部分清偿） |
@@ -93,3 +96,5 @@
 | 2026-03-31 | **Phase Y 创建**：前端代码质量治理（ESLint+Hook+SGE增强+存量修复）；SPM 分析完成；触发自 Phase X Review 23 项问题 |
 | 2026-03-31 | **Phase Y 扩展**：后端 Code Review 15 项问题（P0×3/P1×4/P2×5/P3×3），14 项纳入 Phase Y，1 项（P0-01 SoulEvaluator 架构）拆出为 Phase Z |
 | 2026-03-31 | **Phase Z 创建**：AI 通信架构统一（SoulEvaluator→ai-server 通信路径重构）；SPM 分析完成 |
+| 2026-03-31 | **V0.4.9 Phase Y 前置修复**：后端 11/15 项修复（CORS/端点/校验/崩溃恢复/shutdown/SIGTERM/body限制/重定向/node-llama-cpp/tryConnect/presence_penalty）；文档对齐（handoff/roadmap/review/task 7 文档更新） |
+| 2026-03-31 | **Phase Y 完成**：ESLint flat config（strictTypeChecked + 5 zone 模块边界 + sonarjs + clean-timer）；PostToolUse Hook；SGE Quality Gate（前端+后端）；mud-formatter 65 组单元测试；server/tsconfig.json；4 个 lint error 修复 |

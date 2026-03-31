@@ -5,7 +5,7 @@
 >
 > **创建日期**：2026-03-29 | **维护者**：/SPM
 > **索引入口**：[docs/INDEX.md](../INDEX.md)
-> **最后更新**：2026-03-31 V3.7（标记 Phase X-β 命令增强完成）
+> **最后更新**：2026-03-31 V3.9（Phase Y ✅ 完成标记）
 
 ---
 
@@ -174,7 +174,7 @@
 ### Phase X — 掌门视界 `[展现层重构]`
 
 > **一句话**：让世界的血肉真正被「看到」——信息分级、交互增强、面板系统。
-> **前置**：Phase H ✅ | **状态**：X-α ✅ 已交付 / X-β/X-γ 待启动
+> **前置**：Phase H ✅ | **状态**：X-α ✅ / X-β ✅ / X-γ 待启动
 > **约束**：纯 Presentation 层变更，零 Engine/Data/AI 改动（Electron 迁移前置准备）
 
 #### Phase X-α — 掌门视界·基础 ✅ `[已完成 · 2026-03-31]`
@@ -192,6 +192,46 @@
 > look/inspect 浮层面板（不随日志滚走）/ STORM 裁决弹窗居中面板 / sect 面板化 / ESC 关闭交互
 
 **验收标准**：Tab 补全命令/弟子名 ✅(X-β)、inspect 面板不随日志滚走 ✅(X-γ)、STORM 裁决有独立弹窗 ✅(X-γ)
+
+---
+
+### Phase Y — 前后端代码质量治理 `[质量防线建设]`
+
+> **一句话**：建立自动化 + 人工双层质量防线，前后端统一治理。
+> **前置**：Phase X Review 触发（23 前端 + 15 后端问题）
+> **状态**：✅ 完成（SPM→SGA→SGE 三阶段全部通过）
+
+**交付物**：
+- V0.4.9: 后端修复 11/15 项（端点/CORS/校验/崩溃恢复/shutdown/SIGTERM...）
+- V0.4.10: ESLint flat config（strictTypeChecked + 5 zone 模块边界） + PostToolUse Hook + SGE Quality Gate + mud-formatter 65 组单元测试 + server/tsconfig.json
+
+**剩余交付物**：
+
+| # | 内容 | 说明 | 状态 |
+|---|------|------|:----:|
+| Y-1 | ESLint 配置 | `eslint.config.js` + strictTypeChecked + 插件 | ⬜ |
+| Y-2 | npm lint 脚本 | `lint` / `lint:fix` / `lint:server` | ⬜ |
+| Y-3 | Claude Code Hook | PostToolUse 自动 lint | ⬜ |
+| Y-4 | SGE Skill 增强 | Gate 3 前端 + 后端 Code Quality Checklist | ⬜ |
+| Y-5 | 前端存量修复 | Phase X Review P0+P1 共 9 项 | ⬜ |
+| Y-6 | mud-formatter 单元测试 | 纯函数测试覆盖 ≥20 组 | ⬜ |
+
+**验收标准**：`npm run lint` 零 error + `npm run test:regression` 64/64 + `tsc --noEmit` 零错误
+
+---
+
+### Phase Z — AI 通信架构统一 `[架构重构]`
+
+> **一句话**：SoulEvaluator 从直连 llama-server 迁移到走 ai-server 统一路径。
+> **前置**：Phase Y ✅
+> **状态**：🟡 SPM ✅，Phase Y 已完成，可启动
+
+**核心问题**：SoulEvaluator（soul-evaluator.ts:67）直连 llama-server:8080 绕过 ai-server:3001，
+违反通信约束且两个调用者竞争单并发推理槽。
+
+**交付物**：ai-server 新增结构化补全端点 → SoulEvaluator 改走 ai-server → 单一推理入口
+
+---
 
 ### Phase I — 深度世界 `[NPC 层次 + 世界深度]`
 
@@ -228,34 +268,30 @@
 
 ---
 
-## 全景依赖图（V3）
+## 全景依赖图（V3.8）
 
 ```
-已完成              最高优先            近期              中期              远期
+已完成              当前               近期              中期              远期
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Phase A~E         Phase F0            Phase G           Phase I           Phase J
-(基础引擎+        (世界骨架)          (AI觉醒)          (深度世界)        (涌现)
- 灵魂数据层)       地点·碰面·          AI接入·           T2 NPC·           记忆·
-    ✅             事件池·分级·         独白·决策          因果·堕落         目标·
-                   道风·Storyteller                       救赎              自驱
-                      │                  │                 │                │
-                      ├──→ Phase F ──────┤                 │                │
-                      │    (灵魂闭环)     │                 │                │
-                      │    特性·情绪·     │                 │                │
-                      │    关系→行为      │                 │                │
-                      │                  │                 │                │
-                      ├──→ Phase H ──────┤                 │                │
-                      │    (掌门体验)     │                 │                │
-                      │    弟子面板·      │                 │                │
-                      │    执法堂·干预窗   │                 │                │
-                      │                  │                 │                │
-                      └──────────────────┴─────────────────┴────────────────┘
+Phase A~E ✅      Phase X ✅          Phase Y ✅         Phase I           Phase J
+(基础引擎+        (掌门视界)          (质量治理)        (深度世界)        (涌现)
+ 灵魂数据层)       CSS·分区·           ESLint·Hook·      T2 NPC·           记忆·
+                   补全·面板            SGE增强·修复       因果·堕落         目标·
+Phase F0 ✅           │                  │                 │               自驱
+(世界骨架)            │              Phase Z              │
+Phase F ✅            │              (AI通信统一)          │
+(灵魂闭环)            │              SoulEvaluator         │
+Phase G ✅            │              →ai-server            │
+(AI觉醒)              │                  │                 │
+Phase H ✅            │                  │                 │
+(掌门体验)            └──────────────────┴─────────────────┘
 ```
 
-**关键路径**：`E ✅ → F0 ✅ → F ✅ → G ✅ → **I** → J`
-**已完成并行**：`H-α ✅ + H-β ✅ + H-γ ✅`（与 G 并行交付）
-**下一步可选**：`H5 执法堂卷宗` 或 `I（深度世界）`
+**关键路径**：`E ✅ → F0 ✅ → F ✅ → G ✅ → X ✅ → **Y** 🟡 → **Z** → I → J`
+**已完成**：A~H + X-α/X-β（X-γ 面板系统待启动）
+**当前**：Phase Y ✅ 完成 → 下一步 Phase Z（AI 通信架构统一）
+**下一步**：Phase Z（AI 通信统一） → Phase I（深度世界）
 
 ---
 
@@ -289,3 +325,5 @@ Phase A~E         Phase F0            Phase G           Phase I           Phase 
 | 2026-03-31 | **V3.5 对齐 H-γ 掌门裁决**：新增 Phase H-γ ✅（H4干预窗口+H6道风漂移已交付，H5执法堂defer）；更新基线（⑤60%/⑥50%）；依赖图注释更新 |
 | 2026-03-31 | **V3.6 对齐 X-α 掌门视界**：标记 X-α ✅（CSS主题+日志分区+布局重排+命令历史）；更新基线（⑤65%）；X-β/X-γ 登记 |
 | 2026-03-31 | **V3.7 对齐 X-β 命令增强**：标记 X-β ✅（Tab补全+别名+图标+闪烁）；FB-016 清偿；更新基线（⑤70%）|
+| 2026-03-31 | **V3.8 新增 Phase Y/Z**：Phase Y（质量治理）+ Phase Z（AI 通信统一）插入 X 与 I 之间；V0.4.9 前置修复标记；全景依赖图更新 |
+| 2026-03-31 | **V3.9 Phase Y 完成**：Phase Y 标记 ✅（ESLint/Hook/Quality Gate/单元测试全交付）；Phase Z 状态更新为可启动 |

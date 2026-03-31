@@ -1,9 +1,9 @@
 # Phase Y — 前后端代码质量治理 · 实施计划
 
-> **状态**: 待执行
-> **更新**: 2026-03-31（扩展 scope 覆盖后端 14 项修复）
+> **状态**: ✅ 全部完成（SPM→SGA→SGE 三阶段通过）
+> **更新**: 2026-03-31（SGE 实施完成）
 > **前置**: Phase X-γ code-review.md + 后端 backend-code-review.md + 行业调研
-> **预估**: 6 步，建议分 3-4 个会话完成
+> **验证**: lint 0 errors / regression 64/64 / UI tests 65/65 / tsc 0 errors
 
 ---
 
@@ -144,7 +144,7 @@ export default tseslint.config(
 
 ---
 
-## Step 3: Claude Code Hook
+## Step 3: Claude Code Hook（对应 SPM Step 4）
 
 ### 配置 `.claude/settings.json`
 
@@ -174,7 +174,7 @@ export default tseslint.config(
 
 ---
 
-## Step 4: SGE Skill 增强
+## Step 4: SGE Skill 增强（对应 SPM Step 5）
 
 ### 修改文件: `.agents/skills/engineer/SKILL.md`
 
@@ -233,7 +233,7 @@ AI 推理:
 
 ---
 
-## Step 5: mud-formatter 单元测试
+## Step 5: mud-formatter 单元测试（对应 SPM Step 6）
 
 ### 创建测试文件: `scripts/verify-ui-formatter.ts`
 
@@ -260,57 +260,33 @@ AI 推理:
 
 ---
 
-## Step 6: 后端存量修复（Y-7 + Y-8）
+## Step 6: 后端存量修复（Y-7 + Y-8）— ✅ 已由 V0.4.9 完成（对应 SPM Step 3）
 
-### 第一优先级 — 合规修复（Y-7）
+> **Commit**: `01bd78e` V0.4.9 Phase Y 前置修复
+> **完成**: 11/14 项（3 项低优先级延后）
+> **详细清单**: 见 `backend-review-fix-task.md`
 
-| # | 文件 | 修复方案 |
-|---|------|----------|
-| P0-02 | `ai-server.ts` + `llm-adapter.ts` + `ai-stress-test.ts` | 端点 `/api/generate` → `/api/infer` |
-| P0-03 | `ai-server.ts` | CORS 限制为 `http://localhost:5173` 和 `http://localhost:4173` |
-| P2-03 | `ai-server.ts` | POST 端点添加字段校验，缺失返回 400 |
-| P2-05 | `llm-adapter.ts` | `tryConnect()` 委托给 `this.http.tryConnect()` |
-
-### 第二优先级 — 稳定性加固（Y-8）
-
-| # | 文件 | 修复方案 |
-|---|------|----------|
-| P1-02 | `ai-server.ts` | llama-server 崩溃自动重启（延迟 5s，最多 3 次） |
-| P1-01 | `ai-server.ts` | `parseBody()` 64KB 大小限制 |
-| P1-03 | `ai-server.ts` | Windows SIGTERM 兼容（不传参数） |
-| P1-04 | `ai-server.ts` | `cleanup()` 中加 `server.close()` |
-
-### 第三优先级 — 清理
-
-| # | 文件 | 修复方案 |
-|---|------|----------|
-| P2-02 | `package.json` | `npm uninstall node-llama-cpp` |
-| P2-01 | `download-model.ts` | 重定向深度限制（默认 5） |
-| P2-04 | `ai-server.ts` | `presence_penalty` 降低到 1.0（标记需 A/B 测试） |
-
-### 验证标准
-
-- `npm run lint:server` 零 error
-- `npm run ai` 启动正常，健康检查 `/api/health` 返回 200
-- `curl` 测试 `/api/infer` 端点可用
-- `npm run test:ai-stress` 通过
-- `npm run test:regression` 64/64 通过
-- `tsc --noEmit` 零错误
+已修复项: P0-02/P0-03/P2-03/P2-05/P1-01~04/P2-01/P2-02/P2-04（共 11 项）
+未修复项: P3-01（端口号）/ P3-02（功能测试）/ P3-03（请求 ID）— 低优先级延后
 
 ---
 
-## 依赖关系
+## 依赖关系（更新后）
 
 ```
-Step 1 (ESLint 配置，覆盖 src/ + server/)
-  ↓
-Step 2 (前端存量修复) ← 需要 Step 1 的 lint 验证
-  |
-Step 3 (后端存量修复) ← 需要 Step 1 的 lint，可与 Step 2 并行
-  ↓
-Step 4 (Hook) ← 需要 Step 1 的 eslint 可用
-  |
-Step 5 (SGE Skill，前端+后端) ← 可与 Step 2/3/4 并行
-  |
-Step 6 (单元测试) ← 可与 Step 2/3/4/5 并行
+Step 6 (后端存量修复) ← ✅ V0.4.9
+Step 0 (server/tsconfig.json)               ✅
+Step 1 (ESLint 配置，覆盖 src/ + server/)   ✅ eslint.config.js + devDeps
+Step 2 (前端存量修复)                        ✅ Phase X-α 已修复 + 4 个 lint error 修复
+Step 3 (Hook)                               ✅ .claude/settings.json PostToolUse
+Step 4 (SGE Skill)                          ✅ Quality Gate checklist
+Step 5 (单元测试)                            ✅ verify-ui-formatter.ts 65 assertions
 ```
+
+### SGA GATE 2 签章
+
+`[x] GATE 2 PASSED` — 2026-03-31
+
+### SGE GATE 3 签章
+
+`[x] GATE 3 PASSED` — 2026-03-31
