@@ -1,9 +1,9 @@
 # Phase Y — 前后端代码质量治理 · 实施计划
 
-> **状态**: ✅ 全部完成（SPM→SGA→SGE 三阶段通过）
-> **更新**: 2026-03-31（SGE 实施完成）
+> **状态**: 待执行（已根据 V0.4.9 实际代码状态 + 环境适配性修订）
+> **更新**: 2026-03-31（V0.4.9 同步 + 环境审查）
 > **前置**: Phase X-γ code-review.md + 后端 backend-code-review.md + 行业调研
-> **验证**: lint 0 errors / regression 64/64 / UI tests 65/65 / tsc 0 errors
+> **预估**: 5 步，建议分 1-2 个会话完成（原 6 步/3-4 会话，因大量修复已完成）
 
 ---
 
@@ -13,9 +13,12 @@
 
 ```bash
 npm install -D eslint @eslint/js typescript-eslint \
-  eslint-plugin-import eslint-plugin-sonarjs \
-  eslint-plugin-clean-timer
+  eslint-plugin-import-x eslint-plugin-sonarjs
 ```
+
+> **环境适配性注意**:
+> - `eslint-plugin-import` → 替换为 **`eslint-plugin-import-x`**（原版对 ESLint 9 flat config 支持不稳定）
+> - `eslint-plugin-clean-timer` → **跳过**（npm 下载量极低，未确认支持 ESLint 9，用 SGE Checklist 人工覆盖）
 
 ### 创建 `eslint.config.js`（flat config 格式）
 
@@ -23,8 +26,7 @@ npm install -D eslint @eslint/js typescript-eslint \
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import sonarjs from 'eslint-plugin-sonarjs';
-import cleanTimer from 'eslint-plugin-clean-timer';
-import importPlugin from 'eslint-plugin-import';
+import importPlugin from 'eslint-plugin-import-x';
 
 export default tseslint.config(
   js.configs.recommended,
@@ -37,7 +39,6 @@ export default tseslint.config(
       },
     },
     plugins: {
-      'clean-timer': cleanTimer,
       'import': importPlugin,
     },
     rules: {
@@ -59,9 +60,9 @@ export default tseslint.config(
       }],
 
       // === P2: 代码质量 ===
-      'clean-timer/assign-timer-id': 'warn',
       'sonarjs/no-identical-functions': 'warn',
       'sonarjs/cognitive-complexity': ['warn', 15],
+      // clean-timer: 跳过（插件可能不兼容 ESLint 9，SGE Checklist 人工覆盖）
 
       // === P3: 可维护性 ===
       '@typescript-eslint/no-magic-numbers': ['warn', {
@@ -114,26 +115,20 @@ export default tseslint.config(
 
 ---
 
-## Step 2: Phase X 存量修复（P0 + P1）
+## Step 2: Phase X 前端存量修复（仅剩余项）
 
-### P0 修复（类型安全，4 项）
+> **注意**: P0（4项）+ P1-01/02/04/05 已在 V0.4.9 中修复，无需重复处理。
+> 详见 `docs/pipeline/phaseX-gamma/review-fix-task.md`。
 
-| # | 文件 | 修复方案 |
-|---|------|----------|
-| P0-01 | `llm-adapter.ts` 接口 | 添加 `tryConnect(): Promise<boolean>` 方法声明 |
-| P0-02 | `command-handler.ts` + `main.ts` | `CommandContext` 注入 `onReset: () => void`，消除 `window.__mudReset` |
-| P0-03 | `engine-bindings.ts:128` | 添加 `typeof === 'number'` 类型守卫 |
-| P0-04 | `engine-bindings.ts:130` | 添加 `typeof === 'string'` 类型守卫 |
+### ~~P0 修复（类型安全，4 项）~~ — ✅ V0.4.9 已全部修复
 
-### P1 修复（架构违规，5 项）
+### ~~P1-01/02/04/05~~ — ✅ V0.4.9 已修复
+
+### P1 剩余修复（1 项）
 
 | # | 文件 | 修复方案 |
 |---|------|----------|
-| P1-01 | `log-manager.ts` | 添加 `clearMainLog(): void` 接口方法 |
-| P1-02 | `command-handler.ts` | `CommandContext` 注入 `clearSave(): void` |
-| P1-03 | `mud-formatter.ts` | 提取 `formatStatusPanel()` 纯函数 |
-| P1-04 | `engine-bindings.ts` | AI 上下文操作移到 Engine 回调内 |
-| P1-05 | 新建 `src/ui/ai-connect.ts` | 抽取共用 `connectAI()` 函数 |
+| P1-03 | `command-handler.ts` + `mud-formatter.ts` | 提取 `formatStatusPanel()` 纯函数 |
 
 ### 验证标准
 
@@ -144,37 +139,20 @@ export default tseslint.config(
 
 ---
 
-## Step 3: Claude Code Hook（对应 SPM Step 4）
+## Step 3: ~~Claude Code Hook~~ — ❌ 环境不兼容，跳过
 
-### 配置 `.claude/settings.json`
+> **原始方案**: 通过 `.claude/settings.json` PostToolUse Hook 在每次文件编辑后自动运行 ESLint。
+> **不可用原因**: PostToolUse Hook 和 `$CLAUDE_FILE_PATH` 环境变量是 Claude Code CLI 专有功能，在其他 AI 工具环境中不存在。
 
-```json
-{
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "npx eslint --no-warn-ignored \"$CLAUDE_FILE_PATH\" 2>/dev/null || true"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
+### 替代方案
 
-### 验证标准
-
-- 编辑 `src/ui/` 下任意文件后，终端自动输出 lint 结果
-- lint 耗时 < 500ms（单文件）
-- lint 失败不阻断编辑（exit code 非 2）
+- 通过 `npm run lint` 手动触发
+- IDE 层面配置 ESLint on-save（VSCode settings.json）
+- 在 `.agents/workflows/` 中创建 lint workflow 供 AI 工具调用
 
 ---
 
-## Step 4: SGE Skill 增强（对应 SPM Step 5）
+## Step 4: SGE Skill 增强
 
 ### 修改文件: `.agents/skills/engineer/SKILL.md`
 
@@ -233,7 +211,7 @@ AI 推理:
 
 ---
 
-## Step 5: mud-formatter 单元测试（对应 SPM Step 6）
+## Step 5: mud-formatter 单元测试
 
 ### 创建测试文件: `scripts/verify-ui-formatter.ts`
 
@@ -260,33 +238,61 @@ AI 推理:
 
 ---
 
-## Step 6: 后端存量修复（Y-7 + Y-8）— ✅ 已由 V0.4.9 完成（对应 SPM Step 3）
+## ~~Step 6: 后端存量修复（Y-7 + Y-8）~~ — ✅ V0.4.9 已完成
 
-> **Commit**: `01bd78e` V0.4.9 Phase Y 前置修复
-> **完成**: 11/14 项（3 项低优先级延后）
-> **详细清单**: 见 `backend-review-fix-task.md`
+> 14 项中 11 项已在 V0.4.9 修复，包括 P0-02/03、P1-01/02/03/04、P2-01/02/03/04/05。
+> 详见 `docs/pipeline/phaseY/backend-review-fix-task.md`。
+> 仅剩 P3-01/02/03 低优先级项，按需处理。
 
-已修复项: P0-02/P0-03/P2-03/P2-05/P1-01~04/P2-01/P2-02/P2-04（共 11 项）
-未修复项: P3-01（端口号）/ P3-02（功能测试）/ P3-03（请求 ID）— 低优先级延后
+### 第一优先级 — 合规修复（Y-7）
+
+| # | 文件 | 修复方案 |
+|---|------|----------|
+| P0-02 | `ai-server.ts` + `llm-adapter.ts` + `ai-stress-test.ts` | 端点 `/api/generate` → `/api/infer` |
+| P0-03 | `ai-server.ts` | CORS 限制为 `http://localhost:5173` 和 `http://localhost:4173` |
+| P2-03 | `ai-server.ts` | POST 端点添加字段校验，缺失返回 400 |
+| P2-05 | `llm-adapter.ts` | `tryConnect()` 委托给 `this.http.tryConnect()` |
+
+### 第二优先级 — 稳定性加固（Y-8）
+
+| # | 文件 | 修复方案 |
+|---|------|----------|
+| P1-02 | `ai-server.ts` | llama-server 崩溃自动重启（延迟 5s，最多 3 次） |
+| P1-01 | `ai-server.ts` | `parseBody()` 64KB 大小限制 |
+| P1-03 | `ai-server.ts` | Windows SIGTERM 兼容（不传参数） |
+| P1-04 | `ai-server.ts` | `cleanup()` 中加 `server.close()` |
+
+### 第三优先级 — 清理
+
+| # | 文件 | 修复方案 |
+|---|------|----------|
+| P2-02 | `package.json` | `npm uninstall node-llama-cpp` |
+| P2-01 | `download-model.ts` | 重定向深度限制（默认 5） |
+| P2-04 | `ai-server.ts` | `presence_penalty` 降低到 1.0（标记需 A/B 测试） |
+
+### 验证标准
+
+- `npm run lint:server` 零 error
+- `npm run ai` 启动正常，健康检查 `/api/health` 返回 200
+- `curl` 测试 `/api/infer` 端点可用
+- `npm run test:ai-stress` 通过
+- `npm run test:regression` 64/64 通过
+- `tsc --noEmit` 零错误
 
 ---
 
-## 依赖关系（更新后）
+## 依赖关系（修订后）
 
 ```
-Step 6 (后端存量修复) ← ✅ V0.4.9
-Step 0 (server/tsconfig.json)               ✅
-Step 1 (ESLint 配置，覆盖 src/ + server/)   ✅ eslint.config.js + devDeps
-Step 2 (前端存量修复)                        ✅ Phase X-α 已修复 + 4 个 lint error 修复
-Step 3 (Hook)                               ✅ .claude/settings.json PostToolUse
-Step 4 (SGE Skill)                          ✅ Quality Gate checklist
-Step 5 (单元测试)                            ✅ verify-ui-formatter.ts 65 assertions
+Step 1 (ESLint 配置，覆盖 src/ + server/)
+  ↓
+Step 2 (前端遗留修复，仅 ~4 项) ← 需要 Step 1 的 lint 验证
+  ↓
+Step 3 (Claude Code Hook) ← ❌ 环境不兼容，跳过
+  |
+Step 4 (SGE Skill，前端+后端) ← 可与 Step 2 并行
+  |
+Step 5 (单元测试) ← 可与 Step 2/4 并行
+  |
+Step 6 (后端存量修复) ← ✅ V0.4.9 已完成
 ```
-
-### SGA GATE 2 签章
-
-`[x] GATE 2 PASSED` — 2026-03-31
-
-### SGE GATE 3 签章
-
-`[x] GATE 3 PASSED` — 2026-03-31
