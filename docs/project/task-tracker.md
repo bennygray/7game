@@ -22,6 +22,9 @@
 | G | v0.4.2 | AI觉醒（async缓冲/情绪接入/独白/双阶段决策/反派修复） | ✅ | ✅ | ✅ | 🟢 完成 |
 | H-β | v0.4.5 | 世界缝合（统一日志管线/inspect/sect命令） | ✅ | ✅ | ✅ | 🟢 完成 |
 | H-γ | v0.4.6 | 掌门裁决（STORM裁决窗口/judge命令/道风漂移） | ✅ | ✅ | ✅ | 🟢 完成 |
+| X-α/β/γ | v0.4.8 | 掌门视界（MUD重构+命令增强+面板系统+内存修复） | ✅ | ✅ | ✅ | 🟢 完成 |
+| Y | — | 前后端代码质量治理（ESLint+Hook+SGE增强+前后端存量修复） | ✅ | ⬜ | ⬜ | 🟡 SPM 完成 |
+| Z | — | AI通信架构统一（SoulEvaluator→ai-server 通信路径重构） | ✅ | ⬜ | ⬜ | 🟡 SPM 完成 |
 
 ---
 
@@ -69,6 +72,9 @@
 | G | [PRD](../features/phaseG-PRD.md) | [TDD](../design/specs/phaseG-TDD.md) | [stories](../design/specs/phaseG-user-stories.md) | — | [spm](../pipeline/phaseG/spm-analysis.md) [plan](../pipeline/phaseG/plan.md) [review](../pipeline/phaseG/review.md) [walk](../pipeline/phaseG/walkthrough.md) |
 | H-β | [PRD](../features/phaseH-beta-PRD.md) | [TDD](../design/specs/phaseH-beta-TDD.md) | [stories](../design/specs/phaseH-beta-user-stories.md) | — | [spm](../pipeline/phaseH-beta/spm-analysis.md) [plan](../pipeline/phaseH-beta/plan.md) [review](../pipeline/phaseH-beta/review.md) |
 | H-γ | [PRD](../features/phaseH-gamma-PRD.md) | [TDD](../design/specs/phaseH-gamma-TDD.md) | [stories](../design/specs/phaseH-gamma-user-stories.md) | — | [spm](../pipeline/phaseH-gamma/spm-analysis.md) [review](../pipeline/phaseH-gamma/review.md) |
+| X-α/β/γ | [PRD](../features/phaseX-alpha-PRD.md) | — | — | — | [review](../pipeline/phaseX-gamma/code-review.md) |
+| Y | — | — | — | — | [spm](../pipeline/phaseY/spm-analysis.md) [plan](../pipeline/phaseY/plan.md) [backend-review](../pipeline/phaseY/backend-code-review.md) |
+| Z | — | — | — | — | [spm](../pipeline/phaseZ/spm-analysis.md) |
 
 ---
 
@@ -84,3 +90,6 @@
 | 2026-03-30 | **Phase G 完成**：AI觉醒（async缓冲+情绪接入+独白+双阶段决策+反派修复）；Handler 12→13；已实现系统 18→19；TD-006 部分清偿；FB-010/012 部分清偿；Roadmap V3.3 |
 | 2026-03-30 | **Phase H-β 完成**：世界缝合（统一日志管线+inspect/sect命令）；已实现系统 19→20；TD-015/016 新增；FB-005 部分清偿 |
 | 2026-03-31 | **Phase H-γ 完成**：掌门裁决（STORM裁决窗口+judge命令+道风漂移）；已实现系统 20→21；TD-020/021 新增；FB-011 已清偿 |
+| 2026-03-31 | **Phase Y 创建**：前端代码质量治理（ESLint+Hook+SGE增强+存量修复）；SPM 分析完成；触发自 Phase X Review 23 项问题 |
+| 2026-03-31 | **Phase Y 扩展**：后端 Code Review 15 项问题（P0×3/P1×4/P2×5/P3×3），14 项纳入 Phase Y，1 项（P0-01 SoulEvaluator 架构）拆出为 Phase Z |
+| 2026-03-31 | **Phase Z 创建**：AI 通信架构统一（SoulEvaluator→ai-server 通信路径重构）；SPM 分析完成 |
