@@ -56,9 +56,9 @@
 | Phase IJ-PoC SPM 分析 | `docs/pipeline/phaseIJ-poc/spm-analysis.md` | ✅ |
 | Phase IJ-PoC Review | `docs/pipeline/phaseIJ-poc/review.md` | ✅ |
 | Phase IJ-PoC T1-T5 详细报告 | `docs/pipeline/phaseIJ-poc/detail-T{1-5}.md` | ✅ |
-| Phase IJ-PoC 实验脚本 | `scripts/poc-ij-relationship-test.ts` | ✅ |
-| Phase IJ-PoC 报告生成脚本 | `scripts/poc-ij-export-details.ts` | ✅ |
-| Phase IJ-PoC 原始数据 | `logs/poc-ij-raw-*.json` / `logs/poc-ij-metrics-*.json` | ✅ |
+| Phase IJ-PoC 实验脚本 | `docs/pipeline/phaseIJ-poc/scripts/poc-ij-relationship-test.ts` | ✅ |
+| Phase IJ-PoC 报告生成脚本 | `docs/pipeline/phaseIJ-poc/scripts/poc-ij-export-details.ts` | ✅ |
+| Phase IJ-PoC 原始数据 | `docs/pipeline/phaseIJ-poc/logs/poc-ij-raw-*.json` / `poc-ij-metrics-*.json` | ✅ |
 
 ### Phase IJ 架构要点（v2.0）
 

@@ -151,10 +151,10 @@
 | `pipeline/phaseIJ-poc/detail-T3.md` | T3 李沐阳 vs 张清风资源冲突 — 逐 Level 完整 Prompt/输出 |
 | `pipeline/phaseIJ-poc/detail-T4.md` | T4 张清风(rival)行为决策 — 逐 Level 完整 Prompt/输出 |
 | `pipeline/phaseIJ-poc/detail-T5.md` | T5 王灵均(friend)行为决策 — 逐 Level 完整 Prompt/输出 |
-| `scripts/poc-ij-relationship-test.ts` | PoC 实验脚本（175 次 AI 调用，自包含） |
-| `scripts/poc-ij-export-details.ts` | 详细报告生成脚本（从原始 JSON 生成 detail 报告） |
-| `logs/poc-ij-raw-*.json` | 实验原始数据（175 次调用完整记录） |
-| `logs/poc-ij-metrics-*.json` | 实验指标汇总（逐 Level 统计） |
+| `pipeline/phaseIJ-poc/scripts/poc-ij-relationship-test.ts` | PoC 实验脚本（175 次 AI 调用，自包含） |
+| `pipeline/phaseIJ-poc/scripts/poc-ij-export-details.ts` | 详细报告生成脚本（从原始 JSON 生成 detail 报告） |
+| `pipeline/phaseIJ-poc/logs/poc-ij-raw-*.json` | 实验原始数据（175 次调用完整记录） |
+| `pipeline/phaseIJ-poc/logs/poc-ij-metrics-*.json` | 实验指标汇总（逐 Level 统计） |
 
 ---
 
