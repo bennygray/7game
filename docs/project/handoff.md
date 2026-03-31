@@ -1,16 +1,74 @@
 # 7game-lite — 会话交接文档
 
-> **上次更新**：2026-03-31 | **上次会话主题**：Phase Z SGE 实施
-> **当前活跃 Phase**：Phase Z（AI 通信架构统一）✅ 实施完成
-> **Phase 状态**：SPM ✅ SGA ✅ SGE ✅ — 全部交付物已完成
+> **上次更新**：2026-03-31 | **上次会话主题**：Phase IJ-PoC 实验执行 + 深度分析
+> **当前活跃 Phase**：Phase IJ（NPC 深度智能预研）— SGE 编码实施
+> **Phase 状态**：IJ-PoC: ✅ 完成 / IJ: SPM ✅ SGA ✅ (v2.0) SGE 待启动
 
 ---
 
 ## 当前断点
 
-- **Phase Z 全部完成** — SoulEvaluator 路由统一 + ai-server 结构化补全端点 + 超时放宽
-- 回归验证：64/64 通过 + tsc 零错误 + lint 零新增 error
-- **下一步**：待用户决定下一个 Phase
+- **Phase IJ-PoC 实验完成** — 175 次 AI 调用，成功率 79%，耗时 16.3min
+  - **结论：✅ 关系上下文有效，甜蜜点 = L3**（好感+标签+3条关键事件，~360 tokens）
+  - L1（好感+标签）已能产生 60-80% 行为转变（最小可用）
+  - L3 情绪一致率 78%（峰值），事件引用率 100%（对话类），解析率 72%
+  - L4+ 收益递减，L6 解析率降至 64%（不可接受）
+  - 行为决策（PoC-2）信号较弱：0.8B 模型能可靠转变情绪，但行为选择不稳定
+  - **详细报告**：`docs/pipeline/phaseIJ-poc/review.md` v2.0
+- **Phase IJ v2.0 文档修正完成** — 核心模型从"个人记忆 MemoryEntry"改为"关系记忆 RelationshipMemory"
+- **Phase IJ TDD v2.0 Party Review 完成** — CONDITIONAL PASS（0 BLOCK / 3 WARN）
+  - W1: RelationshipTag import 路径应为 `./soul` 非 `./game-state`
+  - W2: buildRelationshipSummary 缺少获取 RelationshipEdge 的途径（需增加参数或注入引用）
+  - W3: 双写 recordEvent 调用点应为 applyEvaluationResult 而非 updateRelationshipTags
+
+### PoC 对编码范围的影响
+
+| 组件 | 决策 | 理由 |
+|------|------|------|
+| RelationshipMemory 类型 | ✅ 全量 | 基础设施 |
+| RelationshipMemoryManager | ✅ 全量 | keyEvents 存储，L3 需要 |
+| buildRelationshipSummary() | ✅ 实现，**上限 L3** | 好感+标签+3事件 |
+| Prompt 关系摘要注入 | ✅ 实现 | ~360 tokens |
+| 关键事件双写 | ✅ 实现 | 支撑 L3 |
+| 因果事件/个人目标/T2 NPC | ⏸ 仅接口 | 超出验证范围 |
+
+### 下一步（新 session 接手）
+
+1. **Phase IJ SGE 编码实施**（走 /SGE 流程）
+   - 按 TDD v2.0 实现 T1-T12，处理 3 条 WARN
+   - 关系摘要注入上限 = L3（好感+标签+3关键事件）
+   - 保留 L1 降级方案（如果线上解析率 < 70%）
+   - 限制 relationshipDeltas 输出为 max 2 条（减少解析失败）
+   - 行为决策维持规则引擎驱动，AI 仅做情绪+独白
+2. **回归验证**：64 组回归 + tsc 零错误
+3. **更新交接文档**
+
+### Phase IJ 关键文档
+
+| 文档 | 路径 | 状态 |
+|------|------|:----:|
+| Phase IJ PRD | `docs/features/phaseIJ-PRD.md` | ✅ |
+| Phase IJ TDD | `docs/design/specs/phaseIJ-TDD.md` | ✅ |
+| Phase IJ-PoC PRD | `docs/features/phaseIJ-poc-PRD.md` | ✅ |
+| Phase IJ SPM 分析 | `docs/pipeline/phaseIJ/spm-analysis.md` | ✅ |
+| Phase IJ 实施计划 | `docs/pipeline/phaseIJ/plan.md` | ✅ |
+| Phase IJ SGA Review | `docs/pipeline/phaseIJ/review.md` | ✅ |
+| Phase IJ-PoC SPM 分析 | `docs/pipeline/phaseIJ-poc/spm-analysis.md` | ✅ |
+| Phase IJ-PoC Review | `docs/pipeline/phaseIJ-poc/review.md` | ✅ |
+| Phase IJ-PoC T1-T5 详细报告 | `docs/pipeline/phaseIJ-poc/detail-T{1-5}.md` | ✅ |
+| Phase IJ-PoC 实验脚本 | `scripts/poc-ij-relationship-test.ts` | ✅ |
+| Phase IJ-PoC 报告生成脚本 | `scripts/poc-ij-export-details.ts` | ✅ |
+| Phase IJ-PoC 原始数据 | `logs/poc-ij-raw-*.json` / `logs/poc-ij-metrics-*.json` | ✅ |
+
+### Phase IJ 架构要点（v2.0）
+
+- **5 新文件 + 5 修改文件**（PoC 级别）
+- **核心数据**：`RelationshipMemory` 按 pairKey (`sourceId:targetId`) 索引
+- **双写策略**：旧路径不变 + 新 `RelationshipMemoryManager` 并行
+- **不改存档**：运行时 Map，页面刷新清空
+- **不新增 handler**：关系事件记录嵌入现有写入点，Pipeline 13 handlers 不变
+- **Prompt 注入**：关系摘要（好感+标签+关键事件），注入量不硬限制，由 PoC 确定
+- **6 个 ADR**：ADR-IJ-01~06（04/05 对比 v1.0 有实质变更）
 
 ### Phase Y 交付物总览
 

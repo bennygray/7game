@@ -140,6 +140,21 @@
 | **G** | ✅ [`spm-analysis.md`](pipeline/phaseG/spm-analysis.md) | ✅ [`plan.md`](pipeline/phaseG/plan.md) | — | ✅ [`review.md`](pipeline/phaseG/review.md) | ✅ [`walkthrough.md`](pipeline/phaseG/walkthrough.md) |
 | **H-β** | ✅ [`spm-analysis.md`](pipeline/phaseH-beta/spm-analysis.md) | ✅ [`plan.md`](pipeline/phaseH-beta/plan.md) | — | ✅ [`review.md`](pipeline/phaseH-beta/review.md) | ✅ [`walkthrough.md`](pipeline/phaseH-beta/walkthrough.md) |
 | **H-γ** | ✅ [`spm-analysis.md`](pipeline/phaseH-gamma/spm-analysis.md) | — | — | ✅ [`review.md`](pipeline/phaseH-gamma/review.md) | ✅ [`walkthrough.md`](pipeline/phaseH-gamma/walkthrough.md) |
+| **IJ-PoC** | ✅ [`spm-analysis.md`](pipeline/phaseIJ-poc/spm-analysis.md) | — | — | ✅ [`review.md`](pipeline/phaseIJ-poc/review.md) | — |
+
+### Phase IJ-PoC 附加资产
+
+| 文件 | 用途 |
+|------|------|
+| `pipeline/phaseIJ-poc/detail-T1.md` | T1 张清风(rival)对话质量 — 逐 Level 完整 Prompt/输出 |
+| `pipeline/phaseIJ-poc/detail-T2.md` | T2 王灵均(friend)对话质量 — 逐 Level 完整 Prompt/输出 |
+| `pipeline/phaseIJ-poc/detail-T3.md` | T3 李沐阳 vs 张清风资源冲突 — 逐 Level 完整 Prompt/输出 |
+| `pipeline/phaseIJ-poc/detail-T4.md` | T4 张清风(rival)行为决策 — 逐 Level 完整 Prompt/输出 |
+| `pipeline/phaseIJ-poc/detail-T5.md` | T5 王灵均(friend)行为决策 — 逐 Level 完整 Prompt/输出 |
+| `scripts/poc-ij-relationship-test.ts` | PoC 实验脚本（175 次 AI 调用，自包含） |
+| `scripts/poc-ij-export-details.ts` | 详细报告生成脚本（从原始 JSON 生成 detail 报告） |
+| `logs/poc-ij-raw-*.json` | 实验原始数据（175 次调用完整记录） |
+| `logs/poc-ij-metrics-*.json` | 实验指标汇总（逐 Level 统计） |
 
 ---
 

@@ -24,19 +24,30 @@
 | H-γ | v0.4.6 | 掌门裁决（STORM裁决窗口/judge命令/道风漂移） | ✅ | ✅ | ✅ | 🟢 完成 |
 | X-α/β/γ | v0.4.8 | 掌门视界（MUD重构+命令增强+面板系统+内存修复） | ✅ | ✅ | ✅ | 🟢 完成 |
 | Y | v0.4.10 | 前后端代码质量治理（ESLint+Hook+SGE增强+单元测试） | ✅ | ✅ | ✅ | 🟢 完成 |
-| Z | — | AI通信架构统一（SoulEvaluator→ai-server 通信路径重构） | ✅ | ⬜ | ⬜ | 🟡 SPM 完成，待 Phase Y |
+| Z | v0.5.0 | AI通信架构统一（SoulEvaluator→ai-server 通信路径重构） | ✅ | ✅ | ✅ | 🟢 完成 |
+| IJ-PoC | — | 0.8B 关系上下文利用验证（L0-L6 多层级实验） | ✅ | — | ✅ | 🟢 完成（✅ L3 甜蜜点） |
+| IJ | — | NPC 深度智能预研（关系记忆+因果+目标+T2 设计） | ✅ | ✅ | ⬜ | 🟡 SGE 待启动（PoC 结论 = L3 全量编码） |
 
 ---
 
 ## 当前 Phase 详情
 
-**Phase Y 完成** — 前后端代码质量治理
+**Phase IJ-PoC** — 0.8B 关系上下文利用验证 ✅ 完成
 
-- SPM GATE 1 ✅ → SGA GATE 2 ✅ → SGE GATE 3 ✅
-- V0.4.9 后端前置修复 11/15 项 + V0.4.10 ESLint/Hook/Quality Gate/单元测试
-- 交付：`eslint.config.js` + `server/tsconfig.json` + `.claude/settings.json` + `scripts/verify-ui-formatter.ts` + SGE SKILL.md Quality Gate
-- 验证：lint 0 errors / regression 64/64 / UI tests 65/65 / tsc 0 errors
-- **下一步**：Phase Z（AI 通信架构统一）
+- SPM GATE 1 ✅ → 实验执行 ✅ → Review ✅
+- 175 次 AI 调用（5用例×7层级×5轮），成功率 79%，耗时 16.3min
+- **结论：✅ L3 甜蜜点**（好感+标签+3关键事件，~360 tokens）
+- L1 最小可用，L3 最优，L4+ 收益递减
+- 对话情绪强信号，行为决策弱信号
+- Report: `docs/pipeline/phaseIJ-poc/review.md` v2.0
+
+**Phase IJ** — NPC 深度智能预研（SGE 待启动）
+
+- SPM GATE 1 ✅ → SGA GATE 2 ✅ (v2.0) → **SGE 待启动**
+- PRD: `docs/features/phaseIJ-PRD.md` v2.0 / TDD: `docs/design/specs/phaseIJ-TDD.md` v2.0
+- Party Review: CONDITIONAL PASS（0 BLOCK / 3 WARN）
+- **PoC 结论 = ✅ 全量编码**（T1-T12），L3 上限
+- **下一步**：走 /SGE 流程实施编码（处理 3 条 WARN）
 
 ---
 
@@ -55,7 +66,7 @@
 | 弟子数量 | 8 人（4 初始 + 4 Phase D 新增） |
 | AI 模型 | Qwen3.5-0.8B（llama-server 子进程，GPU -ngl 99） |
 | 世界线推演文档 | 9 份（soul-vision-rethinking/01~09） |
-| 宪法文档版本 | MASTER-PRD v2.0 / Roadmap V3.3 / MASTER-ARCHITECTURE v1.4 |
+| 宪法文档版本 | MASTER-PRD v2.0 / Roadmap V4.1 / MASTER-ARCHITECTURE v1.4 |
 
 ---
 
@@ -77,7 +88,9 @@
 | H-γ | [PRD](../features/phaseH-gamma-PRD.md) | [TDD](../design/specs/phaseH-gamma-TDD.md) | [stories](../design/specs/phaseH-gamma-user-stories.md) | — | [spm](../pipeline/phaseH-gamma/spm-analysis.md) [review](../pipeline/phaseH-gamma/review.md) |
 | X-α/β/γ | [PRD](../features/phaseX-alpha-PRD.md) | — | — | — | [review](../pipeline/phaseX-gamma/code-review.md) |
 | Y | — | — | — | — | [spm](../pipeline/phaseY/spm-analysis.md) [plan](../pipeline/phaseY/plan.md) [backend-review](../pipeline/phaseY/backend-code-review.md) |
-| Z | — | — | — | — | [spm](../pipeline/phaseZ/spm-analysis.md) |
+| Z | — | [TDD](../design/specs/phaseZ-TDD.md) | — | — | [spm](../pipeline/phaseZ/spm-analysis.md) [plan](../pipeline/phaseZ/plan.md) [review](../pipeline/phaseZ/review.md) [walk](../pipeline/phaseZ/walkthrough.md) |
+| IJ-PoC | [PRD](../features/phaseIJ-poc-PRD.md) | — | — | — | [spm](../pipeline/phaseIJ-poc/spm-analysis.md) [review](../pipeline/phaseIJ-poc/review.md) |
+| IJ | [PRD](../features/phaseIJ-PRD.md) | [TDD](../design/specs/phaseIJ-TDD.md) | — | — | [spm](../pipeline/phaseIJ/spm-analysis.md) [plan](../pipeline/phaseIJ/plan.md) [review](../pipeline/phaseIJ/review.md) |
 
 ---
 
@@ -98,3 +111,8 @@
 | 2026-03-31 | **Phase Z 创建**：AI 通信架构统一（SoulEvaluator→ai-server 通信路径重构）；SPM 分析完成 |
 | 2026-03-31 | **V0.4.9 Phase Y 前置修复**：后端 11/15 项修复（CORS/端点/校验/崩溃恢复/shutdown/SIGTERM/body限制/重定向/node-llama-cpp/tryConnect/presence_penalty）；文档对齐（handoff/roadmap/review/task 7 文档更新） |
 | 2026-03-31 | **Phase Y 完成**：ESLint flat config（strictTypeChecked + 5 zone 模块边界 + sonarjs + clean-timer）；PostToolUse Hook；SGE Quality Gate（前端+后端）；mud-formatter 65 组单元测试；server/tsconfig.json；4 个 lint error 修复 |
+| 2026-03-31 | **Phase Z 完成**：V0.5.0 推送远端。callLlamaServer 通用化 + /api/infer 结构化补全 + SoulEvaluator 路由统一 + 超时放宽 |
+| 2026-03-31 | **Phase IJ 预研启动**：SPM ✅ GATE 1 + SGA ✅ GATE 2 (v2.0)。核心模型从个人 MemoryEntry 改为关系 RelationshipMemory。Party Review: CONDITIONAL PASS (3 WARN) |
+| 2026-03-31 | **Phase IJ-PoC 独立**：SPM ✅ GATE 1。从 IJ 中拆出独立 PoC Phase。PoC PRD v2.0（7层级×7用例×5次=245次AI调用） |
+| 2026-03-31 | **执行顺序修正**：IJ-PoC 先行 → IJ SGE 后行。PoC 结论决定编码范围（✅全量/🔶精简/❌最小） |
+| 2026-03-31 | **Phase IJ-PoC 完成**：175 次 AI 调用实验完成。结论 ✅ L3 甜蜜点（好感+标签+3事件）。IJ SGE 按全量编码推进。Review v2.0 含深度分析 |
