@@ -4,6 +4,8 @@
 > **评审对象**：`docs/project/trinity-guardian-plan.md` v1.0 + 核心组件文件
 > **评审结论**：方向正确，技术可行，组件设计质量高，有若干落地细节需修正
 > **评级**：8/10（文件补全后从 7 提升）
+>
+> **注意**：本评审写于实施之前，与实施代码同 commit (6297dab) 提交。下方标记 `[FIXED]` 的问题已在同 commit 中修复。冒烟测试于 2026-04-01 通过。
 
 ---
 
@@ -86,10 +88,10 @@
 
 | # | 问题 | 严重度 | 说明 |
 |---|------|:---:|------|
-| D1 | `disallowedTools` 不够严格 | 🟡 | 只禁了 Write/Edit，Subagent 仍可调用 Bash 执行任意命令。建议改用白名单：`tools: Read, Glob, Grep` |
+| D1 | `disallowedTools` 不够严格 | 🟡 `[FIXED]` | 已改用 `tools: Read, Glob, Grep` 白名单 |
 | D2 | L1 Gate 1 的 ROI 评估主观 | 🟡 | "ROI < 2 → WARN" 缺乏计算基准，AI 评估 ROI 本身不可靠。建议降级为信息项而非判定项 |
-| D3 | 审查报告输出路径 | 🟡 | 文档说"由父 agent 写入 `.reviews/`"，但项目已有 `docs/pipeline/` 体系。两套审查记录存放体系可能造成混乱 |
-| D4 | 缺少 `tools` 或白名单中未包含 `Bash` | ✅ | 当前 `disallowedTools: Write, Edit` 不禁 Bash，但 `permissionMode: plan` 会阻止 Bash 执行，形成双重保护 |
+| D3 | 审查报告输出路径 | 🟡 `[FIXED]` | 已改为由父 agent 写入 `docs/pipeline/{phase}/review-g{N}.md`，gate 报告写入 `.reviews/gates/` |
+| D4 | 缺少 `tools` 或白名单中未包含 `Bash` | ✅ `[FIXED]` | 已改用 `tools` 白名单，不再需要 `permissionMode: plan` |
 
 ### 3.2 gate-check.py — 确定性验证器 ⭐ 设计良好
 
@@ -107,12 +109,12 @@
 
 | # | 问题 | 严重度 | 说明 |
 |---|------|:---:|------|
-| G1 | 退出码使用 1 而非 2 | 🔴 | `report()` 返回 `1`，但 Claude Code Hook 约定 **exit 2 = block**，exit 1 只是报错不阻断。需改为 `return 0 if all_pass else 2` |
-| G2 | `--from-review` 运行全部 3 个 Gate | 🟡 | SubagentStop 时应只检查当前 Gate，不是全跑。需要从审查报告中解析 Gate 编号，或从 SubagentStop 的上下文传入 |
-| G3 | 审查记录路径硬编码 `.reviews/` | 🟡 | 与 D3 同源——`.reviews/` 目录在项目中不存在，且与 `docs/pipeline/` 体系不一致 |
-| G4 | `review_exists()` 匹配模式 | 🟡 | 用 `{phase}-{stage}-r*.md` 模式，但 doc-reviewer 输出格式为 `{phase}-{stage}-r{N}.md`，需确认 stage 命名（spm/sga/sge）与实际一致 |
-| G5 | `detect_phase()` 靠 mtime 排序 | 🟡 | 任何对 pipeline 目录的读操作都会改 atime（Windows 上 mtime 不变但 atime 可能变），可能误判。建议优先从 handoff.md 解析活跃 Phase |
-| G6 | 文件路径约定不一致 | 🟡 | `find_prd()` 搜索 `docs/features/`，但项目实际用 `docs/project/prd/` 或 `docs/features/`。需确认与实际目录结构对齐 |
+| G1 | 退出码使用 1 而非 2 | 🔴 `[FIXED]` | 已改为 `return 0 if all_pass else 2`，冒烟测试确认 exit 2 阻断生效 |
+| G2 | `--from-review` 运行全部 3 个 Gate | 🟡 `[FIXED]` | 已改为 `detect_current_gate()` 只检查当前 Gate |
+| G3 | 审查记录路径硬编码 `.reviews/` | 🟡 `[FIXED]` | `review_exists()` 已改为优先搜索 `docs/pipeline/{phase}/review*.md`，`.reviews/` 作为兼容降级 |
+| G4 | `review_exists()` 匹配模式 | 🟡 `[FIXED]` | 已改为 `docs/pipeline/{phase}/review*.md` glob，匹配 review.md 和 review-g{N}.md |
+| G5 | `detect_phase()` 靠 mtime 排序 | 🟡 `[FIXED]` | 已改为优先从 handoff.md 解析，mtime 仅作降级 |
+| G6 | 文件路径约定不一致 | 🟡 | `find_prd()` 搜索 `docs/features/`——冒烟测试确认路径匹配（phaseIJ-PRD.md 存在） |
 
 ### 3.3 doc-integrity-check.py — 文档完整性检查器 ✅ 设计合理
 
@@ -137,9 +139,7 @@
 
 ### 3.4 settings.json — Hook 配置
 
-**当前状态**：仅有 eslint PostToolUse hook，无 Guardian hooks。
-
-**需要合并的配置**：
+**当前状态**：`[FIXED]` Guardian hooks 已合并。最终配置如下：
 
 ```json
 {
@@ -220,24 +220,24 @@
 
 ### 高优先级（阻塞落地）
 
-| # | 建议 | 文件 | 说明 |
+| # | 建议 | 文件 | 状态 |
 |---|------|------|------|
-| H1 | gate-check.py 退出码改为 2 | `scripts/gate-check.py:114` | exit 1 不会触发 Hook 阻断 |
-| H2 | doc-reviewer.md 部署到正确路径 | `docs/project/` → `.claude/agents/` | 否则 `@doc-reviewer` 无法调用 |
-| H3 | settings.json 合并 Guardian hooks | `.claude/settings.json` | 当前仅有 eslint hook |
-| H4 | 创建 `.reviews/` 目录 | `.reviews/.gitkeep` | gate-check.py 写入依赖此目录 |
-| H5 | 更新 plan 中的"已创建"声明 | `trinity-guardian-plan.md` | 修正为实际状态 |
+| H1 | gate-check.py 退出码改为 2 | `scripts/gate-check.py:122` | `[FIXED]` 冒烟测试确认 |
+| H2 | doc-reviewer.md 部署到正确路径 | `.claude/agents/doc-reviewer.md` | `[FIXED]` |
+| H3 | settings.json 合并 Guardian hooks | `.claude/settings.json` | `[FIXED]` |
+| H4 | 创建 `.reviews/` 目录 | `.reviews/gates/` | `[FIXED]` 已创建，待 git add |
+| H5 | 更新 plan 中的"已创建"声明 | `trinity-guardian-plan.md` | `[FIXED]` |
 
 ### 中优先级（影响质量）
 
-| # | 建议 | 说明 |
+| # | 建议 | 状态 |
 |---|------|------|
-| M1 | doc-reviewer 用 `tools` 白名单替代 `disallowedTools` | `tools: Read, Glob, Grep` 更安全，避免遗漏 Bash |
-| M2 | 统一审查记录存放路径 | `.reviews/` vs `docs/pipeline/` 需明确分工 |
-| M3 | gate-check.py `detect_phase()` 改为从 handoff.md 解析 | mtime 排序不可靠 |
-| M4 | gate-check.py 文件路径与实际目录结构对齐 | 验证 `docs/features/`、`docs/design/specs/` 是否匹配 |
-| M5 | `--from-review` 改为只检查相关 Gate | 全跑 3 个 Gate 浪费且可能误报 |
-| M6 | 解释放弃异构审查的决策 | 保持方案演进逻辑完整 |
+| M1 | doc-reviewer 用 `tools` 白名单替代 `disallowedTools` | `[FIXED]` |
+| M2 | 统一审查记录存放路径 | `[FIXED]` 审查报告→`docs/pipeline/`，gate 报告→`.reviews/gates/` |
+| M3 | gate-check.py `detect_phase()` 改为从 handoff.md 解析 | `[FIXED]` 冒烟测试确认 |
+| M4 | gate-check.py 文件路径与实际目录结构对齐 | `[FIXED]` 冒烟测试确认 phaseIJ 路径匹配 |
+| M5 | `--from-review` 改为只检查相关 Gate | `[FIXED]` detect_current_gate() |
+| M6 | 解释放弃异构审查的决策 | 待补充 |
 
 ### 低优先级（锦上添花）
 
@@ -251,16 +251,16 @@
 
 ## 七、建议执行路径
 
-鉴于 M0 技术验证已通过，建议直接进入实施：
+所有 Step 已在 commit 6297dab 中完成，冒烟测试于 2026-04-01 通过：
 
 ```
-Step 1: 修复 gate-check.py 退出码（H1）
-Step 2: 复制 doc-reviewer.md 到 .claude/agents/（H2）
-Step 3: 合并 settings.json hooks（H3）
-Step 4: 创建 .reviews/ 目录（H4）
-Step 5: 冒烟测试（用已有 PRD 做端到端审查）
-Step 6: 根据冒烟结果处理 M1-M6
-Step 7: M3 SKILL.md 集成
+Step 1: 修复 gate-check.py 退出码（H1）           ✅ DONE
+Step 2: 复制 doc-reviewer.md 到 .claude/agents/（H2）✅ DONE
+Step 3: 合并 settings.json hooks（H3）              ✅ DONE
+Step 4: 创建 .reviews/ 目录（H4）                   ✅ DONE
+Step 5: 冒烟测试                                    ✅ DONE (Gate 1/2/3 + auto + doc-integrity)
+Step 6: 根据冒烟结果处理 M1-M6                      ✅ DONE (M1-M5 FIXED, M6 待补充)
+Step 7: SKILL.md 集成                               ✅ DONE (SPM/SGA/SGE)
 ```
 
 ---
