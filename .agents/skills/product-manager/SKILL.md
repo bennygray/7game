@@ -292,6 +292,16 @@ Review 完成后，由父 agent（非 doc-reviewer）追加执行：
 2. 如果结果包含 🔴 BLOCK：
    a. 向 USER 呈现所有 BLOCK 项 + WARN 项
    b. 逐条修复 BLOCK 项（修改 PRD / User Stories）
+
+   > ⚠️ **禁止自审（硬约束）**
+   > 修复后的重新审查**必须**再次调用 `@doc-reviewer` 执行完整四层防线。
+   > 禁止在同一轮报告中标记"已修复"并自行将 BLOCK 改判为 PASS/CONDITIONAL PASS。
+   > **原则**：修复是作者行为，审查是独立评审行为，二者不可合并。
+   >
+   > **文件命名硬约束**：第 N+1 轮审查必须产出新文件 `review-gX-v(N+1).md`。
+   > 写入前检查：上一版文件（如 `review-g1.md`）必须已存在。
+   > 如目标文件不符合递增序列 → 停止，修正命名后再写入。
+
    c. 重新执行 Party Review（完整四层防线，不可跳过已修复项），记为第 N+1 轮
    d. 重复 2a-2c 直到 0 BLOCK
 3. 如果结果为 CONDITIONAL PASS（有 WARN 无 BLOCK）：
@@ -310,6 +320,7 @@ Review 完成后，由父 agent（非 doc-reviewer）追加执行：
 
 - [ ] USER 已审阅 PRD 内容
 - [ ] USER 已确认 User Stories
+- [ ] **评审文件完整性**：如第 1 轮有 BLOCK，则 `review-g1-v2.md`（或更高版本）必须存在
 - [ ] Party Review 无 BLOCK 项（或 USER 已确认接受风险）
 
 签章：`[x] GATE 1 PASSED` — [日期]
