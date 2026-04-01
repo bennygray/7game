@@ -1,9 +1,11 @@
 /**
- * AI 推理后端 — Qwen3.5-0.8B 本地推理
+ * AI 推理后端 — Qwen3.5 本地推理（自动检测最佳可用模型）
  *
  * 架构：ai-server.ts (HTTP :3001) → llama-server.exe (HTTP :8080)
  * llama-server.exe 是 llama.cpp 的官方预编译可执行文件，
  * 原生支持 Qwen3.5 的 Gated DeltaNet 架构（fused kernel）。
+ *
+ * 模型优先级：2B > 0.8B（自动检测 server/models/ 下的 GGUF 文件）
  *
  * 启动：npx tsx server/ai-server.ts
  * 首次需要先下载模型：npx tsx server/download-model.ts
@@ -13,7 +15,7 @@
 
 import { createServer, type IncomingMessage, type ServerResponse, request as httpRequest } from 'node:http';
 import { spawn, type ChildProcess } from 'node:child_process';
-import { existsSync } from 'node:fs';
+import { existsSync, readdirSync, statSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { isModelReady, getModelPath } from './download-model.js';
@@ -23,6 +25,51 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const PORT = 3001;
 const LLAMA_PORT = 8080;
 const LLAMA_SERVER_PATH = join(__dirname, 'llama-server', 'llama-server.exe');
+
+// ===== 模型自动检测 =====
+
+/** 模型优先级列表（越靠前优先级越高） */
+const MODEL_PRIORITY = [
+  { pattern: 'Qwen3.5-2B', label: 'qwen3.5-2b', minSizeMB: 800 },
+  { pattern: 'Qwen3.5-0.8B', label: 'qwen3.5-0.8b', minSizeMB: 400 },
+  { pattern: 'Qwen3-0.6B', label: 'qwen3-0.6b', minSizeMB: 400 },
+];
+
+interface DetectedModel {
+  path: string;
+  label: string;
+  filename: string;
+  sizeMB: number;
+}
+
+/** 检测 server/models/ 下可用的最高优先级模型 */
+function detectBestModel(): DetectedModel | null {
+  const modelsDir = join(__dirname, 'models');
+  if (!existsSync(modelsDir)) return null;
+
+  const files = readdirSync(modelsDir).filter(f => f.endsWith('.gguf'));
+
+  for (const priority of MODEL_PRIORITY) {
+    const match = files.find(f => f.includes(priority.pattern));
+    if (match) {
+      const fullPath = join(modelsDir, match);
+      const sizeMB = statSync(fullPath).size / (1024 * 1024);
+      if (sizeMB >= priority.minSizeMB) {
+        return { path: fullPath, label: priority.label, filename: match, sizeMB: Math.round(sizeMB) };
+      }
+    }
+  }
+
+  // Fallback: 使用 download-model.ts 的检测
+  if (isModelReady()) {
+    return { path: getModelPath(), label: 'qwen3.5-0.8b', filename: 'Qwen3.5-0.8B-Q4_K_M.gguf', sizeMB: 508 };
+  }
+
+  return null;
+}
+
+/** 当前活跃模型信息 */
+let activeModel: DetectedModel | null = null;
 
 // ===== 模型状态 =====
 
@@ -258,17 +305,19 @@ async function startLlamaServer(): Promise<boolean> {
     return false;
   }
 
-  if (!isModelReady()) {
+  // 自动检测最佳模型
+  activeModel = detectBestModel();
+  if (!activeModel) {
     console.log('[AI Server] ⚠ 模型文件未找到');
     console.log('[AI Server]   请先运行: npm run download-model');
     return false;
   }
 
   return new Promise((resolve) => {
-    console.log('[AI Server] 正在启动 llama-server (Qwen3.5-0.8B)...');
+    console.log(`[AI Server] 正在启动 llama-server (${activeModel!.label} — ${activeModel!.filename})...`);
 
     llamaProcess = spawn(LLAMA_SERVER_PATH, [
-      '-m', getModelPath(),
+      '-m', activeModel!.path,
       '--port', String(LLAMA_PORT),
       '-c', '2048',
       '-ngl', '99',
@@ -289,7 +338,7 @@ async function startLlamaServer(): Promise<boolean> {
         started = true;
         modelLoaded = true;
         console.log('[AI Server] ✓ llama-server 启动完成');
-        console.log(`[AI Server]   模型: Qwen3.5-0.8B (${getModelPath()})`);
+        console.log(`[AI Server]   模型: ${activeModel!.label} (${activeModel!.filename}, ${activeModel!.sizeMB}MB)`);
         console.log(`[AI Server]   推理端口: ${LLAMA_PORT}`);
         resolve(true);
       }
@@ -400,8 +449,10 @@ const server = createServer(async (req, res) => {
   if (req.method === 'GET' && req.url === '/api/health') {
     sendJson(res, 200, {
       status: 'ok',
-      model: modelLoaded ? 'qwen3.5-0.8b' : 'placeholder',
+      model: modelLoaded ? (activeModel?.label ?? 'qwen3.5') : 'placeholder',
       modelReady: modelLoaded,
+      modelFile: activeModel?.filename ?? null,
+      modelSizeMB: activeModel?.sizeMB ?? null,
     }, origin);
     return;
   }
@@ -536,7 +587,7 @@ async function start() {
 
   server.listen(PORT, () => {
     console.log(`[AI Server] 已启动，监听端口 ${PORT}`);
-    console.log(`[AI Server] 当前模式：${ok ? 'Qwen3.5-0.8B 本地推理' : '占位模板（无模型）'}`);
+    console.log(`[AI Server] 当前模式：${ok ? `${activeModel?.label ?? 'Qwen3.5'} 本地推理` : '占位模板（无模型）'}`);
     console.log(`[AI Server] 健康检查：http://localhost:${PORT}/api/health`);
   });
 }

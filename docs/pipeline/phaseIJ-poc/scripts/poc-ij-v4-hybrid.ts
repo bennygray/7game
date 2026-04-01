@@ -539,13 +539,17 @@ const SYSTEM_MSG = '你是修仙宗门弟子的灵魂引擎，根据事件和性
 /** Call 2 system message — literary style */
 const SYSTEM_CALL2 = '你是修仙世界弟子的内心独白生成器。根据角色的性格、情绪和行为，写一段简短内心独白。严格按JSON格式输出。';
 
-async function checkHealth(): Promise<boolean> {
+async function checkHealth(): Promise<{ ok: boolean; model: string; modelFile: string }> {
   try {
     const res = await fetch(`${BASE_URL}/api/health`, { signal: AbortSignal.timeout(3000) });
-    if (!res.ok) return false;
-    const data = await res.json() as { status: string; modelReady: boolean };
-    return data.status === 'ok' && data.modelReady;
-  } catch { return false; }
+    if (!res.ok) return { ok: false, model: 'unknown', modelFile: 'unknown' };
+    const data = await res.json() as { status: string; modelReady: boolean; model?: string; modelFile?: string };
+    return {
+      ok: data.status === 'ok' && data.modelReady,
+      model: data.model ?? 'unknown',
+      modelFile: data.modelFile ?? 'unknown',
+    };
+  } catch { return { ok: false, model: 'unknown', modelFile: 'unknown' }; }
 }
 
 async function callInfer(
@@ -811,6 +815,7 @@ function generateReport(
   results: CallResult[], metrics: LevelMetrics[],
   v1: Map<number, V1Level>, v2v3: V2V3Metrics | null,
   startTime: number, endTime: number,
+  modelLabel: string = 'unknown',
 ): string {
   const total = results.length;
   const apiCalls = results.reduce((s, r) => s + r.apiCalls, 0);
@@ -895,7 +900,7 @@ function generateReport(
   return `# Phase IJ-PoC v4 — 混合最优方案验证报告
 
 > **生成时间**：${new Date(endTime).toISOString()}
-> **模型**：Qwen3.5-0.8B GGUF Q4_K_M
+> **模型**：${modelLabel}
 > **逻辑调用**：${total}（API 调用 ${apiCalls}）
 > **成功率**：${success}/${total}（${pct(success / total)}）
 > **耗时**：${dur} 分钟
@@ -976,9 +981,10 @@ async function main(): Promise<void> {
   log('INFO', `配置：${RUNS} 轮 × 7 levels (L0~L6) × 5 cases`);
   log('INFO', `预计：Dialogue ${dialogueCalls} + Decision ${decisionCalls}(×2) = ${apiTotal} 次 API 调用`);
 
-  const healthy = await checkHealth();
-  if (!healthy) { log('ERROR', 'AI 服务不可用'); process.exit(1); }
-  log('INFO', 'AI 服务健康检查通过');
+  const healthResult = await checkHealth();
+  if (!healthResult.ok) { log('ERROR', 'AI 服务不可用'); process.exit(1); }
+  const modelLabel = `${healthResult.model} (${healthResult.modelFile})`;
+  log('INFO', `AI 服务健康检查通过，模型：${modelLabel}`);
 
   const v1Data = loadV1();
   const v2v3Data = loadV2V3();
@@ -1019,8 +1025,10 @@ async function main(): Promise<void> {
   writeFileSync(join(outDir, `poc-ij-v4-metrics-${ts}.json`), JSON.stringify(metrics, null, 2), 'utf8');
   log('INFO', '原始数据 + 指标已保存');
 
-  const report = generateReport(allResults, metrics, v1Data, v2v3Data, startTime, endTime);
-  const reportPath = join(process.cwd(), 'docs', 'pipeline', 'phaseIJ-poc', 'review-v4.md');
+  const report = generateReport(allResults, metrics, v1Data, v2v3Data, startTime, endTime, modelLabel);
+  const modelSlug = (healthResult.model ?? 'unknown').replace(/[^a-z0-9.-]/gi, '-');
+  const reportFilename = `review-v4-${modelSlug}.md`;
+  const reportPath = join(process.cwd(), 'docs', 'pipeline', 'phaseIJ-poc', reportFilename);
   writeFileSync(reportPath, report, 'utf8');
   log('INFO', `报告: ${reportPath}`);
 
