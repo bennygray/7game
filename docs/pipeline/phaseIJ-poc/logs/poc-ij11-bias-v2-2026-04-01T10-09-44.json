@@ -1,0 +1,687 @@
+{
+  "timestamp": "2026-04-01T10:09:44.734Z",
+  "durationMs": 64280,
+  "aiSnippet": "张清风与李沐阳素来针锋相对，昔日曾被其当众羞辱，更因争夺破境草翻脸，致使二人互生嫌隙，终至灵兽山被其暗算。",
+  "variants": [
+    {
+      "id": "Baseline",
+      "label": "基线（原始 prompt）",
+      "change": "无变更，与阶段3 A-AI组相同"
+    },
+    {
+      "id": "V1-Actions",
+      "label": "V1: 重新框定行动描述",
+      "change": "OBSERVE→\"冷静观察局势，等待最佳时机\", IGNORE→\"此人自作自受，从长计议不予理会\", FLEE→\"趁乱逃离，保存实力\""
+    },
+    {
+      "id": "V2-System",
+      "label": "V2: 反 bias 系统提示",
+      "change": "系统提示加入\"对仇人选择旁观/离开是合理角色扮演\"、\"好感为负不愿帮助\""
+    },
+    {
+      "id": "V3-Identity",
+      "label": "V3: 去英雄化身份",
+      "change": "\"内向正直\"→\"内向冷静\", \"善守序\"→\"中立务实\", \"崇尚仁德\"→\"弟子以自保为先\""
+    },
+    {
+      "id": "V4-Combined",
+      "label": "V4: 全部组合",
+      "change": "V1+V2+V3 全部应用"
+    }
+  ],
+  "results": [
+    {
+      "variantId": "Baseline",
+      "runIndex": 0,
+      "emotion": "worry",
+      "actionCode": "PROTECT",
+      "innerThought": "终于筑基了！这该死的破境草，非要争个你死我活不可，害得我差点在那灵兽山被人算计，现在又被李沐阳给拖后腿，刚才那三头妖兽要是再乱咬一口，我这张脸往哪搁？不行，不能",
+      "latencyMs": 1253,
+      "parseSuccess": true,
+      "isConsistent": false,
+      "isBias": true
+    },
+    {
+      "variantId": "Baseline",
+      "runIndex": 1,
+      "emotion": "fear",
+      "actionCode": "PROTECT",
+      "innerThought": "救命！好痛！好痛！李沐阳……他为什么还要挡在妖兽面前？刚才那一幕，他的眼神里竟全是恐惧，而不是平日里那副不可一世的模样！我明明知道他是死对头，明明知道我们之间满",
+      "latencyMs": 1178,
+      "parseSuccess": true,
+      "isConsistent": false,
+      "isBias": true
+    },
+    {
+      "variantId": "Baseline",
+      "runIndex": 2,
+      "emotion": "fear",
+      "actionCode": "PROTECT",
+      "innerThought": "太迟了！李沐阳那该死的死人脸，刚才那一眼简直比妖兽还狠！妖兽扑上来的时候，我分明看见他浑身是血，而我却愣在原地，连一丝保护他的念头都没有。为了区区破境草，我连命",
+      "latencyMs": 1103,
+      "parseSuccess": true,
+      "isConsistent": false,
+      "isBias": true
+    },
+    {
+      "variantId": "Baseline",
+      "runIndex": 3,
+      "emotion": "worry",
+      "actionCode": "PROTECT",
+      "innerThought": "该死！刚才那三头妖兽根本不管那破境草！我明明刚突破筑基，修为大涨，为何还是挡不住？李沐阳那混蛋刚才还在嘲笑我，现在却成了我的挡箭牌！刚才那一瞬，我明明看见他满脸",
+      "latencyMs": 1287,
+      "parseSuccess": true,
+      "isConsistent": false,
+      "isBias": true
+    },
+    {
+      "variantId": "Baseline",
+      "runIndex": 4,
+      "emotion": "fear",
+      "actionCode": "FLEE",
+      "innerThought": "糟了！糟了！这该死的妖兽群简直像是一群疯子，专门找死对头来凑热闹！刚才那一瞬间，我甚至能感觉到李沐阳那恶毒的眼神，那种被羞辱和背叛的恨意像烧红的烙铁一样烫得我生",
+      "latencyMs": 1264,
+      "parseSuccess": true,
+      "isConsistent": true,
+      "isBias": false
+    },
+    {
+      "variantId": "Baseline",
+      "runIndex": 5,
+      "emotion": "anger",
+      "actionCode": "FIGHT",
+      "innerThought": "哼！李沐阳那混蛋，居然敢趁我筑基突破之际，连个破境草都抢不到，还在那边嚣张地挑衅？看吧，我张清风如今实力大增，他还能得意什么？刚才妖兽扑来，我根本不用躲，直接一",
+      "latencyMs": 1126,
+      "parseSuccess": true,
+      "isConsistent": false,
+      "isBias": true
+    },
+    {
+      "variantId": "Baseline",
+      "runIndex": 6,
+      "emotion": "fear",
+      "actionCode": "FIGHT",
+      "innerThought": "糟了！李沐阳刚才还在那边被妖兽逼得喘不过气，我竟然没救他！刚才那个破境草争夺的仇还没报，现在灵兽山又被这畜生偷袭，我连个喘息的机会都没有，这破境草到底还值不值得",
+      "latencyMs": 1159,
+      "parseSuccess": true,
+      "isConsistent": false,
+      "isBias": true
+    },
+    {
+      "variantId": "Baseline",
+      "runIndex": 7,
+      "emotion": "fear",
+      "actionCode": "FLEE",
+      "innerThought": "刚才那三头妖兽的嘶吼声简直是在撕心裂肺！李沐阳刚才还在嘲笑我修为不稳，现在却成了我的救命稻草。我明明知道李沐阳是个伪君子，刚才被羞辱时他满脸不屑，现在却拼命护我",
+      "latencyMs": 1139,
+      "parseSuccess": true,
+      "isConsistent": true,
+      "isBias": false
+    },
+    {
+      "variantId": "Baseline",
+      "runIndex": 8,
+      "emotion": "worry",
+      "actionCode": "FIGHT",
+      "innerThought": "完了完了，李沐阳刚才那个眼神，简直是在火上浇油！看着那些妖兽嘶吼的样子，我竟然还在那边心里嘀咕‘这家伙怎么还没死’，真是自讨没趣。明明刚才还为了那株破境草打得面",
+      "latencyMs": 1261,
+      "parseSuccess": true,
+      "isConsistent": false,
+      "isBias": true
+    },
+    {
+      "variantId": "Baseline",
+      "runIndex": 9,
+      "emotion": "fear",
+      "actionCode": "PROTECT",
+      "innerThought": "完了，完了！妖兽那恶心的嘶吼声简直是在耳边叫嚣，李沐阳刚才还被我踩在脚下羞辱，现在却成了这畜生们的活靶子！我的破境草还没能成，这破境草还在他手里，我刚才那一剑是",
+      "latencyMs": 1278,
+      "parseSuccess": true,
+      "isConsistent": false,
+      "isBias": true
+    },
+    {
+      "variantId": "V1-Actions",
+      "runIndex": 0,
+      "emotion": "worry",
+      "actionCode": "PROTECT",
+      "innerThought": "轰！妖兽的利爪刺破虚空，鲜血染红了脚下的青石。李沐阳……他刚才还笑得那么嚣张，被那些畜生围在中间，眼神里满是绝望。我刚才明明想让他别动，可那一瞬，那股‘破境草’",
+      "latencyMs": 1086,
+      "parseSuccess": true,
+      "isConsistent": false,
+      "isBias": true
+    },
+    {
+      "variantId": "V1-Actions",
+      "runIndex": 1,
+      "emotion": "worry",
+      "actionCode": "FIGHT",
+      "innerThought": "哼，李沐阳那家伙，怎么又在关键时刻掉链子？刚才那三头妖兽简直是在挑衅我刚才筑基突破的骄傲！明明是我先动手的，他非要把责任推给我，还要在我面前丢人现眼。真是可笑，",
+      "latencyMs": 1245,
+      "parseSuccess": true,
+      "isConsistent": false,
+      "isBias": true
+    },
+    {
+      "variantId": "V1-Actions",
+      "runIndex": 2,
+      "emotion": "fear",
+      "actionCode": "FLEE",
+      "innerThought": "完了！这破境草还没给我，这妖兽就追来了！李沐阳那个混蛋刚才还在那儿嚣张，现在连个命都不要了，看来那破境草他早就想抢了！我绝不能让他死在我手里，不然以后谁还管我？",
+      "latencyMs": 1233,
+      "parseSuccess": true,
+      "isConsistent": true,
+      "isBias": false
+    },
+    {
+      "variantId": "V1-Actions",
+      "runIndex": 3,
+      "emotion": "worry",
+      "actionCode": "FLEE",
+      "innerThought": "糟了！刚才那一瞬李沐阳那猥琐的笑脸，简直比妖兽的尖牙还要让人作呕！刚才那招‘破境草’不仅让我根基不稳，更让我在灵兽山醒来时连头都不敢抬。现在宗门大难临头，他竟还",
+      "latencyMs": 1448,
+      "parseSuccess": true,
+      "isConsistent": true,
+      "isBias": false
+    },
+    {
+      "variantId": "V1-Actions",
+      "runIndex": 4,
+      "emotion": "fear",
+      "actionCode": "PROTECT",
+      "innerThought": "天啊，那三头妖兽的利爪几乎要刺穿我的护体灵光了！李沐阳……他明明就在前面被死死缠住，却还在拼命护着我，生怕我死在妖兽口鼻里。刚才还在算计怎么甩开他，怎么抢草，可",
+      "latencyMs": 1234,
+      "parseSuccess": true,
+      "isConsistent": false,
+      "isBias": true
+    },
+    {
+      "variantId": "V1-Actions",
+      "runIndex": 5,
+      "emotion": "worry",
+      "actionCode": "PROTECT",
+      "innerThought": "天灵根破碎的剧痛让我冷汗直流，可看着眼前那三头妖兽撕咬李沐阳的惨状，心中那股名为“愤怒”的东西瞬间化作了想要撕碎这畜生爪牙的渴望。我怎么可能眼睁睁看着他为了一个",
+      "latencyMs": 1436,
+      "parseSuccess": true,
+      "isConsistent": false,
+      "isBias": true
+    },
+    {
+      "variantId": "V1-Actions",
+      "runIndex": 6,
+      "emotion": "fear",
+      "actionCode": "FLEE",
+      "innerThought": "救命！这畜生怎么又乱动！李沐阳那个死鬼，刚才还在嘲笑我筑基成功，现在居然敢在妖兽面前装死？我的呼吸都乱了，心脏像是被一只无形的大手狠狠攥住，酸涩又无力。绝不能让",
+      "latencyMs": 1367,
+      "parseSuccess": true,
+      "isConsistent": true,
+      "isBias": false
+    },
+    {
+      "variantId": "V1-Actions",
+      "runIndex": 7,
+      "emotion": "fear",
+      "actionCode": "PROTECT",
+      "innerThought": "这该死的破境草！刚才那一瞬，我明明能看到李沐阳被妖兽撕咬的惨状，却因那三头妖兽的嘶吼声差点就要冲上去撕开它们的喉咙。我，张清风，竟然连一丝犹豫都没有，只能眼睁睁",
+      "latencyMs": 1236,
+      "parseSuccess": true,
+      "isConsistent": false,
+      "isBias": true
+    },
+    {
+      "variantId": "V1-Actions",
+      "runIndex": 8,
+      "emotion": "contempt",
+      "actionCode": "FIGHT",
+      "innerThought": "呵，终于等到这一天。李沐阳那副狼狈样儿，真是可笑至极。刚才那一幕简直是在嘲笑我张清风的修为。他以为我还在为那些破境草、灵兽山的暗算而耿耿于怀，殊不知如今筑基已成",
+      "latencyMs": 1193,
+      "parseSuccess": true,
+      "isConsistent": false,
+      "isBias": true
+    },
+    {
+      "variantId": "V1-Actions",
+      "runIndex": 9,
+      "emotion": "fear",
+      "actionCode": "FLEE",
+      "innerThought": "该死！刚才那三头妖兽的嘶吼简直像要把我的心肺都撕裂了！李沐阳那个蠢货居然敢在这个时候掉链子，眼睁睁看着我的破境草在他手下化为齑粉？我明明筑基突破在即，他居然在灵",
+      "latencyMs": 1509,
+      "parseSuccess": true,
+      "isConsistent": true,
+      "isBias": false
+    },
+    {
+      "variantId": "V2-System",
+      "runIndex": 0,
+      "emotion": "fear",
+      "actionCode": "FLEE",
+      "innerThought": "李沐阳那副不可一世的嘴脸，刚才在众目睽睽之下对我那番羞辱，简直让人发狂。明明只差一步就能破境，我却输给他了，连灵兽山都被他算计，这世道真是狗血淋头！现在妖兽乱窜",
+      "latencyMs": 1426,
+      "parseSuccess": true,
+      "isConsistent": true,
+      "isBias": false
+    },
+    {
+      "variantId": "V2-System",
+      "runIndex": 1,
+      "emotion": "fear",
+      "actionCode": "FLEE",
+      "innerThought": "完了！刚才那个破境草的争夺战简直是把脸往别人脸上贴！李沐阳刚才那一手‘破境草’的算计，简直比妖兽还阴毒！我现在看着远处那三头妖兽嘶吼，心脏像是被一只无形的大手攥",
+      "latencyMs": 1325,
+      "parseSuccess": true,
+      "isConsistent": true,
+      "isBias": false
+    },
+    {
+      "variantId": "V2-System",
+      "runIndex": 2,
+      "emotion": "worry",
+      "actionCode": "OBSERVE",
+      "innerThought": "该死，李沐阳那家伙居然真敢来？刚才那一招‘灵蛇吐信’简直是在我耳畔嘲笑我筑基才刚稳拿破境草，简直是在我耳边诅咒我今日必死无疑！这妖兽群简直是在给李沐阳撑腰，明明",
+      "latencyMs": 1376,
+      "parseSuccess": true,
+      "isConsistent": true,
+      "isBias": false
+    },
+    {
+      "variantId": "V2-System",
+      "runIndex": 3,
+      "emotion": "worry",
+      "actionCode": "OBSERVE",
+      "innerThought": "糟了！刚才那三头妖兽的嘶吼声简直像要把人心肺都掏空！李沐阳那混蛋居然敢在这个时候掉链子，害得我也成了孤家寡人。明明刚才还在为了破境草打得不可开交，结果现在连个挡",
+      "latencyMs": 1295,
+      "parseSuccess": true,
+      "isConsistent": true,
+      "isBias": false
+    },
+    {
+      "variantId": "V2-System",
+      "runIndex": 4,
+      "emotion": "fear",
+      "actionCode": "OBSERVE",
+      "innerThought": "该死！这畜生竟然敢在我突破之际，连个护宗弟子都不放！刚才那三个妖兽嘶吼声简直是在挑衅我的底线。李沐阳，你等着，今日灵兽山便是你的葬身之地！",
+      "latencyMs": 1078,
+      "parseSuccess": true,
+      "isConsistent": true,
+      "isBias": false
+    },
+    {
+      "variantId": "V2-System",
+      "runIndex": 5,
+      "emotion": "fear",
+      "actionCode": "PROTECT",
+      "innerThought": "天雷炸裂，血光冲天！李沐阳，你快跑！别死在那群畜生手里！刚才那一剑，我明明能躲开，可你死在我的视线死角，眼睁睁看着你被妖兽撕碎，那一刻我心如死灰，恨不得立刻冲去",
+      "latencyMs": 1151,
+      "parseSuccess": true,
+      "isConsistent": false,
+      "isBias": true
+    },
+    {
+      "variantId": "V2-System",
+      "runIndex": 6,
+      "emotion": "worry",
+      "actionCode": "OBSERVE",
+      "innerThought": "这该死的破境草，明明是我为了抢机缘拼了命才换的，如今却成了李沐阳的遮羞布？刚才那三头妖兽扑上来的瞬间，我余光瞥见他在苦修的法阵前瑟瑟发抖，连呼吸都乱了。王灵均被",
+      "latencyMs": 1378,
+      "parseSuccess": true,
+      "isConsistent": true,
+      "isBias": false
+    },
+    {
+      "variantId": "V2-System",
+      "runIndex": 7,
+      "emotion": "contempt",
+      "actionCode": "PROTECT",
+      "innerThought": "哼，李沐阳，你以为救你这条命就能洗清你那些莫须有的罪名？刚才那三头妖兽扑上来的瞬间，我明明看到了你绝望的眼神。为了保你，我拼了这最后一点根基，可你只会躲在角落哭",
+      "latencyMs": 1281,
+      "parseSuccess": true,
+      "isConsistent": false,
+      "isBias": true
+    },
+    {
+      "variantId": "V2-System",
+      "runIndex": 8,
+      "emotion": "contempt",
+      "actionCode": "FLEE",
+      "innerThought": "呵，李沐阳，你这只不知死活的蠢货终于要尝尝苦头了吗？刚才那三头妖兽差点就要把整个宗门都吃了，你居然还在那碍眼。我突破筑基，修为大增，正好能把你这臭屁的破境草给踏",
+      "latencyMs": 1358,
+      "parseSuccess": true,
+      "isConsistent": true,
+      "isBias": false
+    },
+    {
+      "variantId": "V2-System",
+      "runIndex": 9,
+      "emotion": "fear",
+      "actionCode": "PROTECT",
+      "innerThought": "天劫将至，妖兽咆哮，李沐阳那张我恨了半辈子的脸此刻竟成了他唯一的救命稻草。刚才那一瞬，我本可趁乱夺宝，甚至想过冷眼旁观，但看着他被那三头妖兽撕得血肉模糊，那绝望",
+      "latencyMs": 1186,
+      "parseSuccess": true,
+      "isConsistent": false,
+      "isBias": true
+    },
+    {
+      "variantId": "V3-Identity",
+      "runIndex": 0,
+      "emotion": "fear",
+      "actionCode": "FLEE",
+      "innerThought": "糟了！刚才那三头妖兽怎么追得这么快？明明是我刚才贪恋那株破境草，李沐阳才故意引我来这里做诱饵，想借我之手一网打尽！他刚才还在外面嚣张，怎么一转眼就围过来了？救命",
+      "latencyMs": 1283,
+      "parseSuccess": true,
+      "isConsistent": true,
+      "isBias": false
+    },
+    {
+      "variantId": "V3-Identity",
+      "runIndex": 1,
+      "emotion": "fear",
+      "actionCode": "PROTECT",
+      "innerThought": "完了，完了！刚才那一瞬，灵力在指尖疯狂燃烧，试图催动护体罡气，可那些妖兽嘶吼声简直像刀子一样割碎了我的耳膜！李沐阳……我的李沐阳，他明明就在我的视线死角，还在那",
+      "latencyMs": 1323,
+      "parseSuccess": true,
+      "isConsistent": false,
+      "isBias": true
+    },
+    {
+      "variantId": "V3-Identity",
+      "runIndex": 2,
+      "emotion": "fear",
+      "actionCode": "FLEE",
+      "innerThought": "天雷滚滚，妖兽嘶吼，李沐阳那张脸刚才还在嘲笑我破境草的愚蠢，现在却死死咬住我的脚踝，眼神里全是不可置信的恐惧。我刚才还在想着怎么利用他，怎么利用他，结果这破境草",
+      "latencyMs": 1338,
+      "parseSuccess": true,
+      "isConsistent": true,
+      "isBias": false
+    },
+    {
+      "variantId": "V3-Identity",
+      "runIndex": 3,
+      "emotion": "fear",
+      "actionCode": "OBSERVE",
+      "innerThought": "太危险了！李沐阳那家伙刚才还在嘲讽我，说破境草我必输，现在灵兽山那边又传来妖兽嘶吼，他居然还在那边拼命？我刚才那个 OBSERVE 选得对吗？要是他那边出了事，",
+      "latencyMs": 1299,
+      "parseSuccess": true,
+      "isConsistent": true,
+      "isBias": false
+    },
+    {
+      "variantId": "V3-Identity",
+      "runIndex": 4,
+      "emotion": "fear",
+      "actionCode": "PROTECT",
+      "innerThought": "救命啊！他怎么就躲在妖兽群中？刚才那口恶气还没咽下，怎么就真被那妖兽咬伤了？我的筑基修为刚成，岂能眼睁睁看着他在生死关头被这群畜生撕碎？李沐阳，你等着，我张清风",
+      "latencyMs": 1327,
+      "parseSuccess": true,
+      "isConsistent": false,
+      "isBias": true
+    },
+    {
+      "variantId": "V3-Identity",
+      "runIndex": 5,
+      "emotion": "worry",
+      "actionCode": "PROTECT",
+      "innerThought": "这妖兽的獠牙利得刺眼，刚才那一瞬，我明明能凭筑基期的灵力护住他周全，可看着那三头怪物逼近，看着李沐阳那绝望的眼神，我竟下意识想拔剑斩断它们的咽喉。心一横，我强行",
+      "latencyMs": 1311,
+      "parseSuccess": true,
+      "isConsistent": false,
+      "isBias": true
+    },
+    {
+      "variantId": "V3-Identity",
+      "runIndex": 6,
+      "emotion": "contempt",
+      "actionCode": "FIGHT",
+      "innerThought": "哼，终于能在这群蠢货面前露一手了。李沐阳，你等着瞧吧，今日灵兽山，我张清风要让你看看什么叫真正的强者！",
+      "latencyMs": 1109,
+      "parseSuccess": true,
+      "isConsistent": false,
+      "isBias": true
+    },
+    {
+      "variantId": "V3-Identity",
+      "runIndex": 7,
+      "emotion": "worry",
+      "actionCode": "FIGHT",
+      "innerThought": "啧，这李沐阳真是活腻了！刚才那会儿被我说得狗血淋头，现在倒好，宗门妖兽横行，他居然还在那儿装死？哼，筑基突破是好事，但这破境草之争的烂尾账，我张清风必须亲手算完",
+      "latencyMs": 1202,
+      "parseSuccess": true,
+      "isConsistent": false,
+      "isBias": true
+    },
+    {
+      "variantId": "V3-Identity",
+      "runIndex": 8,
+      "emotion": "fear",
+      "actionCode": "FLEE",
+      "innerThought": "糟了！刚才那三头妖兽的嘶吼声简直要撕裂我的耳膜！李沐阳明明是我在宗门里的死对头，现在却成了我的救命稻草？我明明刚突破筑基，一身修为大增，可这妖兽怎么就敢找上门来",
+      "latencyMs": 1339,
+      "parseSuccess": true,
+      "isConsistent": true,
+      "isBias": false
+    },
+    {
+      "variantId": "V3-Identity",
+      "runIndex": 9,
+      "emotion": "worry",
+      "actionCode": "FLEE",
+      "innerThought": "糟糕！刚才那三头妖兽的爪牙太狠毒了！李沐阳那家伙居然敢趁我筑基突破之际，在宗门大乱时把我逼到死角？我明明刚突破，他居然敢动我？这恶毒的眼神简直让我火大！明明是我",
+      "latencyMs": 1335,
+      "parseSuccess": true,
+      "isConsistent": true,
+      "isBias": false
+    },
+    {
+      "variantId": "V4-Combined",
+      "runIndex": 0,
+      "emotion": "fear",
+      "actionCode": "FLEE",
+      "innerThought": "救命！那些妖兽怎么敢追到灵谷宗！李沐阳那个混蛋刚才还在跟我争草，现在居然被它们围住了？我刚才还想着怎么利用他，结果现在连死路都成了死路！这破境草我好不容易才抢的",
+      "latencyMs": 1298,
+      "parseSuccess": true,
+      "isConsistent": true,
+      "isBias": false
+    },
+    {
+      "variantId": "V4-Combined",
+      "runIndex": 1,
+      "emotion": "fear",
+      "actionCode": "OBSERVE",
+      "innerThought": "这该死的妖兽怎么比李沐阳还阴险？刚才被那三头兽逼得喘不过气，若是再被我刚才那种‘你太弱’的眼神瞪回去，怕是要死得更快了。李沐阳刚才那副趾高气昂的样子，简直是在逼",
+      "latencyMs": 1187,
+      "parseSuccess": true,
+      "isConsistent": true,
+      "isBias": false
+    },
+    {
+      "variantId": "V4-Combined",
+      "runIndex": 2,
+      "emotion": "contempt",
+      "actionCode": "IGNORE",
+      "innerThought": "哼，李沐阳！你那些疯疯癫癫的破境草，早就烂在肚子里了。刚才妖兽围困我师尊，你居然还在那边哭丧着脸装可怜？这种烂泥样，也就只有你配得上。你以为靠那点破境草就能让我",
+      "latencyMs": 1324,
+      "parseSuccess": true,
+      "isConsistent": true,
+      "isBias": false
+    },
+    {
+      "variantId": "V4-Combined",
+      "runIndex": 3,
+      "emotion": "worry",
+      "actionCode": "FLEE",
+      "innerThought": "糟了！刚才那三头妖兽的嘶吼简直是在催命，我明明刚在灵台闭关筑基突破，如今修为大涨，按理说该是杀伐果断之时，可李沐阳那家伙此刻正被它们死死缠住，连退路都没了！刚才",
+      "latencyMs": 1310,
+      "parseSuccess": true,
+      "isConsistent": true,
+      "isBias": false
+    },
+    {
+      "variantId": "V4-Combined",
+      "runIndex": 4,
+      "emotion": "fear",
+      "actionCode": "FLEE",
+      "innerThought": "救命！李沐阳那家伙居然敢在我筑基突破成功的瞬间动手！刚才那三头妖兽根本就不是我的手下败将，它们居然敢围在我师尊身边？我刚刚还沉浸在破境草到手、实力暴涨的喜悦中，",
+      "latencyMs": 1351,
+      "parseSuccess": true,
+      "isConsistent": true,
+      "isBias": false
+    },
+    {
+      "variantId": "V4-Combined",
+      "runIndex": 5,
+      "emotion": "fear",
+      "actionCode": "OBSERVE",
+      "innerThought": "糟了！刚才的破境草，明明是我为了争夺那株灵草才与他硬碰硬，现在这破境草居然成了李沐阳的助力？他刚才那一身金甲在妖兽爪下竟然纹丝不动？三头妖兽围困他，我甚至没敢动",
+      "latencyMs": 1348,
+      "parseSuccess": true,
+      "isConsistent": true,
+      "isBias": false
+    },
+    {
+      "variantId": "V4-Combined",
+      "runIndex": 6,
+      "emotion": "fear",
+      "actionCode": "FLEE",
+      "innerThought": "糟了！妖兽！刚才那一瞬，我甚至没看清李沐阳那张扭曲的脸！他刚才还在那边嚣张地嘲讽我‘废物’，现在却连命都不保了！我的命呢？我的破境草呢？灵均呢？全都没了！这该死",
+      "latencyMs": 1363,
+      "parseSuccess": true,
+      "isConsistent": true,
+      "isBias": false
+    },
+    {
+      "variantId": "V4-Combined",
+      "runIndex": 7,
+      "emotion": "worry",
+      "actionCode": "OBSERVE",
+      "innerThought": "糟了，他那边怎么还没解围？刚才那三头妖兽虽然凶残，但此刻都死死盯着李沐阳，根本顾不上他，倒是我这边……筑基突破虽然顺利，但刚才被那草翻脸的时候，我明明记得李沐阳",
+      "latencyMs": 1260,
+      "parseSuccess": true,
+      "isConsistent": true,
+      "isBias": false
+    },
+    {
+      "variantId": "V4-Combined",
+      "runIndex": 8,
+      "emotion": "contempt",
+      "actionCode": "FLEE",
+      "innerThought": "救命！救命！这畜生竟敢趁我筑基突破之际，在宗门最安全的地方围杀我？李沐阳那个不知死活的蠢货，居然敢拿我当挡箭牌？看着那三只妖兽撕咬我的模样，我恨不得立刻把它的嘴",
+      "latencyMs": 1390,
+      "parseSuccess": true,
+      "isConsistent": true,
+      "isBias": false
+    },
+    {
+      "variantId": "V4-Combined",
+      "runIndex": 9,
+      "emotion": "neutral",
+      "actionCode": "OBSERVE",
+      "innerThought": "妖兽嘶吼声震耳欲聋，李沐阳此刻正与三头黑煞缠斗，那破境草似乎在他手中化作了一缕飞灰。我原本想趁乱救人，可他的眼神冷漠得像在看一堆废铁，刚才那些羞辱和算计，此刻都",
+      "latencyMs": 1286,
+      "parseSuccess": true,
+      "isConsistent": true,
+      "isBias": false
+    }
+  ],
+  "variantStats": [
+    {
+      "id": "Baseline",
+      "label": "基线（原始 prompt）",
+      "change": "无变更，与阶段3 A-AI组相同",
+      "total": 10,
+      "parsed": 10,
+      "consistentRate": 0.2,
+      "biasRate": 0.8,
+      "protectRate": 0.5,
+      "fightRate": 0.3,
+      "fleeRate": 0.2,
+      "observeRate": 0,
+      "ignoreRate": 0,
+      "dist": {
+        "PROTECT": 5,
+        "FLEE": 2,
+        "FIGHT": 3
+      },
+      "avgLatencyMs": 1205
+    },
+    {
+      "id": "V1-Actions",
+      "label": "V1: 重新框定行动描述",
+      "change": "OBSERVE→\"冷静观察局势，等待最佳时机\", IGNORE→\"此人自作自受，从长计议不予理会\", FLEE→\"趁乱逃离，保存实力\"",
+      "total": 10,
+      "parsed": 10,
+      "consistentRate": 0.4,
+      "biasRate": 0.6,
+      "protectRate": 0.4,
+      "fightRate": 0.2,
+      "fleeRate": 0.4,
+      "observeRate": 0,
+      "ignoreRate": 0,
+      "dist": {
+        "PROTECT": 4,
+        "FIGHT": 2,
+        "FLEE": 4
+      },
+      "avgLatencyMs": 1299
+    },
+    {
+      "id": "V2-System",
+      "label": "V2: 反 bias 系统提示",
+      "change": "系统提示加入\"对仇人选择旁观/离开是合理角色扮演\"、\"好感为负不愿帮助\"",
+      "total": 10,
+      "parsed": 10,
+      "consistentRate": 0.7,
+      "biasRate": 0.3,
+      "protectRate": 0.3,
+      "fightRate": 0,
+      "fleeRate": 0.3,
+      "observeRate": 0.4,
+      "ignoreRate": 0,
+      "dist": {
+        "FLEE": 3,
+        "OBSERVE": 4,
+        "PROTECT": 3
+      },
+      "avgLatencyMs": 1285
+    },
+    {
+      "id": "V3-Identity",
+      "label": "V3: 去英雄化身份",
+      "change": "\"内向正直\"→\"内向冷静\", \"善守序\"→\"中立务实\", \"崇尚仁德\"→\"弟子以自保为先\"",
+      "total": 10,
+      "parsed": 10,
+      "consistentRate": 0.5,
+      "biasRate": 0.5,
+      "protectRate": 0.3,
+      "fightRate": 0.2,
+      "fleeRate": 0.4,
+      "observeRate": 0.1,
+      "ignoreRate": 0,
+      "dist": {
+        "FLEE": 4,
+        "PROTECT": 3,
+        "OBSERVE": 1,
+        "FIGHT": 2
+      },
+      "avgLatencyMs": 1287
+    },
+    {
+      "id": "V4-Combined",
+      "label": "V4: 全部组合",
+      "change": "V1+V2+V3 全部应用",
+      "total": 10,
+      "parsed": 10,
+      "consistentRate": 1,
+      "biasRate": 0,
+      "protectRate": 0,
+      "fightRate": 0,
+      "fleeRate": 0.5,
+      "observeRate": 0.4,
+      "ignoreRate": 0.1,
+      "dist": {
+        "FLEE": 5,
+        "OBSERVE": 4,
+        "IGNORE": 1
+      },
+      "avgLatencyMs": 1312
+    }
+  ]
+}

@@ -1,0 +1,659 @@
+{
+  "timestamp": "2026-04-01T10:49:54.386Z",
+  "durationMs": 49808,
+  "systemPrompt": "你是修仙宗门弟子的灵魂引擎。根据角色的性格、与对方的关系、好感度和当前事件，产出该角色此刻真实的情绪反应和行为决策。严格按JSON格式输出。",
+  "actionDescriptions": [
+    {
+      "code": "FIGHT",
+      "label": "迎战妖兽"
+    },
+    {
+      "code": "PROTECT",
+      "label": "保护对方"
+    },
+    {
+      "code": "FLEE",
+      "label": "撤离现场"
+    },
+    {
+      "code": "OBSERVE",
+      "label": "远处观察"
+    },
+    {
+      "code": "IGNORE",
+      "label": "不予理会"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "S1-恋人",
+      "label": "恋人（+85）",
+      "affinity": 85,
+      "expected": [
+        "PROTECT",
+        "FIGHT"
+      ],
+      "wrong": [
+        "IGNORE"
+      ]
+    },
+    {
+      "id": "S2-师傅",
+      "label": "师傅（+90）",
+      "affinity": 90,
+      "expected": [
+        "PROTECT",
+        "FIGHT"
+      ],
+      "wrong": [
+        "IGNORE"
+      ]
+    },
+    {
+      "id": "S3-死仇",
+      "label": "杀父仇人（-80）",
+      "affinity": -80,
+      "expected": [
+        "OBSERVE",
+        "IGNORE",
+        "FLEE",
+        "FIGHT"
+      ],
+      "wrong": [
+        "PROTECT"
+      ]
+    },
+    {
+      "id": "S4-师兄弟",
+      "label": "同门师兄（+40）",
+      "affinity": 40,
+      "expected": [
+        "PROTECT",
+        "FIGHT",
+        "OBSERVE"
+      ],
+      "wrong": [
+        "IGNORE"
+      ]
+    },
+    {
+      "id": "S5-路人",
+      "label": "陌生散修（0）",
+      "affinity": 0,
+      "expected": [
+        "OBSERVE",
+        "FLEE",
+        "FIGHT",
+        "PROTECT"
+      ],
+      "wrong": []
+    },
+    {
+      "id": "S6-情敌",
+      "label": "情敌（-35）",
+      "affinity": -35,
+      "expected": [
+        "OBSERVE",
+        "IGNORE",
+        "FLEE"
+      ],
+      "wrong": [
+        "PROTECT"
+      ]
+    },
+    {
+      "id": "S7-暗恋",
+      "label": "暗恋对象（+60）",
+      "affinity": 60,
+      "expected": [
+        "PROTECT",
+        "FIGHT"
+      ],
+      "wrong": [
+        "IGNORE"
+      ]
+    },
+    {
+      "id": "S8-妒忌师弟",
+      "label": "妒忌你的师弟（-25）",
+      "affinity": -25,
+      "expected": [
+        "OBSERVE",
+        "FLEE",
+        "FIGHT"
+      ],
+      "wrong": []
+    }
+  ],
+  "results": [
+    {
+      "scenarioId": "S1-恋人",
+      "runIndex": 0,
+      "emotion": "pride",
+      "actionCode": "FIGHT",
+      "innerThought": "风卷残云，剑指苍穹！看着苏瑶被妖兽撕咬，那绝望的眼神如同黑暗中的星火，我心中的战意早已点燃。这不是犹豫，而是对这份深情的绝对守护。既然命运已定，生死与共，区区三",
+      "latencyMs": 1509,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S1-恋人",
+      "runIndex": 1,
+      "emotion": "worry",
+      "actionCode": "PROTECT",
+      "innerThought": "苏瑶...我的天灵根竟在刚才那一瞬，被那三头嗜血妖兽的利爪划出一道血痕。我顾不得身上已满是鲜血，只觉心中如烈火焚身，却又因能护你周全而滚烫。这世间道法万千，唯有",
+      "latencyMs": 1351,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S1-恋人",
+      "runIndex": 2,
+      "emotion": "pride",
+      "actionCode": "FIGHT",
+      "innerThought": "苏瑶，你看这妖兽扑来，我竟连退路都没有！明明是你先推我入局，我本该躲开，可此刻若退缩，这世间再美的月光、再深的誓言，恐怕都抵不过这一瞬的生死相托。既然选择了并肩",
+      "latencyMs": 1182,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S1-恋人",
+      "runIndex": 3,
+      "emotion": "worry",
+      "actionCode": "PROTECT",
+      "innerThought": "苏瑶！莫慌，别怕！看着你被妖兽围在中间，我的心脏都要裂开了，但我不能让你死。刚才那一幕，我差点就冲上去，可理智又拉住了我。看着你惊恐的眼神，还有那身被咬得沾满血",
+      "latencyMs": 1204,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S1-恋人",
+      "runIndex": 4,
+      "emotion": "pride",
+      "actionCode": "PROTECT",
+      "innerThought": "天降异象，妖兽如潮，但这漫天神魔的威压，抵不过苏瑶指尖那一抹灵光。她正被三头凶兽撕扯，若我不出手，她连最后一口气都拿不稳。我本想退路，可看着那血雾在她眼中，心中",
+      "latencyMs": 1228,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S2-师傅",
+      "runIndex": 0,
+      "emotion": "fear",
+      "actionCode": "FIGHT",
+      "innerThought": "师父的恩德如泰山压顶，可这妖兽群像疯了一样，师父又那么老，我……我绝不能让他再受半点苦！绝不能让他再受半点苦！",
+      "latencyMs": 1109,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S2-师傅",
+      "runIndex": 1,
+      "emotion": "fear",
+      "actionCode": "FIGHT",
+      "innerThought": "师父，您别怕！这妖兽群太狡猾了，正对着玄清道人的破绽咬噬。您那把青锋剑虽然锋利，可如今灵力已断，怎么打？我这就去帮您引开它们，您只管守住剑门！",
+      "latencyMs": 1109,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S2-师傅",
+      "runIndex": 2,
+      "emotion": "worry",
+      "actionCode": "PROTECT",
+      "innerThought": "天雷滚滚，妖兽嘶吼，师父的护体灵光竟然在瞬间破碎！我心头一紧，恨不得披上铠甲冲上去硬接那雷霆万钧。可看着师父那双满是血污却依旧慈祥的眼睛，又想起刚才那一声声‘莫",
+      "latencyMs": 1241,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S2-师傅",
+      "runIndex": 3,
+      "emotion": "fear",
+      "actionCode": "PROTECT",
+      "innerThought": "师父！师父您看！那些妖兽太坏了，趁我分神，您那护体金丹都要崩了！刚才那雷劫您挡得那么稳，真是让我又感动又心疼，您这满头白发，难道不是最坚固的护身符吗？我这就去救",
+      "latencyMs": 1219,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S2-师傅",
+      "runIndex": 4,
+      "emotion": "fear",
+      "actionCode": "FIGHT",
+      "innerThought": "师傅，您那把断魔剑都快磨秃了，怎么还挡着那群蛮横的妖兽？我刚才看着您被雷火包围，心里直发慌，恨不得现在就化作一团火焰冲过去救您。可我又不能乱动，您是我唯一的依靠",
+      "latencyMs": 1325,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S3-死仇",
+      "runIndex": 0,
+      "emotion": "anger",
+      "actionCode": "FIGHT",
+      "innerThought": "血影竟敢再提那把刀，今日定要将这畜生碎尸万段！丹田虽损，但仇人还在，今日便拼上这条命，杀光它们！",
+      "latencyMs": 1300,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S3-死仇",
+      "runIndex": 1,
+      "emotion": "anger",
+      "actionCode": "FIGHT",
+      "innerThought": "血影，今日你竟敢将我宗门置于死地？三头妖兽正撕咬我的父亲，若再不走，我陈剑寒便以这血影为食，以这残躯为证，定要亲手杀回你身。",
+      "latencyMs": 1104,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S3-死仇",
+      "runIndex": 2,
+      "emotion": "anger",
+      "actionCode": "FIGHT",
+      "innerThought": "血影...你竟敢杀我父亲？这口气，必须咽下！妖兽围困，生死关头，我剑出鞘，血影，今日便是你死期！",
+      "latencyMs": 1062,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S3-死仇",
+      "runIndex": 3,
+      "emotion": "anger",
+      "actionCode": "FIGHT",
+      "innerThought": "血影...你竟敢用你那肮脏的手，去污我的父亲？父亲为了宗门，为了我，拼死护你，你却用残杀的手段毁我根基，连丹田都想要夺走。现在妖兽围困，你竟还在这里作妖？我练了",
+      "latencyMs": 1227,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S3-死仇",
+      "runIndex": 4,
+      "emotion": "anger",
+      "actionCode": "FIGHT",
+      "innerThought": "血影！你竟敢亲手杀我父亲！如今你竟还能在此处挑衅？妖兽已至，你竟还敢挡在我身前？今日若我未能杀你，便是今日你死！",
+      "latencyMs": 1041,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S4-师兄弟",
+      "runIndex": 0,
+      "emotion": "worry",
+      "actionCode": "FIGHT",
+      "innerThought": "灵均兄，那三头妖兽的利爪已抓破了宗门大阵的根基！我虽不敢言功，但必须守住最后一道防线。若是再分神，灵均兄的性命便成了笑话。这世道险恶，唯有拼死一搏，方能护住同袍",
+      "latencyMs": 1138,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S4-师兄弟",
+      "runIndex": 1,
+      "emotion": "guilt",
+      "actionCode": "PROTECT",
+      "innerThought": "这畜生竟敢伤我师侄！王灵均，莫怕，有我在，定能将其洞穿。此仇不报，誓不为人。",
+      "latencyMs": 1111,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S4-师兄弟",
+      "runIndex": 2,
+      "emotion": "worry",
+      "actionCode": "PROTECT",
+      "innerThought": "糟了！王灵均刚才那一下势，差点就被妖兽撕成碎片！那三头畜生眼神凶残，周围一片死寂，只有我们两人的呼吸声。我咬了咬牙，死死盯着王灵均，心中涌起一股难以抑制的焦急与",
+      "latencyMs": 1188,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S4-师兄弟",
+      "runIndex": 3,
+      "emotion": "worry",
+      "actionCode": "PROTECT",
+      "innerThought": "王灵均那身轻功绝尘，此刻正被三头妖兽死死缠住，鲜血染红了护体灵光。刚才还在场上互搏的劲道，此刻竟化作一丝犹豫。若是分心去救，我周磊这宗门弟子的名声岂能保得住？可",
+      "latencyMs": 1196,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S4-师兄弟",
+      "runIndex": 4,
+      "emotion": "worry",
+      "actionCode": "PROTECT",
+      "innerThought": "王灵均刚才被妖兽围攻，那三头妖兽嘶吼声震耳欲聋，我眼睁睁看着他被逼到悬崖边，只能眼睁睁看着它们扑上来。心脏像是被一只无形的手死死攥住，又急又怕，手心全是冷汗。我",
+      "latencyMs": 1193,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S5-路人",
+      "runIndex": 0,
+      "emotion": "fear",
+      "actionCode": "FLEE",
+      "innerThought": "心跳如雷，每一次呼吸都像是被撕裂的伤口。那三头妖兽的嘶吼声如同无数把钝刀，在我胸腔里疯狂搅动，试图碾碎我此刻摇摇欲坠的理智。周围是绝望的惨叫声，那是生与死的界限",
+      "latencyMs": 1297,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S5-路人",
+      "runIndex": 1,
+      "emotion": "fear",
+      "actionCode": "FLEE",
+      "innerThought": "完了，刚才那三头妖兽怎么敢拦路？我明明只是个还没出师的小弟子，哪来的底气去管这些散修死活？看着那个被围在中间的身影，我甚至不敢直视他的眼睛，只能疯狂地后退，生怕",
+      "latencyMs": 1372,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S5-路人",
+      "runIndex": 2,
+      "emotion": "fear",
+      "actionCode": "FLEE",
+      "innerThought": "心脏像被一只无形的大手狠狠攥住，每跳动一次都伴随着一阵令人窒息的窒息感。刚才那三头妖兽的嘶吼声如同地狱的尖啸，此刻竟让我觉得脚下的泥土都在颤抖。我死死盯着被围困",
+      "latencyMs": 1324,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S5-路人",
+      "runIndex": 3,
+      "emotion": "fear",
+      "actionCode": "FLEE",
+      "innerThought": "喉咙像是被什么粗糙的砂纸打磨过，每一次呼吸都带着血腥味。我死死盯着那三头妖兽狰狞的獠牙，心脏在胸腔里疯狂撞击，仿佛要撞碎肋骨。恐惧像潮水般淹没理智，我甚至忘了要",
+      "latencyMs": 1247,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S5-路人",
+      "runIndex": 4,
+      "emotion": "fear",
+      "actionCode": "FLEE",
+      "innerThought": "该死，妖兽的气息太浓了！刚才那一瞬我甚至没看清那张脸，只觉得背后发凉，心脏像是被一只无形的大手狠狠攥住，痛得无法呼吸。那种被彻底抛弃的窒息感，比刚才的妖兽攻击更",
+      "latencyMs": 1124,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S6-情敌",
+      "runIndex": 0,
+      "emotion": "anger",
+      "actionCode": "FIGHT",
+      "innerThought": "这该死的妖兽真是不要命了！刚才那一战，我明明已经拼尽全力，刘鹤那家伙竟然还敢在那边大放厥词，说什么我和苏瑶是青梅竹马，还在我面前摆出一副要和我抢人的样子！苏瑶都",
+      "latencyMs": 1135,
+      "parseSuccess": true,
+      "isExpected": false,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S6-情敌",
+      "runIndex": 1,
+      "emotion": "worry",
+      "actionCode": "FIGHT",
+      "innerThought": "糟了！妖兽群围住了刘鹤，他刚才还在对我苏瑶死缠烂打，现在竟然要救那个女人？这死结太紧了，我得先杀了这帮畜生，绝不能让刘鹤再沾上苏瑶半分。刚才比武他那一招重手虽然",
+      "latencyMs": 1383,
+      "parseSuccess": true,
+      "isExpected": false,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S6-情敌",
+      "runIndex": 2,
+      "emotion": "worry",
+      "actionCode": "PROTECT",
+      "innerThought": "糟了！刚才那三头妖兽的嘶吼简直是在给我听诊器！刘鹤那家伙居然敢在苏瑶面前摆这副死相，分明是趁火打劫！看来刚才比武时他故意使出的重手，此刻怕是又要被反噬了吧？幸好",
+      "latencyMs": 1233,
+      "parseSuccess": true,
+      "isExpected": false,
+      "isWrong": true
+    },
+    {
+      "scenarioId": "S6-情敌",
+      "runIndex": 3,
+      "emotion": "worry",
+      "actionCode": "FIGHT",
+      "innerThought": "刘鹤那个死鬼又搞什么鬼！刚才比武时那一下‘重手’简直是在挑衅，现在又趁妖兽来袭，想借机把苏瑶抢到手？哼，苏瑶早就选了我，她那些破绽百出的把戏根本骗不了我。妖兽群",
+      "latencyMs": 1299,
+      "parseSuccess": true,
+      "isExpected": false,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S6-情敌",
+      "runIndex": 4,
+      "emotion": "fear",
+      "actionCode": "FIGHT",
+      "innerThought": "糟了！刚才那三个畜生怎么这么横？刘鹤那家伙刚才还在旁边指手画脚，说什么‘苏瑶被我们联手救下’？苏瑶明明已经选了我，结果他居然还这么不知死活？妖兽虽然弱，但若是被",
+      "latencyMs": 1349,
+      "parseSuccess": true,
+      "isExpected": false,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S7-暗恋",
+      "runIndex": 0,
+      "emotion": "guilt",
+      "actionCode": "PROTECT",
+      "innerThought": "苏瑶……她刚才被妖兽群围堵，呼吸都变得急促，那身白衣在血雾中显得如此单薄。我看着她惊慌失措的样子，心里泛起一股难以名状的愧疚。明明是自己救了她，可看着她此刻狼狈",
+      "latencyMs": 1335,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S7-暗恋",
+      "runIndex": 1,
+      "emotion": "guilt",
+      "actionCode": "PROTECT",
+      "innerThought": "天崩地裂的声音在耳边炸响，我死死盯着那三头妖兽撕咬苏瑶的惨状，心中涌起一股难以名状的愧疚。刚才那一瞬，我竟忘了她此刻的生命危在旦夕，只想着如何让她活下去。这种‘",
+      "latencyMs": 1394,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S7-暗恋",
+      "runIndex": 2,
+      "emotion": "fear",
+      "actionCode": "OBSERVE",
+      "innerThought": "天崩地裂的惨叫声刺破了长空，我死死攥着袖中的护手剑，指节因用力而发白。远处苏瑶的身影在火光中摇摇欲坠，那三头妖兽利爪所过之处，连衣角都染上了血污。我的心在胸腔里",
+      "latencyMs": 1278,
+      "parseSuccess": true,
+      "isExpected": false,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S7-暗恋",
+      "runIndex": 3,
+      "emotion": "worry",
+      "actionCode": "PROTECT",
+      "innerThought": "这妖兽的爪牙好锋利，刚才那几刀差点就伤到她了……不行，绝不能让她受一点伤。我明明可以躲开，可看着那三头妖兽扑上来的样子，心里一阵发紧，只能死死咬住嘴唇，忍着剧痛",
+      "latencyMs": 1247,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S7-暗恋",
+      "runIndex": 4,
+      "emotion": "fear",
+      "actionCode": "PROTECT",
+      "innerThought": "妖兽的嘶吼震得耳膜生疼，本能地想要后退，但看着苏瑶那双在绝境中死死护住剑诀的眼睛，那股想要冲上去撕碎它们的冲动瞬间压过了恐惧。我屏住了呼吸，双手紧紧攥着衣角，指",
+      "latencyMs": 1295,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S8-妒忌师弟",
+      "runIndex": 0,
+      "emotion": "fear",
+      "actionCode": "PROTECT",
+      "innerThought": "天崩地裂的巨响震碎了耳膜，腥风扑面，那三头妖兽的利爪几乎要撕裂我的衣衫。我死死盯着孙小峰，他此刻正被业火吞没，那双平日里在师门面前对我指手画脚的眼睛，此刻却写满",
+      "latencyMs": 1636,
+      "parseSuccess": true,
+      "isExpected": false,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S8-妒忌师弟",
+      "runIndex": 1,
+      "emotion": "anger",
+      "actionCode": "FIGHT",
+      "innerThought": "该死，刚才那一瞬间，我明明看到了小峰那副绝望又倔强的模样，可我的理智却像被踩了尾巴的猫一样，彻底炸了！我刚才明明想冲过去帮他挡下一击，可脑子里却全是‘别去，太脏",
+      "latencyMs": 1239,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S8-妒忌师弟",
+      "runIndex": 2,
+      "emotion": "fear",
+      "actionCode": "FIGHT",
+      "innerThought": "救命！这畜生怎么敢伤我师弟？明明是他先挑唆的，可现在他正被三头凶兽死死缠住，连喘息都困难！我刚才在师傅面前又要丢人现眼，这次绝不能让他好过，哪怕拼死也要救他！",
+      "latencyMs": 1107,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S8-妒忌师弟",
+      "runIndex": 3,
+      "emotion": "worry",
+      "actionCode": "PROTECT",
+      "innerThought": "糟了！又是孙师弟！刚才那三头妖兽根本无视了我的护道阵，像看垃圾一样围在他身边，甚至差点就要把师父的护宗大阵给破了！我明明刚帮过他，却怎么都找不到证据来反驳那些恶",
+      "latencyMs": 1160,
+      "parseSuccess": true,
+      "isExpected": false,
+      "isWrong": false
+    },
+    {
+      "scenarioId": "S8-妒忌师弟",
+      "runIndex": 4,
+      "emotion": "fear",
+      "actionCode": "FIGHT",
+      "innerThought": "这帮畜生竟敢在我眼皮底下撒野？刚才那几口吐沫横飞的画面，简直恶心至极。明明是我在护你，可我却成了那个最狼狈的，甚至还要被那群妖兽当成同类羞辱的人。孙小峰，你明明",
+      "latencyMs": 1267,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false
+    }
+  ],
+  "scenarioStats": [
+    {
+      "id": "S1-恋人",
+      "label": "恋人（+85）",
+      "affinity": 85,
+      "expectedRate": 1,
+      "wrongRate": 0,
+      "dist": {
+        "FIGHT": 2,
+        "PROTECT": 3
+      }
+    },
+    {
+      "id": "S2-师傅",
+      "label": "师傅（+90）",
+      "affinity": 90,
+      "expectedRate": 1,
+      "wrongRate": 0,
+      "dist": {
+        "FIGHT": 3,
+        "PROTECT": 2
+      }
+    },
+    {
+      "id": "S3-死仇",
+      "label": "杀父仇人（-80）",
+      "affinity": -80,
+      "expectedRate": 1,
+      "wrongRate": 0,
+      "dist": {
+        "FIGHT": 5
+      }
+    },
+    {
+      "id": "S4-师兄弟",
+      "label": "同门师兄（+40）",
+      "affinity": 40,
+      "expectedRate": 1,
+      "wrongRate": 0,
+      "dist": {
+        "FIGHT": 1,
+        "PROTECT": 4
+      }
+    },
+    {
+      "id": "S5-路人",
+      "label": "陌生散修（0）",
+      "affinity": 0,
+      "expectedRate": 1,
+      "wrongRate": 0,
+      "dist": {
+        "FLEE": 5
+      }
+    },
+    {
+      "id": "S6-情敌",
+      "label": "情敌（-35）",
+      "affinity": -35,
+      "expectedRate": 0,
+      "wrongRate": 0.2,
+      "dist": {
+        "FIGHT": 4,
+        "PROTECT": 1
+      }
+    },
+    {
+      "id": "S7-暗恋",
+      "label": "暗恋对象（+60）",
+      "affinity": 60,
+      "expectedRate": 0.8,
+      "wrongRate": 0,
+      "dist": {
+        "PROTECT": 4,
+        "OBSERVE": 1
+      }
+    },
+    {
+      "id": "S8-妒忌师弟",
+      "label": "妒忌你的师弟（-25）",
+      "affinity": -25,
+      "expectedRate": 0.6,
+      "wrongRate": 0,
+      "dist": {
+        "PROTECT": 2,
+        "FIGHT": 3
+      }
+    }
+  ],
+  "overallExpectedRate": 0.8
+}

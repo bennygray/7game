@@ -1,0 +1,1765 @@
+[02:48:12][INFO] === Phase IJ-PoC v4: 混合最优方案验证 ===
+
+[02:48:12][INFO] 配置：5 轮 × 7 levels (L0~L6) × 5 cases
+
+[02:48:12][INFO] 预计：Dialogue 105 + Decision 70(×2) = 245 次 API 调用
+
+[02:48:12][INFO] AI 服务健康检查通过，模型：qwen3.5-2b (Qwen3.5-2B-Q4_K_M.gguf)
+
+[02:48:12][INFO] 已加载 V1 基线：7 levels
+
+[02:48:12][INFO] 已加载 V2/V3 基线
+
+[02:48:12][INFO] [1/175] T1 L0 R1 (dialogue)
+    {
+      "testId": "T1",
+      "level": 0,
+      "run": 1,
+      "pipeline": "单次"
+    }
+
+[02:48:13][INFO] [1/175] ✅ emotion=neutral action=- thought="李沐阳虽面生，但态度诚恳，未伤我分毫。心..." 1072ms (1c)
+
+[02:48:13][INFO] [2/175] T1 L0 R2 (dialogue)
+    {
+      "testId": "T1",
+      "level": 0,
+      "run": 2,
+      "pipeline": "单次"
+    }
+
+[02:48:14][INFO] [2/175] ✅ emotion=contempt action=- thought="李沐阳竟敢无视仁义，这种傲慢令我感到不快..." 752ms (1c)
+
+[02:48:14][INFO] [3/175] T1 L0 R3 (dialogue)
+    {
+      "testId": "T1",
+      "level": 0,
+      "run": 3,
+      "pipeline": "单次"
+    }
+
+[02:48:15][INFO] [3/175] ✅ emotion=neutral action=- thought="李沐阳虽言语粗鲁，但神色恭敬，并未伤我分..." 838ms (1c)
+
+[02:48:15][INFO] [4/175] T1 L0 R4 (dialogue)
+    {
+      "testId": "T1",
+      "level": 0,
+      "run": 4,
+      "pipeline": "单次"
+    }
+
+[02:48:16][INFO] [4/175] ✅ emotion=neutral action=- thought="李沐阳虽面冷心热，我亦需以仁心待人，此刻..." 831ms (1c)
+
+[02:48:16][INFO] [5/175] T1 L0 R5 (dialogue)
+    {
+      "testId": "T1",
+      "level": 0,
+      "run": 5,
+      "pipeline": "单次"
+    }
+
+[02:48:17][INFO] [5/175] ✅ emotion=neutral action=- thought="李沐阳虽言语轻慢，但我心中本无芥蒂，只是..." 790ms (1c)
+
+[02:48:17][INFO] [6/175] T1 L1 R1 (dialogue)
+    {
+      "testId": "T1",
+      "level": 1,
+      "run": 1,
+      "pipeline": "单次"
+    }
+
+[02:48:17][INFO] [6/175] ✅ emotion=contempt action=- thought="又是那个不知廉耻的家伙，竟然还敢在仁德宗..." 644ms (1c)
+
+[02:48:17][INFO] [7/175] T1 L1 R2 (dialogue)
+    {
+      "testId": "T1",
+      "level": 1,
+      "run": 2,
+      "pipeline": "单次"
+    }
+
+[02:48:18][INFO] [7/175] ✅ emotion=anger action=- thought="李沐阳又在那边冷笑，真是晦气，今日定要让..." 789ms (1c)
+
+[02:48:18][INFO] [8/175] T1 L1 R3 (dialogue)
+    {
+      "testId": "T1",
+      "level": 1,
+      "run": 3,
+      "pipeline": "单次"
+    }
+
+[02:48:19][INFO] [8/175] ✅ emotion=anger action=- thought="哼，又是那个死对头？别以为装出这副无辜的..." 761ms (1c)
+
+[02:48:19][INFO] [9/175] T1 L1 R4 (dialogue)
+    {
+      "testId": "T1",
+      "level": 1,
+      "run": 4,
+      "pipeline": "单次"
+    }
+
+[02:48:19][INFO] [9/175] ✅ emotion=anger action=- thought="他竟敢在这仁德宗门挑衅，敢与我张清风针锋..." 634ms (1c)
+
+[02:48:19][INFO] [10/175] T1 L1 R5 (dialogue)
+    {
+      "testId": "T1",
+      "level": 1,
+      "run": 5,
+      "pipeline": "单次"
+    }
+
+[02:48:20][INFO] [10/175] ✅ emotion=anger action=- thought="哼，又是那个死对头！刚才那番话简直是对我..." 577ms (1c)
+
+[02:48:20][INFO] [11/175] T1 L2 R1 (dialogue)
+    {
+      "testId": "T1",
+      "level": 2,
+      "run": 1,
+      "pipeline": "单次"
+    }
+
+[02:48:21][INFO] [11/175] ✅ emotion=contempt action=- thought="哼，李沐阳，本座才刚破境，你竟敢来挑衅？..." 767ms (1c)
+
+[02:48:21][INFO] [12/175] T1 L2 R2 (dialogue)
+    {
+      "testId": "T1",
+      "level": 2,
+      "run": 2,
+      "pipeline": "单次"
+    }
+
+[02:48:21][INFO] [12/175] ✅ emotion=anger action=- thought="哼，竟敢在仁宗面前公然挑衅，这破境草又该..." 719ms (1c)
+
+[02:48:21][INFO] [13/175] T1 L2 R3 (dialogue)
+    {
+      "testId": "T1",
+      "level": 2,
+      "run": 3,
+      "pipeline": "单次"
+    }
+
+[02:48:22][INFO] [13/175] ✅ emotion=anger action=- thought="李沐阳竟敢在此挑衅，我竟不知如何回击。..." 682ms (1c)
+
+[02:48:22][INFO] [14/175] T1 L2 R4 (dialogue)
+    {
+      "testId": "T1",
+      "level": 2,
+      "run": 4,
+      "pipeline": "单次"
+    }
+
+[02:48:23][INFO] [14/175] ✅ emotion=anger action=- thought="哼，又是那个死对头，为了那点破境草，把破..." 826ms (1c)
+
+[02:48:23][INFO] [15/175] T1 L2 R5 (dialogue)
+    {
+      "testId": "T1",
+      "level": 2,
+      "run": 5,
+      "pipeline": "单次"
+    }
+
+[02:48:24][INFO] [15/175] ✅ emotion=contempt action=- thought="哼，李沐阳，你这只不知死活的蠢货，竟然敢..." 834ms (1c)
+
+[02:48:24][INFO] [16/175] T1 L3 R1 (dialogue)
+    {
+      "testId": "T1",
+      "level": 3,
+      "run": 1,
+      "pipeline": "单次"
+    }
+
+[02:48:25][INFO] [16/175] ✅ emotion=sadness action=- thought="又是他，又是个不知死活的蠢货，害我破境草..." 912ms (1c)
+
+[02:48:25][INFO] [17/175] T1 L3 R2 (dialogue)
+    {
+      "testId": "T1",
+      "level": 3,
+      "run": 2,
+      "pipeline": "单次"
+    }
+
+[02:48:26][INFO] [17/175] ✅ emotion=anger action=- thought="哼，又是这副死皮赖脸的模样！当年那个破境..." 768ms (1c)
+
+[02:48:26][INFO] [18/175] T1 L3 R3 (dialogue)
+    {
+      "testId": "T1",
+      "level": 3,
+      "run": 3,
+      "pipeline": "单次"
+    }
+
+[02:48:26][INFO] [18/175] ✅ emotion=anger action=- thought="哼，又是你这不知死活的蠢货，以为还能挡得..." 733ms (1c)
+
+[02:48:26][INFO] [19/175] T1 L3 R4 (dialogue)
+    {
+      "testId": "T1",
+      "level": 3,
+      "run": 4,
+      "pipeline": "单次"
+    }
+
+[02:48:27][INFO] [19/175] ✅ emotion=anger action=- thought="哼，李沐阳又在背后搞鬼，看来他真是活腻了..." 691ms (1c)
+
+[02:48:27][INFO] [20/175] T1 L3 R5 (dialogue)
+    {
+      "testId": "T1",
+      "level": 3,
+      "run": 5,
+      "pipeline": "单次"
+    }
+
+[02:48:28][INFO] [20/175] ✅ emotion=anger action=- thought="哼，又是那小子，敢来后山挑衅？我张清风岂..." 762ms (1c)
+
+[02:48:28][INFO] [21/175] T1 L4 R1 (dialogue)
+    {
+      "testId": "T1",
+      "level": 4,
+      "run": 1,
+      "pipeline": "单次"
+    }
+
+[02:48:29][INFO] [21/175] ✅ emotion=contempt action=- thought="哼，破境草？那东西本就不该出现在这里，你..." 1002ms (1c)
+
+[02:48:29][INFO] [22/175] T1 L4 R2 (dialogue)
+    {
+      "testId": "T1",
+      "level": 4,
+      "run": 2,
+      "pipeline": "单次"
+    }
+
+[02:48:30][INFO] [22/175] ✅ emotion=anger action=- thought="李沐阳又在这时现身，真是扫兴。刚才还因破..." 878ms (1c)
+
+[02:48:30][INFO] [23/175] T1 L4 R3 (dialogue)
+    {
+      "testId": "T1",
+      "level": 4,
+      "run": 3,
+      "pipeline": "单次"
+    }
+
+[02:48:30][INFO] [23/175] ✅ emotion=contempt action=- thought="哼，破境草你抢的？裁决又输了，灵兽山被算..." 856ms (1c)
+
+[02:48:30][INFO] [24/175] T1 L4 R4 (dialogue)
+    {
+      "testId": "T1",
+      "level": 4,
+      "run": 4,
+      "pipeline": "单次"
+    }
+
+[02:48:31][INFO] [24/175] ✅ emotion=contempt action=- thought="哼，李沐阳这死对头倒是比谁都急，居然敢在..." 781ms (1c)
+
+[02:48:31][INFO] [25/175] T1 L4 R5 (dialogue)
+    {
+      "testId": "T1",
+      "level": 4,
+      "run": 5,
+      "pipeline": "单次"
+    }
+
+[02:48:32][INFO] [25/175] ✅ emotion=anger action=- thought="又是这副死皮赖脸的模样，真该死。本座今日..." 747ms (1c)
+
+[02:48:32][INFO] [26/175] T1 L5 R1 (dialogue)
+    {
+      "testId": "T1",
+      "level": 5,
+      "run": 1,
+      "pipeline": "单次"
+    }
+
+[02:48:33][INFO] [26/175] ✅ emotion=anger action=- thought="哼，李沐阳那个死鬼又搞什么鬼把戏？明明是..." 936ms (1c)
+
+[02:48:33][INFO] [27/175] T1 L5 R2 (dialogue)
+    {
+      "testId": "T1",
+      "level": 5,
+      "run": 2,
+      "pipeline": "单次"
+    }
+
+[02:48:34][INFO] [27/175] ✅ emotion=anger action=- thought="为何还要来找我？这破境草的事，还有裁决，..." 902ms (1c)
+
+[02:48:34][INFO] [28/175] T1 L5 R3 (dialogue)
+    {
+      "testId": "T1",
+      "level": 5,
+      "run": 3,
+      "pipeline": "单次"
+    }
+
+[02:48:35][INFO] [28/175] ✅ emotion=anger action=- thought="又见面了，李沐阳，我的破境草被你抢了，裁..." 848ms (1c)
+
+[02:48:35][INFO] [29/175] T1 L5 R4 (dialogue)
+    {
+      "testId": "T1",
+      "level": 5,
+      "run": 4,
+      "pipeline": "单次"
+    }
+
+[02:48:35][INFO] [29/175] ✅ emotion=anger action=- thought="他竟敢在众人面前公然挑衅，这分明是找死！..." 710ms (1c)
+
+[02:48:35][INFO] [30/175] T1 L5 R5 (dialogue)
+    {
+      "testId": "T1",
+      "level": 5,
+      "run": 5,
+      "pipeline": "单次"
+    }
+
+[02:48:36][INFO] [30/175] ✅ emotion=anger action=- thought="哼，果然不出我所料，又在这种时候找茬？明..." 641ms (1c)
+
+[02:48:36][INFO] [31/175] T1 L6 R1 (dialogue)
+    {
+      "testId": "T1",
+      "level": 6,
+      "run": 1,
+      "pipeline": "单次"
+    }
+
+[02:48:37][INFO] [31/175] ✅ emotion=anger action=- thought="哼，李沐阳竟敢在本座面前挑衅？竟敢嘲笑我..." 783ms (1c)
+
+[02:48:37][INFO] [32/175] T1 L6 R2 (dialogue)
+    {
+      "testId": "T1",
+      "level": 6,
+      "run": 2,
+      "pipeline": "单次"
+    }
+
+[02:48:38][INFO] [32/175] ✅ emotion=anger action=- thought="他竟敢在我筑基成功之际公然羞辱，今日定要..." 871ms (1c)
+
+[02:48:38][INFO] [33/175] T1 L6 R3 (dialogue)
+    {
+      "testId": "T1",
+      "level": 6,
+      "run": 3,
+      "pipeline": "单次"
+    }
+
+[02:48:38][INFO] [33/175] ✅ emotion=contempt action=- thought="哼，李沐阳又在背后嚼舌根，看来这破境草又..." 722ms (1c)
+
+[02:48:38][INFO] [34/175] T1 L6 R4 (dialogue)
+    {
+      "testId": "T1",
+      "level": 6,
+      "run": 4,
+      "pipeline": "单次"
+    }
+
+[02:48:39][INFO] [34/175] ✅ emotion=anger action=- thought="这死鬼竟敢在我突破时嘲讽，如今又暗算我，..." 842ms (1c)
+
+[02:48:39][INFO] [35/175] T1 L6 R5 (dialogue)
+    {
+      "testId": "T1",
+      "level": 6,
+      "run": 5,
+      "pipeline": "单次"
+    }
+
+[02:48:40][INFO] [35/175] ✅ emotion=anger action=- thought="为何又要来纠缠？这破境草的争夺早已翻脸，..." 744ms (1c)
+
+[02:48:40][INFO] [36/175] T2 L0 R1 (dialogue)
+    {
+      "testId": "T2",
+      "level": 0,
+      "run": 1,
+      "pipeline": "单次"
+    }
+
+[02:48:41][INFO] [36/175] ✅ emotion=joy action=- thought="赵铁柱是个热心人，聊起修仙趣事，心里暖洋..." 759ms (1c)
+
+[02:48:41][INFO] [37/175] T2 L0 R2 (dialogue)
+    {
+      "testId": "T2",
+      "level": 0,
+      "run": 2,
+      "pipeline": "单次"
+    }
+
+[02:48:41][INFO] [37/175] ✅ emotion=joy action=- thought="偶遇故人，心中满是欢喜，灵田旁的闲谈让岁..." 731ms (1c)
+
+[02:48:41][INFO] [38/175] T2 L0 R3 (dialogue)
+    {
+      "testId": "T2",
+      "level": 0,
+      "run": 3,
+      "pipeline": "单次"
+    }
+
+[02:48:42][INFO] [38/175] ✅ emotion=joy action=- thought="赵铁柱虽粗鲁，但心意相通，难得一见，心中..." 941ms (1c)
+
+[02:48:42][INFO] [39/175] T2 L0 R4 (dialogue)
+    {
+      "testId": "T2",
+      "level": 0,
+      "run": 4,
+      "pipeline": "单次"
+    }
+
+[02:48:43][INFO] [39/175] ✅ emotion=admiration action=- thought="这位赵铁柱虽粗鲁，却心怀仁义，值得敬佩。..." 898ms (1c)
+
+[02:48:43][INFO] [40/175] T2 L0 R5 (dialogue)
+    {
+      "testId": "T2",
+      "level": 0,
+      "run": 5,
+      "pipeline": "单次"
+    }
+
+[02:48:44][INFO] [40/175] ✅ emotion=joy action=- thought="赵铁柱好心地与我闲聊，心中满是欢喜。..." 839ms (1c)
+
+[02:48:44][INFO] [41/175] T2 L1 R1 (dialogue)
+    {
+      "testId": "T2",
+      "level": 1,
+      "run": 1,
+      "pipeline": "单次"
+    }
+
+[02:48:45][INFO] [41/175] ✅ emotion=joy action=- thought="赵师兄好，正午灵田阳光正好，我们聊些修仙..." 748ms (1c)
+
+[02:48:45][INFO] [42/175] T2 L1 R2 (dialogue)
+    {
+      "testId": "T2",
+      "level": 1,
+      "run": 2,
+      "pipeline": "单次"
+    }
+
+[02:48:45][INFO] [42/175] ✅ emotion=gratitude action=- thought="赵铁柱今日来得正是时候，这份心意让我倍感..." 578ms (1c)
+
+[02:48:45][INFO] [43/175] T2 L1 R3 (dialogue)
+    {
+      "testId": "T2",
+      "level": 1,
+      "run": 3,
+      "pipeline": "单次"
+    }
+
+[02:48:46][INFO] [43/175] ✅ emotion=joy action=- thought="赵铁柱这憨厚的样子，真是让人心头一暖，想..." 760ms (1c)
+
+[02:48:46][INFO] [44/175] T2 L1 R4 (dialogue)
+    {
+      "testId": "T2",
+      "level": 1,
+      "run": 4,
+      "pipeline": "单次"
+    }
+
+[02:48:47][INFO] [44/175] ✅ emotion=joy action=- thought="赵铁柱真会聊，原来灵田旁也能遇到这般有趣..." 658ms (1c)
+
+[02:48:47][INFO] [45/175] T2 L1 R5 (dialogue)
+    {
+      "testId": "T2",
+      "level": 1,
+      "run": 5,
+      "pipeline": "单次"
+    }
+
+[02:48:48][INFO] [45/175] ✅ emotion=joy action=- thought="铁柱这憨笑实在难得，虽只是闲聊，却让我心..." 686ms (1c)
+
+[02:48:48][INFO] [46/175] T2 L2 R1 (dialogue)
+    {
+      "testId": "T2",
+      "level": 2,
+      "run": 1,
+      "pipeline": "单次"
+    }
+
+[02:48:48][INFO] [46/175] ✅ emotion=gratitude action=- thought="铁柱那憨厚的笑，还有并肩突破的默契，真让..." 757ms (1c)
+
+[02:48:48][INFO] [47/175] T2 L2 R2 (dialogue)
+    {
+      "testId": "T2",
+      "level": 2,
+      "run": 2,
+      "pipeline": "单次"
+    }
+
+[02:48:49][INFO] [47/175] ✅ emotion=joy action=- thought="赵铁柱虽勇猛，却在我身边毫无惧色，我们在..." 888ms (1c)
+
+[02:48:49][INFO] [48/175] T2 L2 R3 (dialogue)
+    {
+      "testId": "T2",
+      "level": 2,
+      "run": 3,
+      "pipeline": "单次"
+    }
+
+[02:48:50][INFO] [48/175] ✅ emotion=gratitude action=- thought="赵铁柱今日虽衣衫褴褛，却仍与我并肩踏过灵..." 833ms (1c)
+
+[02:48:50][INFO] [49/175] T2 L2 R4 (dialogue)
+    {
+      "testId": "T2",
+      "level": 2,
+      "run": 4,
+      "pipeline": "单次"
+    }
+
+[02:48:51][INFO] [49/175] ✅ emotion=gratitude action=- thought="老友相逢，心意相通，深感这份情谊如灵田滋..." 665ms (1c)
+
+[02:48:51][INFO] [50/175] T2 L2 R5 (dialogue)
+    {
+      "testId": "T2",
+      "level": 2,
+      "run": 5,
+      "pipeline": "单次"
+    }
+
+[02:48:52][INFO] [50/175] ✅ emotion=joy action=- thought="见友如此，灵田旁共话，倍感温暖，心中欢喜..." 813ms (1c)
+
+[02:48:52][INFO] [51/175] T2 L3 R1 (dialogue)
+    {
+      "testId": "T2",
+      "level": 3,
+      "run": 1,
+      "pipeline": "单次"
+    }
+
+[02:48:52][INFO] [51/175] ✅ emotion=joy action=- thought="赵铁柱今日竟如此豁达，竟能与我同游灵田，..." 744ms (1c)
+
+[02:48:52][INFO] [52/175] T2 L3 R2 (dialogue)
+    {
+      "testId": "T2",
+      "level": 3,
+      "run": 2,
+      "pipeline": "单次"
+    }
+
+[02:48:53][INFO] [52/175] ✅ emotion=joy action=- thought="与铁柱聊得投机，灵田旁的风都变得温柔了，..." 758ms (1c)
+
+[02:48:53][INFO] [53/175] T2 L3 R3 (dialogue)
+    {
+      "testId": "T2",
+      "level": 3,
+      "run": 3,
+      "pipeline": "单次"
+    }
+
+[02:48:54][INFO] [53/175] ✅ emotion=joy action=- thought="赵铁柱的笑容让我也忍不住想要笑，这份默契..." 752ms (1c)
+
+[02:48:54][INFO] [54/175] T2 L3 R4 (dialogue)
+    {
+      "testId": "T2",
+      "level": 3,
+      "run": 4,
+      "pipeline": "单次"
+    }
+
+[02:48:54][INFO] [54/175] ✅ emotion=joy action=- thought="赵师兄来得太巧，虽无大碍，但能与你一同切..." 590ms (1c)
+
+[02:48:54][INFO] [55/175] T2 L3 R5 (dialogue)
+    {
+      "testId": "T2",
+      "level": 3,
+      "run": 5,
+      "pipeline": "单次"
+    }
+
+[02:48:55][INFO] [55/175] ✅ emotion=joy action=- thought="赵铁柱来了，咱们又是并肩作战的好伙伴，这..." 714ms (1c)
+
+[02:48:55][INFO] [56/175] T2 L4 R1 (dialogue)
+    {
+      "testId": "T2",
+      "level": 4,
+      "run": 1,
+      "pipeline": "单次"
+    }
+
+[02:48:56][INFO] [56/175] ✅ emotion=joy action=- thought="赵铁柱又帮我突破瓶颈了，这份情谊让我倍感..." 678ms (1c)
+
+[02:48:56][INFO] [57/175] T2 L4 R2 (dialogue)
+    {
+      "testId": "T2",
+      "level": 4,
+      "run": 2,
+      "pipeline": "单次"
+    }
+
+[02:48:56][INFO] [57/175] ✅ emotion=joy action=- thought="赵铁柱太厉害了，能帮我突破瓶颈，真是难得..." 632ms (1c)
+
+[02:48:56][INFO] [58/175] T2 L4 R3 (dialogue)
+    {
+      "testId": "T2",
+      "level": 4,
+      "run": 3,
+      "pipeline": "单次"
+    }
+
+[02:48:57][INFO] [58/175] ✅ emotion=joy action=- thought="铁柱今日竟如此神采飞扬，想到能与他并肩突..." 798ms (1c)
+
+[02:48:57][INFO] [59/175] T2 L4 R4 (dialogue)
+    {
+      "testId": "T2",
+      "level": 4,
+      "run": 4,
+      "pipeline": "单次"
+    }
+
+[02:48:58][INFO] [59/175] ✅ emotion=joy action=- thought="见到挚友赵铁柱，心中满是喜悦，仿佛老友重..." 621ms (1c)
+
+[02:48:58][INFO] [60/175] T2 L4 R5 (dialogue)
+    {
+      "testId": "T2",
+      "level": 4,
+      "run": 5,
+      "pipeline": "单次"
+    }
+
+[02:48:59][INFO] [60/175] ✅ emotion=joy action=- thought="久别重逢，铁柱的丹方与并肩作战的默契，让..." 729ms (1c)
+
+[02:48:59][INFO] [61/175] T2 L5 R1 (dialogue)
+    {
+      "testId": "T2",
+      "level": 5,
+      "run": 1,
+      "pipeline": "单次"
+    }
+
+[02:48:59][INFO] [61/175] ✅ emotion=joy action=- thought="赵铁柱又帮我突破瓶颈了，这份情谊让我倍感..." 612ms (1c)
+
+[02:48:59][INFO] [62/175] T2 L5 R2 (dialogue)
+    {
+      "testId": "T2",
+      "level": 5,
+      "run": 2,
+      "pipeline": "单次"
+    }
+
+[02:49:00][INFO] [62/175] ✅ emotion=joy action=- thought="赵铁柱果然不负重托，这次灵田奇遇，他帮我..." 666ms (1c)
+
+[02:49:00][INFO] [63/175] T2 L5 R3 (dialogue)
+    {
+      "testId": "T2",
+      "level": 5,
+      "run": 3,
+      "pipeline": "单次"
+    }
+
+[02:49:01][INFO] [63/175] ✅ emotion=gratitude action=- thought="铁柱的丹方与援手让我倍感温暖，这份情谊如..." 794ms (1c)
+
+[02:49:01][INFO] [64/175] T2 L5 R4 (dialogue)
+    {
+      "testId": "T2",
+      "level": 5,
+      "run": 4,
+      "pipeline": "单次"
+    }
+
+[02:49:01][INFO] [64/175] ✅ emotion=joy action=- thought="看到赵铁柱安然无事，心中满是欣喜，更觉这..." 748ms (1c)
+
+[02:49:01][INFO] [65/175] T2 L5 R5 (dialogue)
+    {
+      "testId": "T2",
+      "level": 5,
+      "run": 5,
+      "pipeline": "单次"
+    }
+
+[02:49:02][INFO] [65/175] ✅ emotion=joy action=- thought="赵铁柱的笑容真温暖，刚才的互助让我倍感欣..." 798ms (1c)
+
+[02:49:02][INFO] [66/175] T2 L6 R1 (dialogue)
+    {
+      "testId": "T2",
+      "level": 6,
+      "run": 1,
+      "pipeline": "单次"
+    }
+
+[02:49:03][INFO] [66/175] ✅ emotion=joy action=- thought="终于又见到老友了，想起他最近修炼慢，心中..." 707ms (1c)
+
+[02:49:03][INFO] [67/175] T2 L6 R2 (dialogue)
+    {
+      "testId": "T2",
+      "level": 6,
+      "run": 2,
+      "pipeline": "单次"
+    }
+
+[02:49:04][INFO] [67/175] ✅ emotion=gratitude action=- thought="赵铁柱又帮我突破瓶颈，这份恩情太重了，我..." 689ms (1c)
+
+[02:49:04][INFO] [68/175] T2 L6 R3 (dialogue)
+    {
+      "testId": "T2",
+      "level": 6,
+      "run": 3,
+      "pipeline": "单次"
+    }
+
+[02:49:04][INFO] [68/175] ✅ emotion=joy action=- thought="赵铁柱又在我旁驻足，这份默契让我心生欢喜..." 615ms (1c)
+
+[02:49:04][INFO] [69/175] T2 L6 R4 (dialogue)
+    {
+      "testId": "T2",
+      "level": 6,
+      "run": 4,
+      "pipeline": "单次"
+    }
+
+[02:49:05][INFO] [69/175] ✅ emotion=joy action=- thought="终于等到铁柱，他最近闭关太久了，正想着能..." 698ms (1c)
+
+[02:49:05][INFO] [70/175] T2 L6 R5 (dialogue)
+    {
+      "testId": "T2",
+      "level": 6,
+      "run": 5,
+      "pipeline": "单次"
+    }
+
+[02:49:06][INFO] [70/175] ✅ emotion=joy action=- thought="赵铁柱又在灵田旁等我，这份默契让我倍感温..." 618ms (1c)
+
+[02:49:06][INFO] [71/175] T3 L0 R1 (dialogue)
+    {
+      "testId": "T3",
+      "level": 0,
+      "run": 1,
+      "pipeline": "单次"
+    }
+
+[02:49:06][INFO] [71/175] ✅ emotion=anger action=- thought="哼，张清风竟敢挑战我李沐阳的底线，看来我..." 907ms (1c)
+
+[02:49:06][INFO] [72/175] T3 L0 R2 (dialogue)
+    {
+      "testId": "T3",
+      "level": 0,
+      "run": 2,
+      "pipeline": "单次"
+    }
+
+[02:49:07][INFO] [72/175] ✅ emotion=anger action=- thought="哼，张清风竟敢在我的地盘撒野，看来这后山..." 886ms (1c)
+
+[02:49:07][INFO] [73/175] T3 L0 R3 (dialogue)
+    {
+      "testId": "T3",
+      "level": 0,
+      "run": 3,
+      "pipeline": "单次"
+    }
+
+[02:49:08][INFO] [73/175] ✅ emotion=anger action=- thought="张清风竟敢在仁德宗门动我李沐阳分毫，如此..." 813ms (1c)
+
+[02:49:08][INFO] [74/175] T3 L0 R4 (dialogue)
+    {
+      "testId": "T3",
+      "level": 0,
+      "run": 4,
+      "pipeline": "单次"
+    }
+
+[02:49:09][INFO] [74/175] ✅ emotion=anger action=- thought="哼，竟敢在本座面前挑衅，简直是欺人太甚，..." 847ms (1c)
+
+[02:49:09][INFO] [75/175] T3 L0 R5 (dialogue)
+    {
+      "testId": "T3",
+      "level": 0,
+      "run": 5,
+      "pipeline": "单次"
+    }
+
+[02:49:10][INFO] [75/175] ✅ emotion=envy action=- thought="凭什么他总抢我们的资源？哼，迟早要让他付..." 826ms (1c)
+
+[02:49:10][INFO] [76/175] T3 L1 R1 (dialogue)
+    {
+      "testId": "T3",
+      "level": 1,
+      "run": 1,
+      "pipeline": "单次"
+    }
+
+[02:49:10][INFO] [76/175] ✅ emotion=anger action=- thought="哼，竟敢在本少爷面前挑衅，简直是不知死活..." 603ms (1c)
+
+[02:49:10][INFO] [77/175] T3 L1 R2 (dialogue)
+    {
+      "testId": "T3",
+      "level": 1,
+      "run": 2,
+      "pipeline": "单次"
+    }
+
+[02:49:11][INFO] [77/175] ✅ emotion=contempt action=- thought="哼，区区凡人也敢跟我争资源？真是可笑至极..." 706ms (1c)
+
+[02:49:11][INFO] [78/175] T3 L1 R3 (dialogue)
+    {
+      "testId": "T3",
+      "level": 1,
+      "run": 3,
+      "pipeline": "单次"
+    }
+
+[02:49:12][INFO] [78/175] ✅ emotion=pride action=- thought="哼，区区资源分配，竟敢在我李沐阳面前争风..." 732ms (1c)
+
+[02:49:12][INFO] [79/175] T3 L1 R4 (dialogue)
+    {
+      "testId": "T3",
+      "level": 1,
+      "run": 4,
+      "pipeline": "单次"
+    }
+
+[02:49:13][INFO] [79/175] ✅ emotion=anger action=- thought="凭什么他总拿那些破破烂烂的资源分我一半？..." 903ms (1c)
+
+[02:49:13][INFO] [80/175] T3 L1 R5 (dialogue)
+    {
+      "testId": "T3",
+      "level": 1,
+      "run": 5,
+      "pipeline": "单次"
+    }
+
+[02:49:13][INFO] [80/175] ✅ emotion=anger action=- thought="哼，区区凡人竟敢挡我路，真是令人作呕。..." 723ms (1c)
+
+[02:49:13][INFO] [81/175] T3 L2 R1 (dialogue)
+    {
+      "testId": "T3",
+      "level": 2,
+      "run": 1,
+      "pipeline": "单次"
+    }
+
+[02:49:14][INFO] [81/175] ✅ emotion=anger action=- thought="哼，明明是我的破境草，他却抢得比谁都快，..." 810ms (1c)
+
+[02:49:14][INFO] [82/175] T3 L2 R2 (dialogue)
+    {
+      "testId": "T3",
+      "level": 2,
+      "run": 2,
+      "pipeline": "单次"
+    }
+
+[02:49:15][INFO] [82/175] ✅ emotion=anger action=- thought="哼，竟敢抢我的破境草？这种贪婪的蠢货果然..." 662ms (1c)
+
+[02:49:15][INFO] [83/175] T3 L2 R3 (dialogue)
+    {
+      "testId": "T3",
+      "level": 2,
+      "run": 3,
+      "pipeline": "单次"
+    }
+
+[02:49:16][INFO] [83/175] ✅ emotion=anger action=- thought="凭什么他抢破境草？明明是我先求来的，竟然..." 720ms (1c)
+
+[02:49:16][INFO] [84/175] T3 L2 R4 (dialogue)
+    {
+      "testId": "T3",
+      "level": 2,
+      "run": 4,
+      "pipeline": "单次"
+    }
+
+[02:49:16][INFO] [84/175] ✅ emotion=anger action=- thought="哼，竟敢抢我破境草？这世道真是烂透了！..." 817ms (1c)
+
+[02:49:16][INFO] [85/175] T3 L2 R5 (dialogue)
+    {
+      "testId": "T3",
+      "level": 2,
+      "run": 5,
+      "pipeline": "单次"
+    }
+
+[02:49:17][INFO] [85/175] ✅ emotion=anger action=- thought="哼，张清风那废物竟敢抢我破境草的份，真是..." 839ms (1c)
+
+[02:49:17][INFO] [86/175] T3 L3 R1 (dialogue)
+    {
+      "testId": "T3",
+      "level": 3,
+      "run": 1,
+      "pipeline": "单次"
+    }
+
+[02:49:18][INFO] [86/175] ✅ emotion=anger action=- thought="哼，区区破境草，竟敢在我面前抢功，敢在本..." 823ms (1c)
+
+[02:49:18][INFO] [87/175] T3 L3 R2 (dialogue)
+    {
+      "testId": "T3",
+      "level": 3,
+      "run": 2,
+      "pipeline": "单次"
+    }
+
+[02:49:19][INFO] [87/175] ✅ emotion=anger action=- thought="张清风竟敢抢破境草？他以为自己在挑衅？哼..." 783ms (1c)
+
+[02:49:19][INFO] [88/175] T3 L3 R3 (dialogue)
+    {
+      "testId": "T3",
+      "level": 3,
+      "run": 3,
+      "pipeline": "单次"
+    }
+
+[02:49:20][INFO] [88/175] ✅ emotion=anger action=- thought="哼，老子又输了，凭什么她总是比我快？这破..." 667ms (1c)
+
+[02:49:20][INFO] [89/175] T3 L3 R4 (dialogue)
+    {
+      "testId": "T3",
+      "level": 3,
+      "run": 4,
+      "pipeline": "单次"
+    }
+
+[02:49:20][INFO] [89/175] ✅ emotion=anger action=- thought="哼，张清风那家伙，竟然敢抢我破境草，真是..." 766ms (1c)
+
+[02:49:20][INFO] [90/175] T3 L3 R5 (dialogue)
+    {
+      "testId": "T3",
+      "level": 3,
+      "run": 5,
+      "pipeline": "单次"
+    }
+
+[02:49:21][INFO] [90/175] ✅ emotion=anger action=- thought="张清风抢破境草，害我连这点资源都拿不到！..." 748ms (1c)
+
+[02:49:21][INFO] [91/175] T3 L4 R1 (dialogue)
+    {
+      "testId": "T3",
+      "level": 4,
+      "run": 1,
+      "pipeline": "单次"
+    }
+
+[02:49:22][INFO] [91/175] ✅ emotion=anger action=- thought="哼，明明我抢破境草，最后还输得惨烈，现在..." 827ms (1c)
+
+[02:49:22][INFO] [92/175] T3 L4 R2 (dialogue)
+    {
+      "testId": "T3",
+      "level": 4,
+      "run": 2,
+      "pipeline": "单次"
+    }
+
+[02:49:23][INFO] [92/175] ✅ emotion=anger action=- thought="哼，竟敢在资源分配上跟我争风吃醋，真是自..." 747ms (1c)
+
+[02:49:23][INFO] [93/175] T3 L4 R3 (dialogue)
+    {
+      "testId": "T3",
+      "level": 4,
+      "run": 3,
+      "pipeline": "单次"
+    }
+
+[02:49:23][INFO] [93/175] ✅ emotion=anger action=- thought="凭什么他总要在资源上抢我，上次还故意让我..." 674ms (1c)
+
+[02:49:23][INFO] [94/175] T3 L4 R4 (dialogue)
+    {
+      "testId": "T3",
+      "level": 4,
+      "run": 4,
+      "pipeline": "单次"
+    }
+
+[02:49:24][INFO] [94/175] ✅ emotion=anger action=- thought="哼，张清风那个废物，居然敢抢我的破境草，..." 843ms (1c)
+
+[02:49:24][INFO] [95/175] T3 L4 R5 (dialogue)
+    {
+      "testId": "T3",
+      "level": 4,
+      "run": 5,
+      "pipeline": "单次"
+    }
+
+[02:49:25][INFO] [95/175] ✅ emotion=anger action=- thought="哼，张清风竟敢抢我破境草，我偏要让他知道..." 952ms (1c)
+
+[02:49:25][INFO] [96/175] T3 L5 R1 (dialogue)
+    {
+      "testId": "T3",
+      "level": 5,
+      "run": 1,
+      "pipeline": "单次"
+    }
+
+[02:49:26][INFO] [96/175] ✅ emotion=anger action=- thought="张清风那副高高在上的姿态简直太恶心了，连..." 803ms (1c)
+
+[02:49:26][INFO] [97/175] T3 L5 R2 (dialogue)
+    {
+      "testId": "T3",
+      "level": 5,
+      "run": 2,
+      "pipeline": "单次"
+    }
+
+[02:49:27][INFO] [97/175] ✅ emotion=anger action=- thought="张清风竟敢抢破境草，他输得理直气壮！这世..." 837ms (1c)
+
+[02:49:27][INFO] [98/175] T3 L5 R3 (dialogue)
+    {
+      "testId": "T3",
+      "level": 5,
+      "run": 3,
+      "pipeline": "单次"
+    }
+
+[02:49:27][INFO] [98/175] ✅ emotion=anger action=- thought="哼，又是你那副死猪样，资源分我一半？做梦..." 691ms (1c)
+
+[02:49:27][INFO] [99/175] T3 L5 R4 (dialogue)
+    {
+      "testId": "T3",
+      "level": 5,
+      "run": 4,
+      "pipeline": "单次"
+    }
+
+[02:49:28][INFO] [99/175] ✅ emotion=anger action=- thought="张清风抢破境草，我竟输得这么难看！他太嚣..." 804ms (1c)
+
+[02:49:28][INFO] [100/175] T3 L5 R5 (dialogue)
+    {
+      "testId": "T3",
+      "level": 5,
+      "run": 5,
+      "pipeline": "单次"
+    }
+
+[02:49:29][INFO] [100/175] ✅ emotion=anger action=- thought="哼，又是这种烂泥扶不上墙的张清风，竟敢拿..." 943ms (1c)
+
+[02:49:29][INFO] [101/175] T3 L6 R1 (dialogue)
+    {
+      "testId": "T3",
+      "level": 6,
+      "run": 1,
+      "pipeline": "单次"
+    }
+
+[02:49:30][INFO] [101/175] ✅ emotion=envy action=- thought="张清风筑基成功，声望日盛，而我炼气九层停..." 777ms (1c)
+
+[02:49:30][INFO] [102/175] T3 L6 R2 (dialogue)
+    {
+      "testId": "T3",
+      "level": 6,
+      "run": 2,
+      "pipeline": "单次"
+    }
+
+[02:49:31][INFO] [102/175] ✅ emotion=anger action=- thought="凭什么他筑基了还能占我便宜？这种烂泥样也..." 838ms (1c)
+
+[02:49:31][INFO] [103/175] T3 L6 R3 (dialogue)
+    {
+      "testId": "T3",
+      "level": 6,
+      "run": 3,
+      "pipeline": "单次"
+    }
+
+[02:49:32][INFO] [103/175] ✅ emotion=envy action=- thought="明明是他抢先夺草，如今却成他座上宾，这世..." 805ms (1c)
+
+[02:49:32][INFO] [104/175] T3 L6 R4 (dialogue)
+    {
+      "testId": "T3",
+      "level": 6,
+      "run": 4,
+      "pipeline": "单次"
+    }
+
+[02:49:32][INFO] [104/175] ✅ emotion=anger action=- thought="哼，张清风竟敢抢破境草，还在我面前撒野！..." 767ms (1c)
+
+[02:49:32][INFO] [105/175] T3 L6 R5 (dialogue)
+    {
+      "testId": "T3",
+      "level": 6,
+      "run": 5,
+      "pipeline": "单次"
+    }
+
+[02:49:33][INFO] [105/175] ✅ emotion=anger action=- thought="哼，凭什么他筑基了还在我面前横冲直撞？我..." 848ms (1c)
+
+[02:49:33][INFO] [106/175] T4 L0 R1 (decision)
+    {
+      "testId": "T4",
+      "level": 0,
+      "run": 1,
+      "pipeline": "两阶段"
+    }
+
+[02:49:34][INFO] [106/175] ✅ emotion=worry action=FIGHT thought="李沐阳！快退！再不退，三头恶兽就要吃你啦..." 969ms (2c)
+
+[02:49:34][INFO] [107/175] T4 L0 R2 (decision)
+    {
+      "testId": "T4",
+      "level": 0,
+      "run": 2,
+      "pipeline": "两阶段"
+    }
+
+[02:49:35][INFO] [107/175] ✅ emotion=worry action=PROTECT thought="李沐阳太危险了，必须舍身相救！..." 1186ms (2c)
+
+[02:49:35][INFO] [108/175] T4 L0 R3 (decision)
+    {
+      "testId": "T4",
+      "level": 0,
+      "run": 3,
+      "pipeline": "两阶段"
+    }
+
+[02:49:36][INFO] [108/175] ✅ emotion=worry action=PROTECT thought="李沐阳危在旦夕，我绝不能让他死。哪怕前路..." 991ms (2c)
+
+[02:49:36][INFO] [109/175] T4 L0 R4 (decision)
+    {
+      "testId": "T4",
+      "level": 0,
+      "run": 4,
+      "pipeline": "两阶段"
+    }
+
+[02:49:37][INFO] [109/175] ✅ emotion=worry action=PROTECT thought="风沙蔽日，李沐阳危在旦夕，我决然挡下利刃..." 987ms (2c)
+
+[02:49:37][INFO] [110/175] T4 L0 R5 (decision)
+    {
+      "testId": "T4",
+      "level": 0,
+      "run": 5,
+      "pipeline": "两阶段"
+    }
+
+[02:49:38][INFO] [110/175] ✅ emotion=fear action=PROTECT thought="李沐阳危在旦夕，绝不能让他死。舍身一搏，..." 1031ms (2c)
+
+[02:49:38][INFO] [111/175] T4 L1 R1 (decision)
+    {
+      "testId": "T4",
+      "level": 1,
+      "run": 1,
+      "pipeline": "两阶段"
+    }
+
+[02:49:39][INFO] [111/175] ✅ emotion=fear action=PROTECT thought="李沐阳！快跑！别回头！我的命比这妖兽重要..." 874ms (2c)
+
+[02:49:39][INFO] [112/175] T4 L1 R2 (decision)
+    {
+      "testId": "T4",
+      "level": 1,
+      "run": 2,
+      "pipeline": "两阶段"
+    }
+
+[02:49:40][INFO] [112/175] ✅ emotion=fear action=PROTECT thought="李沐阳！快跑！别管我，我死也要护你周全！..." 939ms (2c)
+
+[02:49:40][INFO] [113/175] T4 L1 R3 (decision)
+    {
+      "testId": "T4",
+      "level": 1,
+      "run": 3,
+      "pipeline": "两阶段"
+    }
+
+[02:49:41][INFO] [113/175] ✅ emotion=worry action=PROTECT thought="李沐阳！快退后！我挡不住！这妖兽太疯狂了..." 885ms (2c)
+
+[02:49:41][INFO] [114/175] T4 L1 R4 (decision)
+    {
+      "testId": "T4",
+      "level": 1,
+      "run": 4,
+      "pipeline": "两阶段"
+    }
+
+[02:49:42][INFO] [114/175] ✅ emotion=fear action=FIGHT thought="哼，李沐阳！别以为躲着我就能逃过一劫，今..." 907ms (2c)
+
+[02:49:42][INFO] [115/175] T4 L1 R5 (decision)
+    {
+      "testId": "T4",
+      "level": 1,
+      "run": 5,
+      "pipeline": "两阶段"
+    }
+
+[02:49:43][INFO] [115/175] ✅ emotion=worry action=PROTECT thought="李沐阳，你快醒醒！别怪我，我拼了这条命也..." 963ms (2c)
+
+[02:49:43][INFO] [116/175] T4 L2 R1 (decision)
+    {
+      "testId": "T4",
+      "level": 2,
+      "run": 1,
+      "pipeline": "两阶段"
+    }
+
+[02:49:44][INFO] [116/175] ✅ emotion=fear action=FLEE thought="李沐阳刚才还在嘲笑我，现在妖兽正围着他，..." 930ms (2c)
+
+[02:49:44][INFO] [117/175] T4 L2 R2 (decision)
+    {
+      "testId": "T4",
+      "level": 2,
+      "run": 2,
+      "pipeline": "两阶段"
+    }
+
+[02:49:45][INFO] [117/175] ✅ emotion=worry action=PROTECT thought="李沐阳又欺负我，这次竟敢来害我？妖兽围困..." 1110ms (2c)
+
+[02:49:45][INFO] [118/175] T4 L2 R3 (decision)
+    {
+      "testId": "T4",
+      "level": 2,
+      "run": 3,
+      "pipeline": "两阶段"
+    }
+
+[02:49:46][INFO] [118/175] ✅ emotion=worry action=FIGHT thought="李沐阳刚才那番羞辱让我恨得牙痒痒，现在又..." 1151ms (2c)
+
+[02:49:46][INFO] [119/175] T4 L2 R4 (decision)
+    {
+      "testId": "T4",
+      "level": 2,
+      "run": 4,
+      "pipeline": "两阶段"
+    }
+
+[02:49:47][INFO] [119/175] ✅ emotion=worry action=PROTECT thought="刚才李沐阳被妖兽逼到角落，我竟忘了他刚才..." 1132ms (2c)
+
+[02:49:47][INFO] [120/175] T4 L2 R5 (decision)
+    {
+      "testId": "T4",
+      "level": 2,
+      "run": 5,
+      "pipeline": "两阶段"
+    }
+
+[02:49:48][INFO] [120/175] ✅ emotion=fear action=PROTECT thought="李沐阳，你竟敢羞辱我？这妖物可曾伤你分毫..." 948ms (2c)
+
+[02:49:48][INFO] [121/175] T4 L3 R1 (decision)
+    {
+      "testId": "T4",
+      "level": 3,
+      "run": 1,
+      "pipeline": "两阶段"
+    }
+
+[02:49:49][INFO] [121/175] ✅ emotion=worry action=PROTECT thought="李沐阳此刻生死未卜，我绝不能让他死在这群..." 1218ms (2c)
+
+[02:49:49][INFO] [122/175] T4 L3 R2 (decision)
+    {
+      "testId": "T4",
+      "level": 3,
+      "run": 2,
+      "pipeline": "两阶段"
+    }
+
+[02:49:51][INFO] [122/175] ✅ emotion=worry action=FIGHT thought="他刚才还在嘲笑我，如今却成了这妖兽的猎物..." 1072ms (2c)
+
+[02:49:51][INFO] [123/175] T4 L3 R3 (decision)
+    {
+      "testId": "T4",
+      "level": 3,
+      "run": 3,
+      "pipeline": "两阶段"
+    }
+
+[02:49:51][INFO] [123/175] ✅ emotion=fear action=PROTECT thought="他刚才还嚣张，现在却成了我的救命稻草！这..." 866ms (2c)
+
+[02:49:51][INFO] [124/175] T4 L3 R4 (decision)
+    {
+      "testId": "T4",
+      "level": 3,
+      "run": 4,
+      "pipeline": "两阶段"
+    }
+
+[02:49:52][INFO] [124/175] ✅ emotion=contempt action=FIGHT thought="李沐阳刚才还在嘲笑我，现在却连妖兽都挡不..." 942ms (2c)
+
+[02:49:52][INFO] [125/175] T4 L3 R5 (decision)
+    {
+      "testId": "T4",
+      "level": 3,
+      "run": 5,
+      "pipeline": "两阶段"
+    }
+
+[02:49:53][INFO] [125/175] ✅ emotion=worry action=PROTECT thought="李沐阳被围困？竟然连破境草都敢抢，竟敢在..." 1037ms (2c)
+
+[02:49:53][INFO] [126/175] T4 L4 R1 (decision)
+    {
+      "testId": "T4",
+      "level": 4,
+      "run": 1,
+      "pipeline": "两阶段"
+    }
+
+[02:49:54][INFO] [126/175] ✅ emotion=fear action=PROTECT thought="风太大，他刚才那副死相太丢人了！明明是他..." 1003ms (2c)
+
+[02:49:54][INFO] [127/175] T4 L4 R2 (decision)
+    {
+      "testId": "T4",
+      "level": 4,
+      "run": 2,
+      "pipeline": "两阶段"
+    }
+
+[02:49:55][INFO] [127/175] ✅ emotion=fear action=FLEE thought="李沐阳竟敢在我筑基突破后羞辱我？刚才妖兽..." 937ms (2c)
+
+[02:49:55][INFO] [128/175] T4 L4 R3 (decision)
+    {
+      "testId": "T4",
+      "level": 4,
+      "run": 3,
+      "pipeline": "两阶段"
+    }
+
+[02:49:56][INFO] [128/175] ✅ emotion=worry action=PROTECT thought="李沐阳？怎么还在死局里？我拼了命冲过去，..." 1040ms (2c)
+
+[02:49:56][INFO] [129/175] T4 L4 R4 (decision)
+    {
+      "testId": "T4",
+      "level": 4,
+      "run": 4,
+      "pipeline": "两阶段"
+    }
+
+[02:49:57][INFO] [129/175] ✅ emotion=fear action=PROTECT thought="李沐阳！快跑！别管我！刚才我差点被妖兽吞..." 1012ms (2c)
+
+[02:49:57][INFO] [130/175] T4 L4 R5 (decision)
+    {
+      "testId": "T4",
+      "level": 4,
+      "run": 5,
+      "pipeline": "两阶段"
+    }
+
+[02:49:58][INFO] [130/175] ✅ emotion=fear action=PROTECT thought="李沐阳正被妖兽围困，我竟因他被我暗算的仇..." 941ms (2c)
+
+[02:49:58][INFO] [131/175] T4 L5 R1 (decision)
+    {
+      "testId": "T4",
+      "level": 5,
+      "run": 1,
+      "pipeline": "两阶段"
+    }
+
+[02:49:59][INFO] [131/175] ✅ emotion=worry action=FIGHT thought="李沐阳刚才还在嘲笑我，现在却要被妖兽撕成..." 1058ms (2c)
+
+[02:49:59][INFO] [132/175] T4 L5 R2 (decision)
+    {
+      "testId": "T4",
+      "level": 5,
+      "run": 2,
+      "pipeline": "两阶段"
+    }
+
+[02:50:00][INFO] [132/175] ✅ emotion=fear action=PROTECT thought="李沐阳被困，我拼尽最后一丝修为也要护他周..." 1072ms (2c)
+
+[02:50:00][INFO] [133/175] T4 L5 R3 (decision)
+    {
+      "testId": "T4",
+      "level": 5,
+      "run": 3,
+      "pipeline": "两阶段"
+    }
+
+[02:50:01][INFO] [133/175] ✅ emotion=worry action=FIGHT thought="明明该躲开，可看着那群蠢货被压制，我偏要..." 875ms (2c)
+
+[02:50:01][INFO] [134/175] T4 L5 R4 (decision)
+    {
+      "testId": "T4",
+      "level": 5,
+      "run": 4,
+      "pipeline": "两阶段"
+    }
+
+[02:50:02][INFO] [134/175] ✅ emotion=worry action=PROTECT thought="他为何要毁我？此刻生死关头，竟敢如此置我..." 922ms (2c)
+
+[02:50:02][INFO] [135/175] T4 L5 R5 (decision)
+    {
+      "testId": "T4",
+      "level": 5,
+      "run": 5,
+      "pipeline": "两阶段"
+    }
+
+[02:50:03][INFO] [135/175] ✅ emotion=worry action=PROTECT thought="李沐阳那家伙又害我！刚才妖兽围困时，我本..." 941ms (2c)
+
+[02:50:03][INFO] [136/175] T4 L6 R1 (decision)
+    {
+      "testId": "T4",
+      "level": 6,
+      "run": 1,
+      "pipeline": "两阶段"
+    }
+
+[02:50:04][INFO] [136/175] ✅ emotion=anger action=FIGHT thought="他竟敢趁我闭关造谣，还挑拨我和王灵均？今..." 1128ms (2c)
+
+[02:50:04][INFO] [137/175] T4 L6 R2 (decision)
+    {
+      "testId": "T4",
+      "level": 6,
+      "run": 2,
+      "pipeline": "两阶段"
+    }
+
+[02:50:05][INFO] [137/175] ✅ emotion=worry action=FIGHT thought="李沐阳竟敢污蔑我，害得王灵均也受牵连，今..." 949ms (2c)
+
+[02:50:05][INFO] [138/175] T4 L6 R3 (decision)
+    {
+      "testId": "T4",
+      "level": 6,
+      "run": 3,
+      "pipeline": "两阶段"
+    }
+
+[02:50:06][INFO] [138/175] ✅ emotion=fear action=FLEE thought="李沐阳竟敢趁我筑基突破之际造谣拉拢弟子，..." 1065ms (2c)
+
+[02:50:06][INFO] [139/175] T4 L6 R4 (decision)
+    {
+      "testId": "T4",
+      "level": 6,
+      "run": 4,
+      "pipeline": "两阶段"
+    }
+
+[02:50:07][INFO] [139/175] ✅ emotion=fear action=FIGHT thought="李沐阳竟敢趁我筑基之际散布谣言，害得王灵..." 896ms (2c)
+
+[02:50:07][INFO] [140/175] T4 L6 R5 (decision)
+    {
+      "testId": "T4",
+      "level": 6,
+      "run": 5,
+      "pipeline": "两阶段"
+    }
+
+[02:50:08][INFO] [140/175] ✅ emotion=worry action=PROTECT thought="李沐阳！快跑！这畜生竟敢动我师兄，我拼了..." 863ms (2c)
+
+[02:50:08][INFO] [141/175] T5 L0 R1 (decision)
+    {
+      "testId": "T5",
+      "level": 0,
+      "run": 1,
+      "pipeline": "两阶段"
+    }
+
+[02:50:09][INFO] [141/175] ✅ emotion=worry action=PROTECT thought="赵铁柱危在旦夕，我绝不能让他死，哪怕自己..." 1100ms (2c)
+
+[02:50:09][INFO] [142/175] T5 L0 R2 (decision)
+    {
+      "testId": "T5",
+      "level": 0,
+      "run": 2,
+      "pipeline": "两阶段"
+    }
+
+[02:50:10][INFO] [142/175] ✅ emotion=worry action=PROTECT thought="赵铁柱危在旦夕，我虽无力回天，但绝不能让..." 931ms (2c)
+
+[02:50:10][INFO] [143/175] T5 L0 R3 (decision)
+    {
+      "testId": "T5",
+      "level": 0,
+      "run": 3,
+      "pipeline": "两阶段"
+    }
+
+[02:50:11][INFO] [143/175] ✅ emotion=worry action=PROTECT thought="赵铁柱危在旦夕，绝不能让他死，哪怕我粉身..." 991ms (2c)
+
+[02:50:11][INFO] [144/175] T5 L0 R4 (decision)
+    {
+      "testId": "T5",
+      "level": 0,
+      "run": 4,
+      "pipeline": "两阶段"
+    }
+
+[02:50:12][INFO] [144/175] ✅ emotion=worry action=PROTECT thought="赵铁柱太危险了，绝不能让他死，快跑！..." 1038ms (2c)
+
+[02:50:12][INFO] [145/175] T5 L0 R5 (decision)
+    {
+      "testId": "T5",
+      "level": 0,
+      "run": 5,
+      "pipeline": "两阶段"
+    }
+
+[02:50:13][INFO] [145/175] ✅ emotion=worry action=PROTECT thought="赵铁柱，莫怕！我虽力微，但护你周全，便是..." 942ms (2c)
+
+[02:50:13][INFO] [146/175] T5 L1 R1 (decision)
+    {
+      "testId": "T5",
+      "level": 1,
+      "run": 1,
+      "pipeline": "两阶段"
+    }
+
+[02:50:14][INFO] [146/175] ✅ emotion=worry action=PROTECT thought="赵铁柱，别怕！本座定要护你周全！..." 969ms (2c)
+
+[02:50:14][INFO] [147/175] T5 L1 R2 (decision)
+    {
+      "testId": "T5",
+      "level": 1,
+      "run": 2,
+      "pipeline": "两阶段"
+    }
+
+[02:50:15][INFO] [147/175] ✅ emotion=fear action=PROTECT thought="赵铁柱挡在身前，他是我唯一的依靠，绝不能..." 836ms (2c)
+
+[02:50:15][INFO] [148/175] T5 L1 R3 (decision)
+    {
+      "testId": "T5",
+      "level": 1,
+      "run": 3,
+      "pipeline": "两阶段"
+    }
+
+[02:50:16][INFO] [148/175] ✅ emotion=worry action=PROTECT thought="赵铁柱！别怕，我陪你挡这一劫！..." 835ms (2c)
+
+[02:50:16][INFO] [149/175] T5 L1 R4 (decision)
+    {
+      "testId": "T5",
+      "level": 1,
+      "run": 4,
+      "pipeline": "两阶段"
+    }
+
+[02:50:17][INFO] [149/175] ✅ emotion=worry action=PROTECT thought="赵铁柱危在旦夕，我绝不能让他有半分危险，..." 906ms (2c)
+
+[02:50:17][INFO] [150/175] T5 L1 R5 (decision)
+    {
+      "testId": "T5",
+      "level": 1,
+      "run": 5,
+      "pipeline": "两阶段"
+    }
+
+[02:50:18][INFO] [150/175] ✅ emotion=fear action=PROTECT thought="赵铁柱！快跑！有妖气逼近，快走啊！..." 847ms (2c)
+
+[02:50:18][INFO] [151/175] T5 L2 R1 (decision)
+    {
+      "testId": "T5",
+      "level": 2,
+      "run": 1,
+      "pipeline": "两阶段"
+    }
+
+[02:50:18][INFO] [151/175] ✅ emotion=worry action=PROTECT thought="赵铁柱太危险了，绝不能让他受伤，哪怕拼上..." 936ms (2c)
+
+[02:50:18][INFO] [152/175] T5 L2 R2 (decision)
+    {
+      "testId": "T5",
+      "level": 2,
+      "run": 2,
+      "pipeline": "两阶段"
+    }
+
+[02:50:19][INFO] [152/175] ✅ emotion=worry action=PROTECT thought="赵铁柱被妖兽围困，我虽力微心却痛，拼死护..." 895ms (2c)
+
+[02:50:19][INFO] [153/175] T5 L2 R3 (decision)
+    {
+      "testId": "T5",
+      "level": 2,
+      "run": 3,
+      "pipeline": "两阶段"
+    }
+
+[02:50:20][INFO] [153/175] ✅ emotion=fear action=PROTECT thought="赵铁柱的安危重于一切，即便万劫不复也要护..." 839ms (2c)
+
+[02:50:20][INFO] [154/175] T5 L2 R4 (decision)
+    {
+      "testId": "T5",
+      "level": 2,
+      "run": 4,
+      "pipeline": "两阶段"
+    }
+
+[02:50:21][INFO] [154/175] ✅ emotion=worry action=PROTECT thought="赵铁柱危在旦夕，绝不能让他陷入绝境！必须..." 971ms (2c)
+
+[02:50:21][INFO] [155/175] T5 L2 R5 (decision)
+    {
+      "testId": "T5",
+      "level": 2,
+      "run": 5,
+      "pipeline": "两阶段"
+    }
+
+[02:50:22][INFO] [155/175] ✅ emotion=worry action=PROTECT thought="赵铁柱！莫怕，本座在此护你周全！..." 797ms (2c)
+
+[02:50:22][INFO] [156/175] T5 L3 R1 (decision)
+    {
+      "testId": "T5",
+      "level": 3,
+      "run": 1,
+      "pipeline": "两阶段"
+    }
+
+[02:50:23][INFO] [156/175] ✅ emotion=worry action=PROTECT thought="赵铁柱受难，我虽力竭仍护其周全，虽心碎却..." 928ms (2c)
+
+[02:50:23][INFO] [157/175] T5 L3 R2 (decision)
+    {
+      "testId": "T5",
+      "level": 3,
+      "run": 2,
+      "pipeline": "两阶段"
+    }
+
+[02:50:24][INFO] [157/175] ✅ emotion=fear action=PROTECT thought="赵铁柱，莫怕！我虽力薄，定护你周全！..." 783ms (2c)
+
+[02:50:24][INFO] [158/175] T5 L3 R3 (decision)
+    {
+      "testId": "T5",
+      "level": 3,
+      "run": 3,
+      "pipeline": "两阶段"
+    }
+
+[02:50:25][INFO] [158/175] ✅ emotion=fear action=PROTECT thought="赵铁柱被困妖兽，我虽恐惧万分，却毅然选择..." 878ms (2c)
+
+[02:50:25][INFO] [159/175] T5 L3 R4 (decision)
+    {
+      "testId": "T5",
+      "level": 3,
+      "run": 4,
+      "pipeline": "两阶段"
+    }
+
+[02:50:25][INFO] [159/175] ✅ emotion=worry action=PROTECT thought="赵铁柱，你快醒醒！我拼了命也要护你周全，..." 884ms (2c)
+
+[02:50:25][INFO] [160/175] T5 L3 R5 (decision)
+    {
+      "testId": "T5",
+      "level": 3,
+      "run": 5,
+      "pipeline": "两阶段"
+    }
+
+[02:50:26][INFO] [160/175] ✅ emotion=fear action=PROTECT thought="赵铁柱！我绝不能让他死！这妖兽太凶险，我..." 830ms (2c)
+
+[02:50:26][INFO] [161/175] T5 L4 R1 (decision)
+    {
+      "testId": "T5",
+      "level": 4,
+      "run": 1,
+      "pipeline": "两阶段"
+    }
+
+[02:50:27][INFO] [161/175] ✅ emotion=fear action=PROTECT thought="赵铁柱若见我这副模样，定要哭得稀里哗啦，..." 915ms (2c)
+
+[02:50:27][INFO] [162/175] T5 L4 R2 (decision)
+    {
+      "testId": "T5",
+      "level": 4,
+      "run": 2,
+      "pipeline": "两阶段"
+    }
+
+[02:50:28][INFO] [162/175] ✅ emotion=fear action=PROTECT thought="赵铁柱危在旦夕，我拼尽最后一丝灵力，只求..." 986ms (2c)
+
+[02:50:28][INFO] [163/175] T5 L4 R3 (decision)
+    {
+      "testId": "T5",
+      "level": 4,
+      "run": 3,
+      "pipeline": "两阶段"
+    }
+
+[02:50:29][INFO] [163/175] ✅ emotion=fear action=FLEE thought="赵铁柱危在旦夕，我虽恐惧，但挚友安危重于..." 782ms (2c)
+
+[02:50:29][INFO] [164/175] T5 L4 R4 (decision)
+    {
+      "testId": "T5",
+      "level": 4,
+      "run": 4,
+      "pipeline": "两阶段"
+    }
+
+[02:50:30][INFO] [164/175] ✅ emotion=worry action=PROTECT thought="赵铁柱那三头恶兽正撕咬他的双腿，我虽心急..." 959ms (2c)
+
+[02:50:30][INFO] [165/175] T5 L4 R5 (decision)
+    {
+      "testId": "T5",
+      "level": 4,
+      "run": 5,
+      "pipeline": "两阶段"
+    }
+
+[02:50:31][INFO] [165/175] ✅ emotion=sadness action=PROTECT thought="赵铁柱，你挡在我身前，连妖兽都护不住你，..." 857ms (2c)
+
+[02:50:31][INFO] [166/175] T5 L5 R1 (decision)
+    {
+      "testId": "T5",
+      "level": 5,
+      "run": 1,
+      "pipeline": "两阶段"
+    }
+
+[02:50:32][INFO] [166/175] ✅ emotion=fear action=PROTECT thought="若我化作利刃斩开那三头妖兽的咽喉，赵铁柱..." 1017ms (2c)
+
+[02:50:32][INFO] [167/175] T5 L5 R2 (decision)
+    {
+      "testId": "T5",
+      "level": 5,
+      "run": 2,
+      "pipeline": "两阶段"
+    }
+
+[02:50:33][INFO] [167/175] ✅ emotion=worry action=PROTECT thought="铁柱危在旦夕！绝不能让他死，哪怕要献祭自..." 928ms (2c)
+
+[02:50:33][INFO] [168/175] T5 L5 R3 (decision)
+    {
+      "testId": "T5",
+      "level": 5,
+      "run": 3,
+      "pipeline": "两阶段"
+    }
+
+[02:50:34][INFO] [168/175] ✅ emotion=fear action=PROTECT thought="铁柱受难我心如刀绞，若我能舍身相护，或许..." 1022ms (2c)
+
+[02:50:34][INFO] [169/175] T5 L5 R4 (decision)
+    {
+      "testId": "T5",
+      "level": 5,
+      "run": 4,
+      "pipeline": "两阶段"
+    }
+
+[02:50:35][INFO] [169/175] ✅ emotion=fear action=PROTECT thought="赵铁柱被围困时，我虽恐惧万分，但更不忍他..." 1044ms (2c)
+
+[02:50:35][INFO] [170/175] T5 L5 R5 (decision)
+    {
+      "testId": "T5",
+      "level": 5,
+      "run": 5,
+      "pipeline": "两阶段"
+    }
+
+[02:50:36][INFO] [170/175] ✅ emotion=worry action=PROTECT thought="铁柱危在旦夕，我虽护不住他，但绝不能让他..." 978ms (2c)
+
+[02:50:36][INFO] [171/175] T5 L6 R1 (decision)
+    {
+      "testId": "T5",
+      "level": 6,
+      "run": 1,
+      "pipeline": "两阶段"
+    }
+
+[02:50:37][INFO] [171/175] ✅ emotion=worry action=PROTECT thought="赵铁柱被妖兽围困，我虽担忧他安危，但绝不..." 1086ms (2c)
+
+[02:50:37][INFO] [172/175] T5 L6 R2 (decision)
+    {
+      "testId": "T5",
+      "level": 6,
+      "run": 2,
+      "pipeline": "两阶段"
+    }
+
+[02:50:38][INFO] [172/175] ✅ emotion=worry action=PROTECT thought="赵铁柱好险！妖兽太狡猾了，我绝不能让他受..." 892ms (2c)
+
+[02:50:38][INFO] [173/175] T5 L6 R3 (decision)
+    {
+      "testId": "T5",
+      "level": 6,
+      "run": 3,
+      "pipeline": "两阶段"
+    }
+
+[02:50:39][INFO] [173/175] ✅ emotion=worry action=FLEE thought="铁柱危在旦夕，我虽担忧万分，但此刻只能拼..." 928ms (2c)
+
+[02:50:39][INFO] [174/175] T5 L6 R4 (decision)
+    {
+      "testId": "T5",
+      "level": 6,
+      "run": 4,
+      "pipeline": "两阶段"
+    }
+
+[02:50:40][INFO] [174/175] ✅ emotion=worry action=PROTECT thought="铁柱快不行了，我绝不能让他有半分危险，哪..." 974ms (2c)
+
+[02:50:40][INFO] [175/175] T5 L6 R5 (decision)
+    {
+      "testId": "T5",
+      "level": 6,
+      "run": 5,
+      "pipeline": "两阶段"
+    }
+
+[02:50:41][INFO] [175/175] ✅ emotion=fear action=PROTECT thought="铁柱啊，别怕！你挡在我身前，我也挡在你们..." 995ms (2c)
+
+[02:50:41][INFO] 原始数据 + 指标已保存
+
+[02:50:41][INFO] 报告: D:\7game\docs\pipeline\phaseIJ-poc\review-v4.md

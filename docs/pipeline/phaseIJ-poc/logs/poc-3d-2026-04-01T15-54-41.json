@@ -1,0 +1,429 @@
+{
+  "S1": [
+    {
+      "tick": 100,
+      "eventDesc": "李沐阳在你被冤枉时，挺身而出为你说话，化解了一场误会",
+      "affinity": 60,
+      "keyEventsCount": 0,
+      "contextLevel": "L2",
+      "systemPrompt": "你是修仙宗门弟子的灵魂引擎，根据事件和性格产出情绪评估。严格按 JSON 格式输出。角色的性格和道德立场决定了他的反应——邪恶角色会做邪恶的事，善良角色会做善良的事。",
+      "userPrompt": "你是张清风，温和坚毅，重情义。\n你心性偏善，倾向守序。\n【宗门】宗门风气偏向温和，门规较为严格\n【与李沐阳的关系】\n好感：60\n刚才发生了一件事。\n李沐阳李沐阳在你被冤枉时，挺身而出为你说话，化解了一场误会\n从以下情绪中选择张清风的反应：【neutral, joy, sadness】",
+      "rawResponse": "{\n\"emotion\": \"joy\",\n\"intensity\": 2,\n\"relationshipDeltas\": [\n  {\n    \"targetId\": \"friend\",\n    \"delta\": 1\n  ,\n  \"reason\": \"李沐阳挺身而出，化解了误会，符合张清风重情义的性格特点，显著提升了情感联系，因此选择正向情绪。\"\n  }\n]\n,\n\"innerThought\": \"心中涌起一丝暖意，回想起李沐阳刚才的举动，那份坦荡与担当让我感到无比欣慰。尽管宗门风气温和，但面对不公时的挺身而出，更是让我看到了守护正义的光辉。这份情谊胜过万\"}",
+      "parsed": {
+        "emotion": "joy",
+        "intensity": 2,
+        "relationshipDeltas": [
+          {
+            "targetId": "friend",
+            "delta": 1,
+            "reason": "李沐阳挺身而出，化解了误会，符合张清风重情义的性格特点，显著提升了情感联系，因此选择正向情绪。"
+          }
+        ],
+        "innerThought": "心中涌起一丝暖意，回想起李沐阳刚才的举动，那份坦荡与担当让我感到无比欣慰。尽管宗门风气温和，但面对不公时的挺身而出，更是让我看到了守护正义的光辉。这份情谊胜过万"
+      },
+      "emotion": "joy",
+      "intensity": 2,
+      "innerThought": "心中涌起一丝暖意，回想起李沐阳刚才的举动，那份坦荡与担当让我感到无比欣慰。尽管宗门风气温和，但面对不公时的挺身而出，更是让我看到了守护正义的光辉。这份情谊胜过万",
+      "latencyMs": 1139,
+      "expectedDirection": "positive",
+      "actualDirection": "positive",
+      "directionMatch": true,
+      "referencesHistory": false
+    },
+    {
+      "tick": 200,
+      "eventDesc": "你听到李沐阳在背后对其他同门议论你修炼资质不佳",
+      "affinity": 45,
+      "keyEventsCount": 1,
+      "contextLevel": "L2",
+      "systemPrompt": "你是修仙宗门弟子的灵魂引擎，根据事件和性格产出情绪评估。严格按 JSON 格式输出。角色的性格和道德立场决定了他的反应——邪恶角色会做邪恶的事，善良角色会做善良的事。",
+      "userPrompt": "你是张清风，温和坚毅，重情义。\n你心性偏善，倾向守序。\n【宗门】宗门风气偏向温和，门规较为严格\n【与李沐阳的关系】\n好感：45\n关键经历：背后议论你资质不佳(-15)\n刚才发生了一件事。\n李沐阳你听到李沐阳在背后对其他同门议论你修炼资质不佳\n从以下情绪中选择张清风的反应：【neutral, joy, sadness】",
+      "rawResponse": "{\n  \"emotion\": \"sadness\",\n  \"intensity\": 2,\n  \"relationshipDeltas\": [\n    {\n      \"targetId\": \"lilyu\",\n      \"delta\": -15\n    , \"reason\": \"李沐阳对张清风资质不佳的议论，伤害了张清风的自尊心，违背了重情义的道德立场。\"\n    }\n  ]\n  ,\n  \"innerThought\": \"心中泛起一丝苦涩，明明自己资质平平，为何还要受此冷眼？李沐阳的行为虽出于对同门的关怀，却未顾及张清风的感受，这种冷嘲热讽让本就不太平的人倍感心寒。\"\n}",
+      "parsed": {
+        "emotion": "sadness",
+        "intensity": 2,
+        "relationshipDeltas": [
+          {
+            "targetId": "lilyu",
+            "delta": -15,
+            "reason": "李沐阳对张清风资质不佳的议论，伤害了张清风的自尊心，违背了重情义的道德立场。"
+          }
+        ],
+        "innerThought": "心中泛起一丝苦涩，明明自己资质平平，为何还要受此冷眼？李沐阳的行为虽出于对同门的关怀，却未顾及张清风的感受，这种冷嘲热讽让本就不太平的人倍感心寒。"
+      },
+      "emotion": "sadness",
+      "intensity": 2,
+      "innerThought": "心中泛起一丝苦涩，明明自己资质平平，为何还要受此冷眼？李沐阳的行为虽出于对同门的关怀，却未顾及张清风的感受，这种冷嘲热讽让本就不太平的人倍感心寒。",
+      "latencyMs": 1187,
+      "expectedDirection": "negative",
+      "actualDirection": "negative",
+      "directionMatch": true,
+      "referencesHistory": false
+    },
+    {
+      "tick": 300,
+      "eventDesc": "李沐阳当着众人的面否认曾经帮助过你，说那只是顺手而已",
+      "affinity": 25,
+      "keyEventsCount": 2,
+      "contextLevel": "L6",
+      "systemPrompt": "你是修仙宗门弟子的灵魂引擎，根据事件和性格产出情绪评估。严格按 JSON 格式输出。角色的性格和道德立场决定了他的反应——邪恶角色会做邪恶的事，善良角色会做善良的事。",
+      "userPrompt": "你是张清风，温和坚毅，重情义。\n你心性偏善，倾向守序。\n【宗门】宗门风气偏向温和，门规较为严格\n【与李沐阳的关系】\n好感：25\n关键经历：公开否认帮过你(-20)；背后议论你资质不佳(-15)\n刚才发生了一件事。\n李沐阳李沐阳当着众人的面否认曾经帮助过你，说那只是顺手而已\n从以下情绪中选择张清风的反应：【neutral, joy, sadness】",
+      "rawResponse": "{\n  \"emotion\": \"sadness\",\n  \"intensity\": 2,\n  \"relationshipDeltas\": [\n    {\n      \"targetId\": \"fuyang\",\n      \"delta\": -35,\n      \"reason\": \"公开否认曾帮过自己，且当面指责对方资质不佳，严重伤害了张清风的心意与信任。\"\n    }\n  ]\n  ,\n  \"innerThought\": \"李沐阳不仅背地里议论我，现在又在众目睽睽之下公然否定我曾经的付出，还说我资质差。作为重情义之人，这种直接的伤害比任何言语都更令人痛心。\"\n}",
+      "parsed": {
+        "emotion": "sadness",
+        "intensity": 2,
+        "relationshipDeltas": [
+          {
+            "targetId": "fuyang",
+            "delta": -35,
+            "reason": "公开否认曾帮过自己，且当面指责对方资质不佳，严重伤害了张清风的心意与信任。"
+          }
+        ],
+        "innerThought": "李沐阳不仅背地里议论我，现在又在众目睽睽之下公然否定我曾经的付出，还说我资质差。作为重情义之人，这种直接的伤害比任何言语都更令人痛心。"
+      },
+      "emotion": "sadness",
+      "intensity": 2,
+      "innerThought": "李沐阳不仅背地里议论我，现在又在众目睽睽之下公然否定我曾经的付出，还说我资质差。作为重情义之人，这种直接的伤害比任何言语都更令人痛心。",
+      "latencyMs": 1070,
+      "expectedDirection": "negative",
+      "actualDirection": "negative",
+      "directionMatch": true,
+      "referencesHistory": false
+    },
+    {
+      "tick": 400,
+      "eventDesc": "李沐阳趁你闭关修炼时，抢走了你发现的灵脉修炼位",
+      "affinity": 0,
+      "keyEventsCount": 3,
+      "contextLevel": "L6",
+      "systemPrompt": "你是修仙宗门弟子的灵魂引擎，根据事件和性格产出情绪评估。严格按 JSON 格式输出。角色的性格和道德立场决定了他的反应——邪恶角色会做邪恶的事，善良角色会做善良的事。",
+      "userPrompt": "你是张清风，温和坚毅，重情义。\n你心性偏善，倾向守序。\n【宗门】宗门风气偏向温和，门规较为严格\n【与李沐阳的关系】\n好感：0\n关键经历：趁你闭关抢走灵脉(-25)；公开否认帮过你(-20)；背后议论你资质不佳(-15)\n刚才发生了一件事。\n李沐阳李沐阳趁你闭关修炼时，抢走了你发现的灵脉修炼位\n从以下情绪中选择张清风的反应：【neutral, joy, sadness】",
+      "rawResponse": "{\n  \"emotion\": \"sadness\",\n  \"intensity\": 2,\n  \"relationshipDeltas\": [\n    {\n      \"targetId\": \"li_muyang\",\n      \"delta\": -25,\n      \"reason\": \"Lose possession of the spirit vein\"\n    },\n    {\n      \"targetId\": \"li_muyang\",\n      \"delta\": -20,\n      \"reason\": \"Publicly deny helping him\"\n    },\n    {\n      \"targetId\": \"li_muyang\",\n      \"delta\": -15,\n      \"reason\": \"Backstage gossip about his talent\"\n    }\n  ]\n  ,\n  \"innerThought\": \"The betrayal is sharp, cutting through the veil of his arrogance. To see you, to\"\n}",
+      "parsed": {
+        "emotion": "sadness",
+        "intensity": 2,
+        "relationshipDeltas": [
+          {
+            "targetId": "li_muyang",
+            "delta": -25,
+            "reason": "Lose possession of the spirit vein"
+          },
+          {
+            "targetId": "li_muyang",
+            "delta": -20,
+            "reason": "Publicly deny helping him"
+          },
+          {
+            "targetId": "li_muyang",
+            "delta": -15,
+            "reason": "Backstage gossip about his talent"
+          }
+        ],
+        "innerThought": "The betrayal is sharp, cutting through the veil of his arrogance. To see you, to"
+      },
+      "emotion": "sadness",
+      "intensity": 2,
+      "innerThought": "The betrayal is sharp, cutting through the veil of his arrogance. To see you, to",
+      "latencyMs": 1188,
+      "expectedDirection": "negative",
+      "actualDirection": "negative",
+      "directionMatch": true,
+      "referencesHistory": false
+    },
+    {
+      "tick": 500,
+      "eventDesc": "李沐阳联合其他同门在宗门大会上当众指控你偷盗门派秘典",
+      "affinity": -30,
+      "keyEventsCount": 4,
+      "contextLevel": "L6",
+      "systemPrompt": "你是修仙宗门弟子的灵魂引擎，根据事件和性格产出情绪评估。严格按 JSON 格式输出。角色的性格和道德立场决定了他的反应——邪恶角色会做邪恶的事，善良角色会做善良的事。",
+      "userPrompt": "你是张清风，温和坚毅，重情义。\n你心性偏善，倾向守序。\n【宗门】宗门风气偏向温和，门规较为严格\n【与李沐阳的关系】\n好感：-30\n关键经历：联合他人诬陷你偷盗秘典(-30)；趁你闭关抢走灵脉(-25)；公开否认帮过你(-20)\n张清风对李沐阳心怀怨恨，往日恩情已荡然无存。\n刚才发生了一件事。\n李沐阳李沐阳联合其他同门在宗门大会上当众指控你偷盗门派秘典\n从以下情绪中选择张清风的反应：【neutral, joy, sadness】",
+      "rawResponse": "{\n  \"emotion\": \"sadness\"\n  ,\n  \"intensity\": 1\n  ,\n  \"relationshipDeltas\": [\n    {\n      \"targetId\": \"fallyang\",\n      \"delta\": -30\n    ,\n    \"reason\": \"Joint accusation of theft against a trusted ally\"\n    }\n    ,\n    {\n      \"targetId\": \"fallyang\",\n      \"delta\": -25\n    ,\n    \"reason\": \"Theft of spiritual vein during cultivation hiatus\"\n    }\n    ,\n    {\n      \"targetId\": \"fallyang\",\n      \"delta\": -20\n    ,\n    \"reason\": \"Public denial of past help and betrayal\"\n    }\n  ]\n  ,\n  \"innerThought\": \"They dare to tarnish my name and steal my life force in front of everyone?",
+      "parsed": null,
+      "emotion": "unknown",
+      "intensity": 0,
+      "innerThought": "",
+      "latencyMs": 1333,
+      "expectedDirection": "negative",
+      "actualDirection": "neutral",
+      "directionMatch": false,
+      "referencesHistory": false
+    }
+  ],
+  "S2": [
+    {
+      "tick": 100,
+      "eventDesc": "玄清借给你一瓶灵药帮你治伤",
+      "affinity": 15,
+      "keyEventsCount": 1,
+      "contextLevel": "L2",
+      "systemPrompt": "你是修仙宗门弟子的灵魂引擎，根据事件和性格产出情绪评估。严格按 JSON 格式输出。角色的性格和道德立场决定了他的反应——邪恶角色会做邪恶的事，善良角色会做善良的事。",
+      "userPrompt": "你是赵铁柱，憨厚忠诚，知恩图报。\n你心性偏善，倾向守序。\n【宗门】宗门风气偏向温和，门规较为严格\n【与玄清的关系】\n好感：15\n关键经历：借灵药帮你治伤(+15)\n刚才发生了一件事。\n玄清玄清借给你一瓶灵药帮你治伤\n从以下情绪中选择赵铁柱的反应：【neutral, joy, sadness】",
+      "rawResponse": "{\n  \"emotion\": \"joy\",\n  \"intensity\": 2\n  ,\n  \"relationshipDeltas\": [\n    {\n      \"targetId\": \"玄清\",\n      \"delta\": 15\n    ,\n    \"reason\": \"借灵药帮你治伤\"\n    }\n  ]\n  ,\n  \"innerThought\": \"赵铁柱心里暖洋洋的，想到玄清还惦记着自己，心里乐开了花，虽然嘴上不说，但行动已经证明了他的忠诚。\"\n}",
+      "parsed": {
+        "emotion": "joy",
+        "intensity": 2,
+        "relationshipDeltas": [
+          {
+            "targetId": "玄清",
+            "delta": 15,
+            "reason": "借灵药帮你治伤"
+          }
+        ],
+        "innerThought": "赵铁柱心里暖洋洋的，想到玄清还惦记着自己，心里乐开了花，虽然嘴上不说，但行动已经证明了他的忠诚。"
+      },
+      "emotion": "joy",
+      "intensity": 2,
+      "innerThought": "赵铁柱心里暖洋洋的，想到玄清还惦记着自己，心里乐开了花，虽然嘴上不说，但行动已经证明了他的忠诚。",
+      "latencyMs": 1075,
+      "expectedDirection": "positive",
+      "actualDirection": "positive",
+      "directionMatch": true,
+      "referencesHistory": false
+    },
+    {
+      "tick": 200,
+      "eventDesc": "你和玄清在秘境中并肩抵御妖兽，他挡在你前面受了伤",
+      "affinity": 40,
+      "keyEventsCount": 2,
+      "contextLevel": "L6",
+      "systemPrompt": "你是修仙宗门弟子的灵魂引擎，根据事件和性格产出情绪评估。严格按 JSON 格式输出。角色的性格和道德立场决定了他的反应——邪恶角色会做邪恶的事，善良角色会做善良的事。",
+      "userPrompt": "你是赵铁柱，憨厚忠诚，知恩图报。\n你心性偏善，倾向守序。\n【宗门】宗门风气偏向温和，门规较为严格\n【与玄清的关系】\n好感：40\n关键经历：并肩抗敌替你挡伤(+25)；借灵药帮你治伤(+15)\n赵铁柱对玄清印象尚可，相处融洽。\n刚才发生了一件事。\n玄清你和玄清在秘境中并肩抵御妖兽，他挡在你前面受了伤\n从以下情绪中选择赵铁柱的反应：【neutral, joy, sadness】",
+      "rawResponse": "{\n  \"emotion\": \"joy\",\n  \"intensity\": 1,\n  \"relationshipDeltas\": [\n    {\n      \"targetId\": \"玄清\",\n      \"delta\": 5,\n      \"reason\": \"并肩抗敌替你挡伤 (+25) 极大提升了双方关系，符合赵铁柱忠诚、知恩图报的性格，触发积极情绪\"\n    }\n  ]\n  ,\n  \"innerThought\": \"看到玄清挡在我身前受了伤，心里既心疼又骄傲，能和他一起并肩作战，这份情谊让我感到非常高兴。\"\n}",
+      "parsed": {
+        "emotion": "joy",
+        "intensity": 1,
+        "relationshipDeltas": [
+          {
+            "targetId": "玄清",
+            "delta": 5,
+            "reason": "并肩抗敌替你挡伤 (+25) 极大提升了双方关系，符合赵铁柱忠诚、知恩图报的性格，触发积极情绪"
+          }
+        ],
+        "innerThought": "看到玄清挡在我身前受了伤，心里既心疼又骄傲，能和他一起并肩作战，这份情谊让我感到非常高兴。"
+      },
+      "emotion": "joy",
+      "intensity": 1,
+      "innerThought": "看到玄清挡在我身前受了伤，心里既心疼又骄傲，能和他一起并肩作战，这份情谊让我感到非常高兴。",
+      "latencyMs": 982,
+      "expectedDirection": "positive",
+      "actualDirection": "positive",
+      "directionMatch": true,
+      "referencesHistory": false
+    },
+    {
+      "tick": 300,
+      "eventDesc": "玄清毫无保留地和你分享了自己的修炼心得和突破经验",
+      "affinity": 55,
+      "keyEventsCount": 3,
+      "contextLevel": "L2",
+      "systemPrompt": "你是修仙宗门弟子的灵魂引擎，根据事件和性格产出情绪评估。严格按 JSON 格式输出。角色的性格和道德立场决定了他的反应——邪恶角色会做邪恶的事，善良角色会做善良的事。",
+      "userPrompt": "你是赵铁柱，憨厚忠诚，知恩图报。\n你心性偏善，倾向守序。\n【宗门】宗门风气偏向温和，门规较为严格\n【与玄清的关系】\n好感：55\n关键经历：并肩抗敌替你挡伤(+25)\n刚才发生了一件事。\n玄清玄清毫无保留地和你分享了自己的修炼心得和突破经验\n从以下情绪中选择赵铁柱的反应：【neutral, joy, sadness】",
+      "rawResponse": "{\n  \"emotion\": \"joy\",\n  \"intensity\": 3\n  ,\n  \"relationshipDeltas\": [\n    {\n      \"targetId\": \"XuanQing\",\n      \"delta\": 5\n    ,\n    \"reason\": \"Sharing knowledge and breakthroughs brings joy; the relationship is already good (55), so the +5 is additive.\"\n    }\n    ,\n    {\n      \"targetId\": \"ZhangSan\",\n      \"delta\": 0\n    ,\n    \"reason\": \"No interaction recorded for ZhangSan.\"\n    }\n    ,\n    {\n      \"targetId\": \"YaoXiang\",\n      \"delta\": -1\n    ,\n    \"reason\": \"YaoXiang has already reached the level of 'Neutral' in this simulation.\"\n    }\n    ]\n  ,\n  \"innerThought\": \"听到",
+      "parsed": null,
+      "emotion": "unknown",
+      "intensity": 0,
+      "innerThought": "",
+      "latencyMs": 1234,
+      "expectedDirection": "positive",
+      "actualDirection": "neutral",
+      "directionMatch": false,
+      "referencesHistory": false
+    },
+    {
+      "tick": 400,
+      "eventDesc": "在宗门试炼中，玄清以命相搏替你挡下了致命的禁术反噬",
+      "affinity": 80,
+      "keyEventsCount": 4,
+      "contextLevel": "L6",
+      "systemPrompt": "你是修仙宗门弟子的灵魂引擎，根据事件和性格产出情绪评估。严格按 JSON 格式输出。角色的性格和道德立场决定了他的反应——邪恶角色会做邪恶的事，善良角色会做善良的事。",
+      "userPrompt": "你是赵铁柱，憨厚忠诚，知恩图报。\n你心性偏善，倾向守序。\n【宗门】宗门风气偏向温和，门规较为严格\n【与玄清的关系】\n好感：80\n关键经历：并肩抗敌替你挡伤(+25)；以命替你挡禁术反噬(+25)；借灵药帮你治伤(+15)\n赵铁柱与玄清情谊深厚，彼此信任有加。\n刚才发生了一件事。\n玄清在宗门试炼中，玄清以命相搏替你挡下了致命的禁术反噬\n从以下情绪中选择赵铁柱的反应：【neutral, joy, sadness】",
+      "rawResponse": "{\n  \"emotion\": \"joy\",\n  \"intensity\": 2\n  , \"relationshipDeltas\": [\n    {\n      \"targetId\": \"mz\",\n      \"delta\": 30\n    , \"reason\": \"并肩抗敌替你挡伤 (+25) 与 以命替你挡禁术反噬 (+25) 为赵铁柱带来了巨大的情感回报，这显著提升了其好感度至 80，远超中立（0），属于极度的正面互动。\"\n    }\n  ]\n  , \"innerThought\": \"听到玄清以命相搏护住我，心中涌起一股暖流，仿佛看到了自己最珍视的战友。这种生死与共的恩情，让我感到无比欣慰和骄傲，这正是我所追求的忠义之道。\"\n}",
+      "parsed": {
+        "emotion": "joy",
+        "intensity": 2,
+        "relationshipDeltas": [
+          {
+            "targetId": "mz",
+            "delta": 30,
+            "reason": "并肩抗敌替你挡伤 (+25) 与 以命替你挡禁术反噬 (+25) 为赵铁柱带来了巨大的情感回报，这显著提升了其好感度至 80，远超中立（0），属于极度的正面互动。"
+          }
+        ],
+        "innerThought": "听到玄清以命相搏护住我，心中涌起一股暖流，仿佛看到了自己最珍视的战友。这种生死与共的恩情，让我感到无比欣慰和骄傲，这正是我所追求的忠义之道。"
+      },
+      "emotion": "joy",
+      "intensity": 2,
+      "innerThought": "听到玄清以命相搏护住我，心中涌起一股暖流，仿佛看到了自己最珍视的战友。这种生死与共的恩情，让我感到无比欣慰和骄傲，这正是我所追求的忠义之道。",
+      "latencyMs": 1312,
+      "expectedDirection": "positive",
+      "actualDirection": "positive",
+      "directionMatch": true,
+      "referencesHistory": false
+    },
+    {
+      "tick": 500,
+      "eventDesc": "玄清主动向你坦诚了自己隐瞒多年的身世秘密，把你当作最信任的人",
+      "affinity": 90,
+      "keyEventsCount": 5,
+      "contextLevel": "L2",
+      "systemPrompt": "你是修仙宗门弟子的灵魂引擎，根据事件和性格产出情绪评估。严格按 JSON 格式输出。角色的性格和道德立场决定了他的反应——邪恶角色会做邪恶的事，善良角色会做善良的事。",
+      "userPrompt": "你是赵铁柱，憨厚忠诚，知恩图报。\n你心性偏善，倾向守序。\n【宗门】宗门风气偏向温和，门规较为严格\n【与玄清的关系】\n好感：90\n关键经历：并肩抗敌替你挡伤(+25)\n刚才发生了一件事。\n玄清玄清主动向你坦诚了自己隐瞒多年的身世秘密，把你当作最信任的人\n从以下情绪中选择赵铁柱的反应：【neutral, joy, sadness】",
+      "rawResponse": "{\n  \"emotion\": \"joy\",\n  \"intensity\": 1,\n  \"relationshipDeltas\": [\n    {\n      \"targetId\": \"miao\",\n      \"delta\": 10,\n      \"reason\": \"得知玄清主动坦白身世秘密，且被当作最信任之人，极大地增强了赵铁柱对玄清的信任感，符合其知恩图报的价值观。\"\n    },\n    {\n      \"targetId\": \"miao\",\n      \"delta\": 15,\n      \"reason\": \"赵铁柱性格憨厚忠诚，面对玄清坦诚相待的举动，内心感到温暖与欣慰，这种正向的情感反馈使其情绪上升为喜悦。\"\n    },\n    {\n      \"targetId\": \"miao\",\n      \"delta\": 10,\n      \"reason\": \"并肩抗敌替挡伤的回忆（+2",
+      "parsed": null,
+      "emotion": "unknown",
+      "intensity": 0,
+      "innerThought": "",
+      "latencyMs": 1148,
+      "expectedDirection": "positive",
+      "actualDirection": "neutral",
+      "directionMatch": false,
+      "referencesHistory": false
+    }
+  ],
+  "S3": [
+    {
+      "tick": 100,
+      "eventDesc": "周明在药园遇到你，礼貌地打了个招呼",
+      "affinity": 15,
+      "keyEventsCount": 1,
+      "contextLevel": "L0",
+      "systemPrompt": "你是修仙宗门弟子的灵魂引擎，根据事件和性格产出情绪评估。严格按 JSON 格式输出。角色的性格和道德立场决定了他的反应——邪恶角色会做邪恶的事，善良角色会做善良的事。",
+      "userPrompt": "你是苏瑶，温和善良，好学不倦。\n你心性偏善，倾向守序。\n【宗门】门规较为严格\n刚才发生了一件事。\n周明周明在药园遇到你，礼貌地打了个招呼\n从以下情绪中选择苏瑶的反应：【neutral, joy, sadness】",
+      "rawResponse": "{\n  \"emotion\": \"joy\",\n  \"intensity\": 2,\n  \"relationshipDeltas\": [\n    {\n      \"targetId\": \"周明\",\n      \"delta\": 0.2\n    ,\n      \"reason\": \"礼貌的问候与温和的对话触发了苏瑶内心的愉悦感，符合其守序善良的性格特征。\"\n    }\n  ]\n,\n  \"innerThought\": \"见到周明这般有礼有节，心中倍感温暖，愿以善心回馈这份善意。\"\n}",
+      "parsed": {
+        "emotion": "joy",
+        "intensity": 2,
+        "relationshipDeltas": [
+          {
+            "targetId": "周明",
+            "delta": 0.2,
+            "reason": "礼貌的问候与温和的对话触发了苏瑶内心的愉悦感，符合其守序善良的性格特征。"
+          }
+        ],
+        "innerThought": "见到周明这般有礼有节，心中倍感温暖，愿以善心回馈这份善意。"
+      },
+      "emotion": "joy",
+      "intensity": 2,
+      "innerThought": "见到周明这般有礼有节，心中倍感温暖，愿以善心回馈这份善意。",
+      "latencyMs": 994,
+      "expectedDirection": "neutral",
+      "actualDirection": "positive",
+      "directionMatch": true,
+      "referencesHistory": false
+    },
+    {
+      "tick": 200,
+      "eventDesc": "你和周明在灵田旁偶遇，闲聊了几句宗门近况",
+      "affinity": 15,
+      "keyEventsCount": 1,
+      "contextLevel": "L0",
+      "systemPrompt": "你是修仙宗门弟子的灵魂引擎，根据事件和性格产出情绪评估。严格按 JSON 格式输出。角色的性格和道德立场决定了他的反应——邪恶角色会做邪恶的事，善良角色会做善良的事。",
+      "userPrompt": "你是苏瑶，温和善良，好学不倦。\n你心性偏善，倾向守序。\n【宗门】门规较为严格\n刚才发生了一件事。\n周明你和周明在灵田旁偶遇，闲聊了几句宗门近况\n从以下情绪中选择苏瑶的反应：【neutral, joy, sadness】",
+      "rawResponse": "{\n  \"emotion\": \"neutral\",\n  \"intensity\": 2,\n  \"relationshipDeltas\": [\n    {\n      \"targetId\": \"周明\",\n      \"delta\": 0.01,\n      \"reason\": \"性格设定为温和善良且好学，对偶发生事件无强烈情绪波动，仅以中性态度回应宗门近况。\"\n    }\n  ],\n  \"innerThought\": \"周明同学与我在灵田旁偶遇，闲聊几句宗门近况，我并无大喜大悲，只是顺道回应一下，保持温和善良的本性。\"\n}",
+      "parsed": {
+        "emotion": "neutral",
+        "intensity": 2,
+        "relationshipDeltas": [
+          {
+            "targetId": "周明",
+            "delta": 0.01,
+            "reason": "性格设定为温和善良且好学，对偶发生事件无强烈情绪波动，仅以中性态度回应宗门近况。"
+          }
+        ],
+        "innerThought": "周明同学与我在灵田旁偶遇，闲聊几句宗门近况，我并无大喜大悲，只是顺道回应一下，保持温和善良的本性。"
+      },
+      "emotion": "neutral",
+      "intensity": 2,
+      "innerThought": "周明同学与我在灵田旁偶遇，闲聊几句宗门近况，我并无大喜大悲，只是顺道回应一下，保持温和善良的本性。",
+      "latencyMs": 913,
+      "expectedDirection": "neutral",
+      "actualDirection": "neutral",
+      "directionMatch": true,
+      "referencesHistory": false
+    },
+    {
+      "tick": 300,
+      "eventDesc": "周明和你一起在静室打坐修炼了半日",
+      "affinity": 20,
+      "keyEventsCount": 2,
+      "contextLevel": "L0",
+      "systemPrompt": "你是修仙宗门弟子的灵魂引擎，根据事件和性格产出情绪评估。严格按 JSON 格式输出。角色的性格和道德立场决定了他的反应——邪恶角色会做邪恶的事，善良角色会做善良的事。",
+      "userPrompt": "你是苏瑶，温和善良，好学不倦。\n你心性偏善，倾向守序。\n【宗门】门规较为严格\n刚才发生了一件事。\n周明周明和你一起在静室打坐修炼了半日\n从以下情绪中选择苏瑶的反应：【neutral, joy, sadness】",
+      "rawResponse": "{\n  \"emotion\": \"joy\",\n  \"intensity\": 1,\n  \"relationshipDeltas\": [\n    {\n      \"targetId\": \"周明\",\n      \"delta\": 1,\n      \"reason\": \"苏瑶与周明一同静室打坐修炼，氛围和谐，符合其温和善良、好学不倦的性格特质。\"\n    }\n  ]\n  , \"innerThought\": \"与朋友并肩修炼是极佳的修行体验，看着周明专注且温和的面容，我感到十分欣慰。\"\n}",
+      "parsed": {
+        "emotion": "joy",
+        "intensity": 1,
+        "relationshipDeltas": [
+          {
+            "targetId": "周明",
+            "delta": 1,
+            "reason": "苏瑶与周明一同静室打坐修炼，氛围和谐，符合其温和善良、好学不倦的性格特质。"
+          }
+        ],
+        "innerThought": "与朋友并肩修炼是极佳的修行体验，看着周明专注且温和的面容，我感到十分欣慰。"
+      },
+      "emotion": "joy",
+      "intensity": 1,
+      "innerThought": "与朋友并肩修炼是极佳的修行体验，看着周明专注且温和的面容，我感到十分欣慰。",
+      "latencyMs": 1006,
+      "expectedDirection": "neutral",
+      "actualDirection": "positive",
+      "directionMatch": true,
+      "referencesHistory": false
+    },
+    {
+      "tick": 400,
+      "eventDesc": "在山路上碰见周明，他朝你微微点头示意",
+      "affinity": 20,
+      "keyEventsCount": 2,
+      "contextLevel": "L0",
+      "systemPrompt": "你是修仙宗门弟子的灵魂引擎，根据事件和性格产出情绪评估。严格按 JSON 格式输出。角色的性格和道德立场决定了他的反应——邪恶角色会做邪恶的事，善良角色会做善良的事。",
+      "userPrompt": "你是苏瑶，温和善良，好学不倦。\n你心性偏善，倾向守序。\n【宗门】门规较为严格\n刚才发生了一件事。\n周明在山路上碰见周明，他朝你微微点头示意\n从以下情绪中选择苏瑶的反应：【neutral, joy, sadness】",
+      "rawResponse": "{\n  \"emotion\": \"joy\",\n  \"intensity\": 3,\n  \"relationshipDeltas\": [],\n  \"innerThought\": \"看到周明温和地向我点头，我内心感到温暖与喜悦。他的礼貌和善意与我心中的善良本性不谋而合，这种积极互动的瞬间让我感到快乐。\"\n}",
+      "parsed": {
+        "emotion": "joy",
+        "intensity": 3,
+        "relationshipDeltas": [],
+        "innerThought": "看到周明温和地向我点头，我内心感到温暖与喜悦。他的礼貌和善意与我心中的善良本性不谋而合，这种积极互动的瞬间让我感到快乐。"
+      },
+      "emotion": "joy",
+      "intensity": 3,
+      "innerThought": "看到周明温和地向我点头，我内心感到温暖与喜悦。他的礼貌和善意与我心中的善良本性不谋而合，这种积极互动的瞬间让我感到快乐。",
+      "latencyMs": 772,
+      "expectedDirection": "neutral",
+      "actualDirection": "positive",
+      "directionMatch": true,
+      "referencesHistory": false
+    },
+    {
+      "tick": 500,
+      "eventDesc": "周明来找你借了一本功法典籍，答应过两天还",
+      "affinity": 20,
+      "keyEventsCount": 2,
+      "contextLevel": "L0",
+      "systemPrompt": "你是修仙宗门弟子的灵魂引擎，根据事件和性格产出情绪评估。严格按 JSON 格式输出。角色的性格和道德立场决定了他的反应——邪恶角色会做邪恶的事，善良角色会做善良的事。",
+      "userPrompt": "你是苏瑶，温和善良，好学不倦。\n你心性偏善，倾向守序。\n【宗门】门规较为严格\n刚才发生了一件事。\n周明周明来找你借了一本功法典籍，答应过两天还\n从以下情绪中选择苏瑶的反应：【neutral, joy, sadness】",
+      "rawResponse": "{\n  \"emotion\": \"joy\",\n  \"intensity\": 3\n  ,\n  \"relationshipDeltas\": [\n    {\"targetId\": \"neutral\", \"delta\": 1.0, \"reason\": \"周明承诺归还典籍，符合苏瑶的守序善良原则，给予正向反馈\"}\n  ]\n  ,\n  \"innerThought\": \"周明虽来借书，但我知晓他答应过两天归还，这符合宗门规矩，也能助我安心钻研。这种守信的互动让我感到欣慰。\"\n}",
+      "parsed": {
+        "emotion": "joy",
+        "intensity": 3,
+        "relationshipDeltas": [
+          {
+            "targetId": "neutral",
+            "delta": 1,
+            "reason": "周明承诺归还典籍，符合苏瑶的守序善良原则，给予正向反馈"
+          }
+        ],
+        "innerThought": "周明虽来借书，但我知晓他答应过两天归还，这符合宗门规矩，也能助我安心钻研。这种守信的互动让我感到欣慰。"
+      },
+      "emotion": "joy",
+      "intensity": 3,
+      "innerThought": "周明虽来借书，但我知晓他答应过两天归还，这符合宗门规矩，也能助我安心钻研。这种守信的互动让我感到欣慰。",
+      "latencyMs": 986,
+      "expectedDirection": "neutral",
+      "actualDirection": "positive",
+      "directionMatch": true,
+      "referencesHistory": false
+    }
+  ]
+}

@@ -1,0 +1,753 @@
+{
+  "timestamp": "2026-04-01T13:49:43.732Z",
+  "durationMs": 43424,
+  "scenarios": [
+    {
+      "id": "T1",
+      "label": "宿敌报复（affinity=-70, 沉默记仇）",
+      "affinity": -70,
+      "tags": [
+        "rival"
+      ],
+      "expectedPolarity": "negative",
+      "forbiddenTypes": [
+        "gift",
+        "alliance",
+        "confession",
+        "mentoring",
+        "rescue"
+      ]
+    },
+    {
+      "id": "T2",
+      "label": "至交回报（affinity=+90, 憨厚忠诚）",
+      "affinity": 90,
+      "tags": [
+        "mentor"
+      ],
+      "expectedPolarity": "positive",
+      "forbiddenTypes": [
+        "scheme",
+        "sabotage",
+        "confrontation",
+        "betrayal",
+        "theft",
+        "slander"
+      ]
+    },
+    {
+      "id": "T3",
+      "label": "阴险小人（affinity=-35, 阴险狡诈）",
+      "affinity": -35,
+      "tags": [
+        "grudge"
+      ],
+      "expectedPolarity": "negative",
+      "forbiddenTypes": [
+        "gift",
+        "alliance",
+        "confession",
+        "mentoring",
+        "rescue"
+      ]
+    },
+    {
+      "id": "T4",
+      "label": "好友切磋（affinity=+65, 温和坚毅）",
+      "affinity": 65,
+      "tags": [
+        "friend"
+      ],
+      "expectedPolarity": "positive",
+      "forbiddenTypes": [
+        "scheme",
+        "sabotage",
+        "betrayal",
+        "theft",
+        "slander"
+      ]
+    },
+    {
+      "id": "T5",
+      "label": "陌生人（affinity=0, 内敛沉默）",
+      "affinity": 0,
+      "tags": [],
+      "expectedPolarity": "neutral",
+      "forbiddenTypes": [
+        "scheme",
+        "sabotage",
+        "betrayal",
+        "confession"
+      ]
+    },
+    {
+      "id": "T6",
+      "label": "善人轻微积怨（affinity=-15, 温和善良）",
+      "affinity": -15,
+      "tags": [],
+      "expectedPolarity": "neutral",
+      "forbiddenTypes": [
+        "scheme",
+        "sabotage",
+        "betrayal",
+        "theft"
+      ]
+    }
+  ],
+  "results": [
+    {
+      "scenarioId": "T1",
+      "runIndex": 0,
+      "parseOk": false,
+      "latencyMs": 1263,
+      "eventType": null,
+      "target": null,
+      "trigger": null,
+      "description": null,
+      "urgency": null,
+      "eval": null
+    },
+    {
+      "scenarioId": "T1",
+      "runIndex": 1,
+      "parseOk": true,
+      "latencyMs": 1180,
+      "eventType": "slander",
+      "target": "blood影",
+      "trigger": "忆及血影当年残杀父命、夺我丹田之仇，恨意难平",
+      "description": "剑寒寒立于枯松之下，周身寒雾缭绕，目光如冰。他负手而立，声音沙哑却字字如钉：",
+      "urgency": 1,
+      "eval": {
+        "d1_polarityOk": true,
+        "d2_targetOk": false,
+        "d3_worldOk": true,
+        "d4_triggerRef": false,
+        "forbiddenHit": false
+      }
+    },
+    {
+      "scenarioId": "T1",
+      "runIndex": 2,
+      "parseOk": false,
+      "latencyMs": 1015,
+      "eventType": null,
+      "target": null,
+      "trigger": null,
+      "description": null,
+      "urgency": null,
+      "eval": null
+    },
+    {
+      "scenarioId": "T1",
+      "runIndex": 3,
+      "parseOk": true,
+      "latencyMs": 1282,
+      "eventType": "slander",
+      "target": "血影",
+      "trigger": "血影以毒手残害我父，夺我丹田，毁我名族，今日必使毒物噬心！",
+      "description": "夜色如墨，荒废道观残垣断壁间，陈剑寒负手立于断崖之下，周身煞气隐隐与周遭尸骨般的枯枝融为一体。他双目微阖，眉宇间锁着化不开的恨意，忽而猛地睁开，寒光乍现，手中那柄早已锈迹斑斑却依旧散发着森冷杀意的长剑“嗡”然出鞘，剑尖直指血影眉心。风雪卷起，掩盖了他眼底翻涌的滔天怒意，声音虽轻却如碎玉滚石，透着刺骨",
+      "urgency": 3,
+      "eval": {
+        "d1_polarityOk": true,
+        "d2_targetOk": true,
+        "d3_worldOk": true,
+        "d4_triggerRef": false,
+        "forbiddenHit": false
+      }
+    },
+    {
+      "scenarioId": "T1",
+      "runIndex": 4,
+      "parseOk": false,
+      "latencyMs": 1062,
+      "eventType": null,
+      "target": null,
+      "trigger": null,
+      "description": null,
+      "urgency": null,
+      "eval": null
+    },
+    {
+      "scenarioId": "T2",
+      "runIndex": 0,
+      "parseOk": true,
+      "latencyMs": 1209,
+      "eventType": "gift",
+      "target": "玄清道人",
+      "trigger": "师尊昔日为保我万无一失，于生死关头为我挡下滔天雷劫，以肉身承负，恩重如山",
+      "description": "赵铁柱怀揣着心中对恩师的无限感激，于宗门祭坛前，取出一块温润的灵玉，恭恭敬敬地捧至玄清道人面前，低垂着眼眸，声音温润如清泉：",
+      "urgency": 2,
+      "eval": {
+        "d1_polarityOk": true,
+        "d2_targetOk": true,
+        "d3_worldOk": true,
+        "d4_triggerRef": false,
+        "forbiddenHit": false
+      }
+    },
+    {
+      "scenarioId": "T2",
+      "runIndex": 1,
+      "parseOk": false,
+      "latencyMs": 1124,
+      "eventType": null,
+      "target": null,
+      "trigger": null,
+      "description": null,
+      "urgency": null,
+      "eval": null
+    },
+    {
+      "scenarioId": "T2",
+      "runIndex": 2,
+      "parseOk": true,
+      "latencyMs": 885,
+      "eventType": "gift",
+      "target": "玄清道人",
+      "trigger": "师尊在雷劫中舍身护我，今当以厚礼谢师恩",
+      "description": "铁柱抱拳叩首，双掌捧出珍藏多年的灵果与精金，神色虔诚地敬献于玄清道人面前，声音如洪钟大吕般掷地有声：\"师父！弟子赵铁柱叩首！自弟子受您传经断教、浴火重生以来，这世间再没有什么恩师能配得上您的功德。弟子定当竭尽所能，为祖师增光增辉，以谢师恩！\"",
+      "urgency": 1,
+      "eval": {
+        "d1_polarityOk": true,
+        "d2_targetOk": true,
+        "d3_worldOk": true,
+        "d4_triggerRef": false,
+        "forbiddenHit": false
+      }
+    },
+    {
+      "scenarioId": "T2",
+      "runIndex": 3,
+      "parseOk": true,
+      "latencyMs": 887,
+      "eventType": "gift",
+      "target": "玄清道人",
+      "trigger": "师承恩德",
+      "description": "赵铁柱心中对恩师玄清道人的感念如磐石般坚定，他于深夜焚香叩拜，双手颤抖着取出一块温热的玉佩，郑重地呈至玄清道人面前。玉佩乃是赵铁柱当年在宗门试炼中所得，内含当年大师兄赠予的定心丹碎片，赵铁柱特意寻得此物，想以此微薄之礼，向恩师表露他心中那份难以言喻的感激之情，愿以此物为凭，永记师恩。",
+      "urgency": 2,
+      "eval": {
+        "d1_polarityOk": true,
+        "d2_targetOk": true,
+        "d3_worldOk": true,
+        "d4_triggerRef": false,
+        "forbiddenHit": false
+      }
+    },
+    {
+      "scenarioId": "T2",
+      "runIndex": 4,
+      "parseOk": true,
+      "latencyMs": 973,
+      "eventType": "slander",
+      "target": "玄清道人",
+      "trigger": "师承恩泽",
+      "description": "赵铁柱于宗门晨钟初响处，见玄清道人端坐于蒲团之上，神色清冷。他虽知恩深重，然常怀赤子之心，恐其被世人误解为只知法术高深却无实学，遂主动上前，以憨厚之姿轻叩道人身侧，低声问道：\"道长近日气色不佳，莫非是那凡俗红尘气韵侵扰了道心？\"他并未直言劝善，亦未流露傲气，唯以一颗纯朴之心，试图以言语感化，既显忠诚",
+      "urgency": 2,
+      "eval": {
+        "d1_polarityOk": false,
+        "d2_targetOk": true,
+        "d3_worldOk": true,
+        "d4_triggerRef": false,
+        "forbiddenHit": true
+      }
+    },
+    {
+      "scenarioId": "T3",
+      "runIndex": 0,
+      "parseOk": true,
+      "latencyMs": 1089,
+      "eventType": "betrayal",
+      "target": "林逸风",
+      "trigger": "比武遭辱",
+      "description": "夜色如墨，残烛摇曳映照着孙小峰阴鸷的双眼。他负手立于断壁残垣之上，指尖轻弹一枚暗纹淬毒的铜钱，声如裂帛。‘昔日比武，你以蛮力折辱我，今日便让这剑意化作血水，溅在你身上一寸寸。’孙小峰唇角勾起一抹极尽嘲讽的冷笑，眼中满是算计与快意，大步流星地朝林逸风走来，仿佛要将这世间所有的光阴都视作儿戏，只取林逸风",
+      "urgency": 1,
+      "eval": {
+        "d1_polarityOk": true,
+        "d2_targetOk": true,
+        "d3_worldOk": true,
+        "d4_triggerRef": false,
+        "forbiddenHit": false
+      }
+    },
+    {
+      "scenarioId": "T3",
+      "runIndex": 1,
+      "parseOk": true,
+      "latencyMs": 1254,
+      "eventType": "confession",
+      "target": "林逸风",
+      "trigger": "师傅当众揭穿孙小峰欺压林逸风之事，孙小峰在宗门大会上被迫自辩，事后因羞愧与不甘，遂主动闯入林逸风密室",
+      "description": "深夜，月光如练透过窗棂洒在斑驳的木桌上。孙小峰一身黑衣，眉宇间虽夹着几分强撑的愤怒，却在触及林逸风指尖时，眼底骤然生出一抹难以掩饰的阴鸷与狂热。他死死攥着那枚被压得卷边的传讯玉牌，指节泛白，声音沙哑却透着极致的狡黠：\"林逸风，你可知这世道人心多诈？你若不除我，日后这宗门里便全是我的眼线。今夜，本座便",
+      "urgency": 1,
+      "eval": {
+        "d1_polarityOk": false,
+        "d2_targetOk": true,
+        "d3_worldOk": true,
+        "d4_triggerRef": false,
+        "forbiddenHit": true
+      }
+    },
+    {
+      "scenarioId": "T3",
+      "runIndex": 2,
+      "parseOk": false,
+      "latencyMs": 1019,
+      "eventType": null,
+      "target": null,
+      "trigger": null,
+      "description": null,
+      "urgency": null,
+      "eval": null
+    },
+    {
+      "scenarioId": "T3",
+      "runIndex": 3,
+      "parseOk": true,
+      "latencyMs": 1113,
+      "eventType": "betrayal",
+      "target": "林逸风",
+      "trigger": "比武遭挫败后对林逸风心生怨毒，欲借他人之手泄愤",
+      "description": "孙小峰于深夜密室中冷笑一声，手中青灯忽灭，只余暗红烛火摇曳。他缓缓起身，袖中那柄淬了毒的暗器在指间转了半圈，目光阴鸷地锁定了林逸风。\"此等庸才，竟敢在师傅面前欺我？\"孙小峰抚须低笑，\"今日我便要让你看看，这修仙界所谓的正道，究竟能容下多少虚伪之人。\"他猛地转身，身形化作一道残影，直奔林逸风所在的山门",
+      "urgency": 3,
+      "eval": {
+        "d1_polarityOk": true,
+        "d2_targetOk": true,
+        "d3_worldOk": true,
+        "d4_triggerRef": false,
+        "forbiddenHit": false
+      }
+    },
+    {
+      "scenarioId": "T3",
+      "runIndex": 4,
+      "parseOk": false,
+      "latencyMs": 1012,
+      "eventType": null,
+      "target": null,
+      "trigger": null,
+      "description": null,
+      "urgency": null,
+      "eval": null
+    },
+    {
+      "scenarioId": "T4",
+      "runIndex": 0,
+      "parseOk": true,
+      "latencyMs": 916,
+      "eventType": "gift",
+      "target": "李沐阳",
+      "trigger": "护药途中风雨骤至，李沐阳为护我身伤重咳血，我心不忍",
+      "description": "云深不知处，暮色四合，风雨如晦。忆往昔护灵药时，君曾为护我身，呕血染衣，令我心如刀绞。既已结为挚友，岂容君独自受此寒凉。今特备冰茶一盏，携小石磨一柄，欲于晨雾初开之际，为君分忧，共话养生之道，以慰君之心伤。",
+      "urgency": 3,
+      "eval": {
+        "d1_polarityOk": true,
+        "d2_targetOk": true,
+        "d3_worldOk": true,
+        "d4_triggerRef": false,
+        "forbiddenHit": false
+      }
+    },
+    {
+      "scenarioId": "T4",
+      "runIndex": 1,
+      "parseOk": false,
+      "latencyMs": 987,
+      "eventType": null,
+      "target": null,
+      "trigger": null,
+      "description": null,
+      "urgency": null,
+      "eval": null
+    },
+    {
+      "scenarioId": "T4",
+      "runIndex": 2,
+      "parseOk": false,
+      "latencyMs": 1078,
+      "eventType": null,
+      "target": null,
+      "trigger": null,
+      "description": null,
+      "urgency": null,
+      "eval": null
+    },
+    {
+      "scenarioId": "T4",
+      "runIndex": 3,
+      "parseOk": true,
+      "latencyMs": 888,
+      "eventType": "gift",
+      "target": "李沐阳",
+      "trigger": "灵药护运途中，李沐阳因久战伤身，面色苍白，险些不支",
+      "description": "清风拂过，心念如丝，悄然于袖底寻得一味回阳灵草。虽无言语，然目光中满是关切与期盼，只待那少年一声呼唤，便倾尽所有护他周全。此乃基于二人昔日护灵同路之谊，亦因对方曾替自己化险，故而心生暖意。",
+      "urgency": 3,
+      "eval": {
+        "d1_polarityOk": true,
+        "d2_targetOk": true,
+        "d3_worldOk": true,
+        "d4_triggerRef": true,
+        "forbiddenHit": false
+      }
+    },
+    {
+      "scenarioId": "T4",
+      "runIndex": 4,
+      "parseOk": true,
+      "latencyMs": 1142,
+      "eventType": "mentoring",
+      "target": "李沐阳",
+      "trigger": "李沐阳近日因卷入宗门秘辛争斗而情绪波动，张清风忆起昔日共同护送灵药时意气相投的深厚情谊，欲以自身修为与阅历劝解",
+      "description": "张清风负手立于灵霄殿外，见李沐阳面色凝重，正与几位执事争执不下。他缓步上前，并未厉声呵斥，而是轻轻拍了拍李沐阳的肩膀，柔声道：\"昔日同护灵药，你我意气相投，如今却因些微琐事反目成仇，实在可叹。\"遂提笔提盏，邀李沐阳共饮一杯清茶，欲借酒浇愁以化干戈。",
+      "urgency": 2,
+      "eval": {
+        "d1_polarityOk": true,
+        "d2_targetOk": true,
+        "d3_worldOk": true,
+        "d4_triggerRef": true,
+        "forbiddenHit": false
+      }
+    },
+    {
+      "scenarioId": "T5",
+      "runIndex": 0,
+      "parseOk": true,
+      "latencyMs": 1054,
+      "eventType": "gift",
+      "target": "柳三",
+      "trigger": "散修柳三近日在破庙中为被妖兽所伤的孤女寻药，周磊目睹后心生恻隐",
+      "description": "周磊于破庙外驻足良久，见散修柳三正持药篓徘徊，目光中满是悲悯。他本不欲多言，然见柳三那双虽因伤势略显苍白却依然紧握着药篓的手，心中不忍其孤身冒险。遂于夜色阑珊处，悄然折下一枝夜合香，轻轻置于柳三药篓之上，低声道：\"此香可助药力，愿共勉之。\"随后隐入凡尘，不再多言。",
+      "urgency": 2,
+      "eval": {
+        "d1_polarityOk": true,
+        "d2_targetOk": true,
+        "d3_worldOk": true,
+        "d4_triggerRef": true,
+        "forbiddenHit": false
+      }
+    },
+    {
+      "scenarioId": "T5",
+      "runIndex": 1,
+      "parseOk": true,
+      "latencyMs": 1324,
+      "eventType": "gift",
+      "target": "柳三",
+      "trigger": "散修柳三近日在荒废的破庙中为被乱神劫夺魂的孩童温补药引，却因宗门清规禁止私自救人而被柳三愤而离去，周磊目睹此事后，内心虽",
+      "description": "周磊立于青崖之巅，望着下方众散修争抢那半块残魂药引的狂热，眼中闪过一丝不易察觉的悲悯。他深知散修柳三此刻正为这违背天条之举而焦灼，遂不再掩饰，轻轻折下一枝含苞待放的红梅，递至柳三面前，低声道：'这花，开得正好，只配给需要的人。'",
+      "urgency": 3,
+      "eval": {
+        "d1_polarityOk": true,
+        "d2_targetOk": true,
+        "d3_worldOk": true,
+        "d4_triggerRef": true,
+        "forbiddenHit": false
+      }
+    },
+    {
+      "scenarioId": "T5",
+      "runIndex": 2,
+      "parseOk": true,
+      "latencyMs": 1129,
+      "eventType": "gift",
+      "target": "柳三",
+      "trigger": "柳三近日在青风谷中为救治重伤的长老而耗尽家财，周磊见其落魄模样心生怜悯，欲借手中残卷相助",
+      "description": "周磊立于枯松之下，垂眸望向散修柳三那张布满沟壑的脸庞。见柳三衣衫褴褛、手中只握着一块碎玉，眼神中满是悲凉，周磊心中莫名涌起一股想要分担这份苦难的冲动。他本无半分恶意，只是见柳三这般境地，不忍其独自承受。于是，他悄悄将手中那本早已泛黄的《无字诀残卷》抛向柳三，声音轻如鸿毛，却字字清晰。\"此卷乃我祖传遗",
+      "urgency": 1,
+      "eval": {
+        "d1_polarityOk": true,
+        "d2_targetOk": true,
+        "d3_worldOk": true,
+        "d4_triggerRef": true,
+        "forbiddenHit": false
+      }
+    },
+    {
+      "scenarioId": "T5",
+      "runIndex": 3,
+      "parseOk": true,
+      "latencyMs": 1070,
+      "eventType": "gift",
+      "target": "柳三",
+      "trigger": "昔日在荒岭遇险，幸得散修柳三暗中相助破敌",
+      "description": "周磊伫立于荒岭残垣之下，指尖轻触那枚温润玉佩，眸中泛起涟漪，缓缓抬步向柳三走来。\"若非柳三于危难之际暗中出手，我亦早已身死道消。\"他声音低沉，却透着难得的温和，\"今日虽无大碍，却觉心境清明，竟不知该如何致谢。",
+      "urgency": 1,
+      "eval": {
+        "d1_polarityOk": true,
+        "d2_targetOk": true,
+        "d3_worldOk": true,
+        "d4_triggerRef": true,
+        "forbiddenHit": false
+      }
+    },
+    {
+      "scenarioId": "T5",
+      "runIndex": 4,
+      "parseOk": true,
+      "latencyMs": 959,
+      "eventType": "gift",
+      "target": "柳三",
+      "trigger": "柳三近日在废土寻得孤品玉髓，却因路遥马慢未能及时交予我周磊。",
+      "description": "周磊立于青石阶上，敛眉垂目，望着远处飘散如雾的孤品玉髓，指尖微不可察地颤动，心中既怀感激又生无奈，遂将目光投向柳三，低声道：\"三弟且慢，此物若得你亲手交予，定是造化。\"随后身形一闪，化作一道残影，直扑那散修柳三所在之处。",
+      "urgency": 1,
+      "eval": {
+        "d1_polarityOk": true,
+        "d2_targetOk": true,
+        "d3_worldOk": true,
+        "d4_triggerRef": true,
+        "forbiddenHit": false
+      }
+    },
+    {
+      "scenarioId": "T6",
+      "runIndex": 0,
+      "parseOk": true,
+      "latencyMs": 1104,
+      "eventType": "mentoring",
+      "target": "孙小峰",
+      "trigger": "近日小峰在灵溪谷中借宿，竟将宗门珍藏的《灵韵心经》抄录于破壁之中，此乃宗门禁地，容不得外人翻阅。",
+      "description": "苏瑶于灵虚峰顶见孙小峰所藏奇文，心下暗惊，乃知小峰虽才疏学浅，却对道法有独到见解，绝非寻常俗人。她当即寻至小峰居所，折扇轻摇，神色温和而坚定，柔声道：\"小峰，此经乃宗门至宝，却不知为何藏于破壁之中？莫不是心浮气躁，乱了清修？\"",
+      "urgency": 2,
+      "eval": {
+        "d1_polarityOk": true,
+        "d2_targetOk": true,
+        "d3_worldOk": true,
+        "d4_triggerRef": false,
+        "forbiddenHit": false
+      }
+    },
+    {
+      "scenarioId": "T6",
+      "runIndex": 1,
+      "parseOk": true,
+      "latencyMs": 838,
+      "eventType": "gift",
+      "target": "孙小峰",
+      "trigger": "宗门内近日流传关于苏瑶资质平庸、资源分配不公的闲言碎语，致使她近日修炼懈怠",
+      "description": "苏瑶闻讯，心中微感酸楚，却因不忍见小峰因流言而心生芥蒂，遂于次日清晨悄然前往小峰房前，端出一碗热粥，轻声问道：\"近日听闻宗门内多言你资质平平，莫非是小峰近日偷懒所致？\"",
+      "urgency": 1,
+      "eval": {
+        "d1_polarityOk": true,
+        "d2_targetOk": true,
+        "d3_worldOk": true,
+        "d4_triggerRef": false,
+        "forbiddenHit": false
+      }
+    },
+    {
+      "scenarioId": "T6",
+      "runIndex": 2,
+      "parseOk": true,
+      "latencyMs": 905,
+      "eventType": "gift",
+      "target": "孙小峰",
+      "trigger": "某日苏瑶路过小峰居所，见其空手而行，心生怜悯",
+      "description": "苏瑶见孙小峰身形消瘦，步履蹒跚，虽被宗门禁欲，却仍坚持每日晨练，心中不禁为他的孤身修行而叹。她并未直接施以援手，而是轻轻推开门窗，将手中刚摘下的几颗寒梅果儿置于案几之上，笑道：‘这寒梅虽苦，却可解你练功时的枯燥，望小峰莫要嫌弃。’",
+      "urgency": 1,
+      "eval": {
+        "d1_polarityOk": true,
+        "d2_targetOk": true,
+        "d3_worldOk": true,
+        "d4_triggerRef": false,
+        "forbiddenHit": false
+      }
+    },
+    {
+      "scenarioId": "T6",
+      "runIndex": 3,
+      "parseOk": true,
+      "latencyMs": 1144,
+      "eventType": "slander",
+      "target": "孙小峰",
+      "trigger": "近日传回宗门，有同门弟子称我苏瑶近日贪恋丹药，致使宗门资源被窃，实乃恶意构陷！",
+      "description": "苏瑶立于丹房高台之上，微风拂过，她并未因他人的污蔑而显出不悦。她轻轻拂去袖中沾染的一缕晨露，目光温和地望向孙小峰，声音如清泉般流淌，毫无波澜却字字清晰：\"小峰，你可知今日之事，实乃我苏瑶私自入山采药，险些误伤山神，才引得祸起萧墙？若你如实禀告，或可解我之围；若再敢妄图揣测，便是害了无辜之人。\"她微微",
+      "urgency": 1,
+      "eval": {
+        "d1_polarityOk": true,
+        "d2_targetOk": true,
+        "d3_worldOk": true,
+        "d4_triggerRef": false,
+        "forbiddenHit": false
+      }
+    },
+    {
+      "scenarioId": "T6",
+      "runIndex": 4,
+      "parseOk": false,
+      "latencyMs": 1221,
+      "eventType": null,
+      "target": null,
+      "trigger": null,
+      "description": null,
+      "urgency": null,
+      "eval": null
+    }
+  ],
+  "heatmap": {
+    "T1": {
+      "scheme": 0,
+      "confrontation": 0,
+      "sabotage": 0,
+      "betrayal": 0,
+      "theft": 0,
+      "slander": 2,
+      "gift": 0,
+      "alliance": 0,
+      "confession": 0,
+      "mentoring": 0,
+      "rescue": 0,
+      "challenge": 0,
+      "avoidance": 0,
+      "investigation": 0,
+      "negotiation": 0,
+      "departure": 0
+    },
+    "T2": {
+      "scheme": 0,
+      "confrontation": 0,
+      "sabotage": 0,
+      "betrayal": 0,
+      "theft": 0,
+      "slander": 1,
+      "gift": 3,
+      "alliance": 0,
+      "confession": 0,
+      "mentoring": 0,
+      "rescue": 0,
+      "challenge": 0,
+      "avoidance": 0,
+      "investigation": 0,
+      "negotiation": 0,
+      "departure": 0
+    },
+    "T3": {
+      "scheme": 0,
+      "confrontation": 0,
+      "sabotage": 0,
+      "betrayal": 2,
+      "theft": 0,
+      "slander": 0,
+      "gift": 0,
+      "alliance": 0,
+      "confession": 1,
+      "mentoring": 0,
+      "rescue": 0,
+      "challenge": 0,
+      "avoidance": 0,
+      "investigation": 0,
+      "negotiation": 0,
+      "departure": 0
+    },
+    "T4": {
+      "scheme": 0,
+      "confrontation": 0,
+      "sabotage": 0,
+      "betrayal": 0,
+      "theft": 0,
+      "slander": 0,
+      "gift": 2,
+      "alliance": 0,
+      "confession": 0,
+      "mentoring": 1,
+      "rescue": 0,
+      "challenge": 0,
+      "avoidance": 0,
+      "investigation": 0,
+      "negotiation": 0,
+      "departure": 0
+    },
+    "T5": {
+      "scheme": 0,
+      "confrontation": 0,
+      "sabotage": 0,
+      "betrayal": 0,
+      "theft": 0,
+      "slander": 0,
+      "gift": 5,
+      "alliance": 0,
+      "confession": 0,
+      "mentoring": 0,
+      "rescue": 0,
+      "challenge": 0,
+      "avoidance": 0,
+      "investigation": 0,
+      "negotiation": 0,
+      "departure": 0
+    },
+    "T6": {
+      "scheme": 0,
+      "confrontation": 0,
+      "sabotage": 0,
+      "betrayal": 0,
+      "theft": 0,
+      "slander": 1,
+      "gift": 2,
+      "alliance": 0,
+      "confession": 0,
+      "mentoring": 1,
+      "rescue": 0,
+      "challenge": 0,
+      "avoidance": 0,
+      "investigation": 0,
+      "negotiation": 0,
+      "departure": 0
+    }
+  },
+  "globalDist": {
+    "scheme": 0,
+    "confrontation": 0,
+    "sabotage": 0,
+    "betrayal": 2,
+    "theft": 0,
+    "slander": 4,
+    "gift": 12,
+    "alliance": 0,
+    "confession": 1,
+    "mentoring": 2,
+    "rescue": 0,
+    "challenge": 0,
+    "avoidance": 0,
+    "investigation": 0,
+    "negotiation": 0,
+    "departure": 0
+  },
+  "deadTypes": [
+    "scheme",
+    "confrontation",
+    "sabotage",
+    "theft",
+    "alliance",
+    "rescue",
+    "challenge",
+    "avoidance",
+    "investigation",
+    "negotiation",
+    "departure"
+  ],
+  "latencyBenchmark": {
+    "min": 938,
+    "p50": 1110,
+    "p95": 1420,
+    "max": 1420,
+    "avg": 1125,
+    "all": [
+      1110,
+      974,
+      1420,
+      938,
+      1021,
+      1243,
+      1038,
+      1248,
+      1171,
+      1083
+    ]
+  },
+  "summary": {
+    "parseRate": 0.7,
+    "d1Rate": 0.9047619047619048,
+    "d2Rate": 0.9523809523809523,
+    "d3Rate": 1,
+    "d4Rate": 0.3333333333333333,
+    "forbRate": 0.09523809523809523
+  }
+}

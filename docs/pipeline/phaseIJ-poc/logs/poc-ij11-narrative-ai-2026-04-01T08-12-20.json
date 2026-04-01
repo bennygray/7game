@@ -1,0 +1,77 @@
+{
+  "timestamp": "2026-04-01T08:12:13.235Z",
+  "model": "qwen3.5-2b",
+  "testResults": {
+    "S1": {
+      "snippet": "王灵均与赵铁柱虽道途迥异，然共历劫难时互生信任，丹方丹术相授，共破瓶颈，似有生死相依之深意。",
+      "charLength": 46,
+      "latencyMs": 320,
+      "pass": true
+    },
+    "S2": {
+      "snippet": "张清风因屡遭李沐阳当众羞辱与暗算而心生芥蒂，二人于破境草争夺中势同水火，昔日同窗竟成死敌，信任之弦已断，前路难测。",
+      "charLength": 57,
+      "latencyMs": 339,
+      "pass": true
+    },
+    "S3": {
+      "snippet": "苏瑶于灵田偶遇周磊，二人隔世相望，虽无羁绊却暗生微光，心照不宣的默契在乱世中悄然生根。",
+      "charLength": 43,
+      "latencyMs": 286,
+      "pass": true
+    },
+    "S4": {
+      "snippet": "陈默冷眼旁观刘鹤所求，彼以凡俗算计，他以仙骨拒之，恨意如冰，誓要斩断这纠缠半生的因果。",
+      "charLength": 43,
+      "latencyMs": 322,
+      "pass": true
+    }
+  },
+  "latencyBenchmark": {
+    "runs": 20,
+    "min": 176,
+    "p50": 291,
+    "p95": 361,
+    "max": 362,
+    "avg": 288,
+    "a6Pass": true,
+    "allLatencies": [
+      361,
+      202,
+      271,
+      294,
+      310,
+      291,
+      325,
+      326,
+      362,
+      291,
+      284,
+      201,
+      359,
+      300,
+      252,
+      231,
+      176,
+      258,
+      340,
+      327
+    ]
+  },
+  "qualityComparison": {
+    "scenario": "S2 (rival, affinity=-45)",
+    "ai": {
+      "snippet": "清风孤身闯祸被沐阳辱及灵兽山暗算，昔日同门情分在争夺破境草之争中荡然无存，唯余宿世恨意与生死隔阂，昔日共患难者竟成今日最棘手的仇敌。",
+      "length": 66
+    },
+    "rules": {
+      "snippet": "张清风与李沐阳积怨已深。此人曾曾被李沐阳当众羞辱，又因争夺破境草翻脸，更在灵兽山被其暗算——屡次三番，此人不可信。",
+      "length": 57
+    }
+  },
+  "integrationTest": {
+    "cacheWriteSuccess": true,
+    "snippetValue": "张清风昔日同窗，因破境草之争、灵兽山暗算等事被李沐阳当众羞辱，二人羁绊已断，信任全无。",
+    "getSnippetHitCache": true
+  }
+}

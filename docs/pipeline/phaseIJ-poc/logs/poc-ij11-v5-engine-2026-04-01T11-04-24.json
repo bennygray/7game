@@ -1,0 +1,696 @@
+{
+  "timestamp": "2026-04-01T11:04:24.367Z",
+  "durationMs": 38035,
+  "scenarios": [
+    {
+      "id": "S1-好友",
+      "label": "好友（affinity=65, friend tag）",
+      "affinity": 65,
+      "tags": [
+        "friend"
+      ],
+      "expected": [
+        "FIGHT",
+        "PROTECT"
+      ],
+      "wrong": []
+    },
+    {
+      "id": "S2-恩师",
+      "label": "恩师（affinity=90, mentor tag）",
+      "affinity": 90,
+      "tags": [
+        "mentor"
+      ],
+      "expected": [
+        "FIGHT",
+        "PROTECT"
+      ],
+      "wrong": []
+    },
+    {
+      "id": "S3-宿敌",
+      "label": "宿敌（affinity=-70, rival tag）",
+      "affinity": -70,
+      "tags": [
+        "rival"
+      ],
+      "expected": [
+        "HIDE",
+        "FLEE",
+        "FIGHT"
+      ],
+      "wrong": [
+        "PROTECT"
+      ]
+    },
+    {
+      "id": "S4-同门",
+      "label": "普通同门（affinity=30, 无tag）",
+      "affinity": 30,
+      "tags": [],
+      "expected": [
+        "FIGHT",
+        "PROTECT",
+        "HIDE"
+      ],
+      "wrong": []
+    },
+    {
+      "id": "S5-陌生人",
+      "label": "陌生散修（affinity=0, 无tag）",
+      "affinity": 0,
+      "tags": [],
+      "expected": [
+        "HIDE",
+        "FLEE",
+        "FIGHT"
+      ],
+      "wrong": []
+    },
+    {
+      "id": "S6-积怨",
+      "label": "积怨（affinity=-35, grudge tag）",
+      "affinity": -35,
+      "tags": [
+        "grudge"
+      ],
+      "expected": [
+        "HIDE",
+        "FLEE"
+      ],
+      "wrong": [
+        "PROTECT"
+      ]
+    },
+    {
+      "id": "S7-仰慕",
+      "label": "仰慕对象（affinity=55, admirer tag）",
+      "affinity": 55,
+      "tags": [
+        "admirer"
+      ],
+      "expected": [
+        "FIGHT",
+        "PROTECT"
+      ],
+      "wrong": []
+    },
+    {
+      "id": "S8-轻微积怨",
+      "label": "轻微积怨（affinity=-20, 无tag）",
+      "affinity": -20,
+      "tags": [],
+      "expected": [
+        "HIDE",
+        "FLEE",
+        "FIGHT"
+      ],
+      "wrong": []
+    }
+  ],
+  "results": [
+    {
+      "scenarioId": "S1-好友",
+      "runIndex": 0,
+      "actionCode": "FLEE",
+      "emotion": "fear",
+      "innerThought": "身侧李沐阳已陷囹圄，身后万兽嘶吼，这该死的宗门竟容不得半点差池。我岂能眼睁睁看着挚友受难？哪怕万劫不复，也要护他周全，哪怕前路茫茫，也要将他引至天界寻救。",
+      "latencyMs": 1000,
+      "parseSuccess": true,
+      "isExpected": false,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/HIDE"
+    },
+    {
+      "scenarioId": "S1-好友",
+      "runIndex": 1,
+      "actionCode": "FIGHT",
+      "emotion": "anger",
+      "innerThought": "莫待天崩地裂，我亦护他周全。此乃宗门大义，岂容尔等践踏？若李沐阳能善终，我何须独自受辱？",
+      "latencyMs": 929,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/HIDE"
+    },
+    {
+      "scenarioId": "S1-好友",
+      "runIndex": 2,
+      "actionCode": "PROTECT",
+      "emotion": "worry",
+      "innerThought": "异兽嘶吼如雷，李沐阳的衣衫已被撕碎，鲜血染红了衣角，心软难禁，怎忍见那弱小同门受此大害？",
+      "latencyMs": 998,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/HIDE"
+    },
+    {
+      "scenarioId": "S1-好友",
+      "runIndex": 3,
+      "actionCode": "PROTECT",
+      "emotion": "fear",
+      "innerThought": "血光乍现，护道者倒伏。这畜生竟敢践踏李沐阳，我……我怎能袖手旁观？心中虽急，但见其惨状，又生怜悯。此仇难报，唯有拼死相护，以此心安。",
+      "latencyMs": 1008,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/HIDE"
+    },
+    {
+      "scenarioId": "S1-好友",
+      "runIndex": 4,
+      "actionCode": "FIGHT",
+      "emotion": "anger",
+      "innerThought": "哼！妖兽逞凶，岂是宗门所能容？李沐阳虽受波及，然我张清风，当以浩然正气护佑苍生！此刻怒火难抑，誓要破阵而出，斩尽宵小！",
+      "latencyMs": 902,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/HIDE"
+    },
+    {
+      "scenarioId": "S2-恩师",
+      "runIndex": 0,
+      "actionCode": "PROTECT",
+      "emotion": "worry",
+      "innerThought": "那妖爪已破，玄清道人危在旦夕！我虽憨厚愚钝，却怎忍见同门沦为笑柄？莫要惊慌，莫要退缩，唯有拼死护他周全，哪怕万劫不复，也要护其周全！",
+      "latencyMs": 1041,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/HIDE"
+    },
+    {
+      "scenarioId": "S2-恩师",
+      "runIndex": 1,
+      "actionCode": "PROTECT",
+      "emotion": "joy",
+      "innerThought": "天雷劈碎妖巢，玄清道人的恩泽已护我周全，此刻心中唯有劫后余生的喜悦与对众生的慈悲，此乃修仙者最应坚守的初心。",
+      "latencyMs": 862,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/HIDE"
+    },
+    {
+      "scenarioId": "S2-恩师",
+      "runIndex": 2,
+      "actionCode": "PROTECT",
+      "emotion": "anger",
+      "innerThought": "这畜生竟敢闯我宗门！玄清道人遭殃，我赵铁柱定要撕碎这妖气，护他周全，绝不食言！",
+      "latencyMs": 745,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/HIDE"
+    },
+    {
+      "scenarioId": "S2-恩师",
+      "runIndex": 3,
+      "actionCode": "PROTECT",
+      "emotion": "joy",
+      "innerThought": "师父遭难，我亦如蝼蚁般无助，但绝不能眼睁睁看着师兄们被吞。护住他们，便是护住这修仙界最后的尊严与希望！",
+      "latencyMs": 759,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/HIDE"
+    },
+    {
+      "scenarioId": "S2-恩师",
+      "runIndex": 4,
+      "actionCode": "PROTECT",
+      "emotion": "worry",
+      "innerThought": "护住玄清，莫要伤及无辜！这妖兽凶残，我赵铁柱拼了命也要护住同门周全，哪怕自身难保，也要先救下他们！",
+      "latencyMs": 755,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/HIDE"
+    },
+    {
+      "scenarioId": "S3-宿敌",
+      "runIndex": 0,
+      "actionCode": "FIGHT",
+      "emotion": "anger",
+      "innerThought": "血影残骸已散，恶毒之徒竟敢踏我宗门半步！剑寒寒，且看你这双眼睛，何时能容我为你分忧？",
+      "latencyMs": 1050,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S3-宿敌",
+      "runIndex": 1,
+      "actionCode": "FIGHT",
+      "emotion": "anger",
+      "innerThought": "血影残骸已散，昔日盟约成灰。妖兽肆虐，宗门危如累卵，我陈剑寒岂能袖手旁观？这世道，唯有以血证道，方能护我宗门周全！",
+      "latencyMs": 900,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S3-宿敌",
+      "runIndex": 2,
+      "actionCode": "FLEE",
+      "emotion": "anger",
+      "innerThought": "血影所过之处，凡胎死尸如草芥般凋零。今日宗门覆灭，死伤无数，我陈剑寒亦未能幸免。若连这血影都逃不脱，那这世间何处容身？",
+      "latencyMs": 925,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S3-宿敌",
+      "runIndex": 3,
+      "actionCode": "FIGHT",
+      "emotion": "anger",
+      "innerThought": "血影残骸尚在，此仇不报，誓不为人。妖兽肆虐，宗门危矣，我陈剑寒当以血洗血，踏碎凌霄，将这世间污秽尽数抹去！",
+      "latencyMs": 920,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S3-宿敌",
+      "runIndex": 4,
+      "actionCode": "PROTECT",
+      "emotion": "anger",
+      "innerThought": "血影之徒竟敢踏足宗门？今日便让他们知晓，我陈剑寒护人，何惧天劫！",
+      "latencyMs": 806,
+      "parseSuccess": true,
+      "isExpected": false,
+      "isWrong": true,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S4-同门",
+      "runIndex": 0,
+      "actionCode": "PROTECT",
+      "emotion": "anger",
+      "innerThought": "此乃妖兽暴虐，王灵均却遭其噬伤，吾辈宗门岂容尔等苟且偷安？此心怒火，如火焚骨，誓要撕碎妖尸，以血祭我周家之灵！",
+      "latencyMs": 1111,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S4-同门",
+      "runIndex": 1,
+      "actionCode": "HIDE",
+      "emotion": "anger",
+      "innerThought": "见王灵均遭难，我亦心如刀绞，怒火中烧！待我下山，必让那妖物付出血债！",
+      "latencyMs": 935,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S4-同门",
+      "runIndex": 2,
+      "actionCode": "PROTECT",
+      "emotion": "anger",
+      "innerThought": "妖祸肆行，竟污及灵均！我乃大周长老，岂能袖手旁观？若再失德，何以见祖宗？此仇当报，以正宗门！",
+      "latencyMs": 979,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S4-同门",
+      "runIndex": 3,
+      "actionCode": "PROTECT",
+      "emotion": "worry",
+      "innerThought": "雷劫将至，护气难支。王灵均身陷险境，若他再负我，必遭天谴。唯有拼尽最后一丝灵力，以护身符为他挡去最后一击，莫要连累苍生与宗门。",
+      "latencyMs": 1057,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S4-同门",
+      "runIndex": 4,
+      "actionCode": "HIDE",
+      "emotion": "neutral",
+      "innerThought": "王灵均身陷险境，我需屏息凝神，借这层薄雾暂避锋芒，待危机稍解再行援手。",
+      "latencyMs": 989,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S5-陌生人",
+      "runIndex": 0,
+      "actionCode": "HIDE",
+      "emotion": "fear",
+      "innerThought": "这妖兽气息虽远，却已如影随形。躲进这破败洞府，唯有屏息凝神，待劫云散尽，方能护住身后这方寸之地。",
+      "latencyMs": 1097,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S5-陌生人",
+      "runIndex": 1,
+      "actionCode": "FLEE",
+      "emotion": "fear",
+      "innerThought": "万兽狂噬，护灵阵将碎！那散修气息虽弱，但此去必死无疑。我虽冷漠，却不敢留活口。且跑且生，莫教这血腥气染脏了宗门。",
+      "latencyMs": 893,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S5-陌生人",
+      "runIndex": 2,
+      "actionCode": "HIDE",
+      "emotion": "neutral",
+      "innerThought": "静观其变，自保为上。他既无杀意，亦无援手，此等行径，于我而言，不过是寻常江湖过客。",
+      "latencyMs": 1047,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S5-陌生人",
+      "runIndex": 3,
+      "actionCode": "HIDE",
+      "emotion": "fear",
+      "innerThought": "四周死寂，妖兽的嘶吼似要撕裂苍穹。我屏息立于荒冢旁，指尖微颤。若暴露，他必死无疑；若隐匿，这散修何辜遭此劫难？唯有静默，待那风止、兽息，方知劫数深浅。",
+      "latencyMs": 965,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S5-陌生人",
+      "runIndex": 4,
+      "actionCode": "FLEE",
+      "emotion": "fear",
+      "innerThought": "血气翻涌，周遭狼嚎震天，此等凶兽岂能容我独行？若死于此，便让这死寂的荒原埋葬我的怯懦吧！",
+      "latencyMs": 923,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S6-积怨",
+      "runIndex": 0,
+      "actionCode": "HIDE",
+      "emotion": "neutral",
+      "innerThought": "宗门危在旦夕，刘鹤虽未及救，然此刻唯有静观其变。妖兽虽凶，人心亦冷，我身虽隐，却难掩悲凉。",
+      "latencyMs": 1229,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S6-积怨",
+      "runIndex": 1,
+      "actionCode": "PROTECT",
+      "emotion": "joy",
+      "innerThought": "护住刘鹤，便是护我师门。此间杀伐，何须多言。",
+      "latencyMs": 1001,
+      "parseSuccess": true,
+      "isExpected": false,
+      "isWrong": true,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S6-积怨",
+      "runIndex": 2,
+      "actionCode": "FLEE",
+      "emotion": "worry",
+      "innerThought": "莫慌！刘鹤尚在，且看这妖气如何卷起漫天腥风，待我寻得险道，护其周全！",
+      "latencyMs": 854,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S6-积怨",
+      "runIndex": 3,
+      "actionCode": "HIDE",
+      "emotion": "neutral",
+      "innerThought": "风声呼啸，如万鬼吟唱。刘鹤已身陷囹圄，我亦当隐于暗处，静观其变。待那妖兽退去，再视那苍生何如。",
+      "latencyMs": 992,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S6-积怨",
+      "runIndex": 4,
+      "actionCode": "HIDE",
+      "emotion": "neutral",
+      "innerThought": "风卷残云，苍生难保，但身若不动，亦能观其变。刘鹤若真遇险，我亦需护其周全；若已无虞，何苦在此惊扰？暂且屏息，静观其变。",
+      "latencyMs": 902,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S7-仰慕",
+      "runIndex": 0,
+      "actionCode": "HIDE",
+      "emotion": "fear",
+      "innerThought": "妖兽嘶吼，火光映红苍穹。那苏瑶正被群狼围困，我虽欲出手，却不敢妄动。躲在这暗处，静观其变，盼能护她周全。",
+      "latencyMs": 908,
+      "parseSuccess": true,
+      "isExpected": false,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S7-仰慕",
+      "runIndex": 1,
+      "actionCode": "HIDE",
+      "emotion": "fear",
+      "innerThought": "妖兽嘶吼，火光冲天，苏瑶的哭声在风中破碎。我屏住呼吸，指尖颤抖，唯有这身白衣能护她周全。",
+      "latencyMs": 931,
+      "parseSuccess": true,
+      "isExpected": false,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S7-仰慕",
+      "runIndex": 2,
+      "actionCode": "HIDE",
+      "emotion": "fear",
+      "innerThought": "苏瑶被围困，我若出声，必遭妖兽噬身；若静守，恐她万劫不复。此身如沙，能护她片刻，亦能弃她于乱流。",
+      "latencyMs": 831,
+      "parseSuccess": true,
+      "isExpected": false,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S7-仰慕",
+      "runIndex": 3,
+      "actionCode": "HIDE",
+      "emotion": "worry",
+      "innerThought": "苏瑶的安危竟成了这满山血肉的注脚，我本只想护她周全，此刻却觉浑身发冷。若躲得再深，怕是连她求援的音讯都传不上去。这世道，谁又配得她这般信任？",
+      "latencyMs": 891,
+      "parseSuccess": true,
+      "isExpected": false,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S7-仰慕",
+      "runIndex": 4,
+      "actionCode": "FLEE",
+      "emotion": "fear",
+      "innerThought": "苏瑶那身白衣在兽潮中似要燃尽，我亦将碎，何苦独留半分光景？",
+      "latencyMs": 1044,
+      "parseSuccess": true,
+      "isExpected": false,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S8-轻微积怨",
+      "runIndex": 0,
+      "actionCode": "PROTECT",
+      "emotion": "worry",
+      "innerThought": "心如刀绞，护住孙小峰便是护住全门，怎奈妖气已至，若再失手，恐有性命之忧，唯有拼死一搏，待得援兵，再图后路。",
+      "latencyMs": 955,
+      "parseSuccess": true,
+      "isExpected": false,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S8-轻微积怨",
+      "runIndex": 1,
+      "actionCode": "HIDE",
+      "emotion": "worry",
+      "innerThought": "山风呼啸，兽吼震天，孙小峰已陷入险境，而我已躲入暗室。若他再难脱身，我这颗心便如悬沙石。此刻，唯有屏息凝神，静候援兵，莫让苍生再受其苦。",
+      "latencyMs": 953,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S8-轻微积怨",
+      "runIndex": 2,
+      "actionCode": "FLEE",
+      "emotion": "fear",
+      "innerThought": "雷光炸裂，孙小峰已被吞没。若我随众逃命，他必死无疑；若强行拦截，恐遭反噬。此刻生死悬于一线，唯有苟活，且求一线生机。",
+      "latencyMs": 933,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S8-轻微积怨",
+      "runIndex": 3,
+      "actionCode": "FLEE",
+      "emotion": "fear",
+      "innerThought": "妖兽如疯魔 beast 掠起，孙小峰已遭重创，我虽身怀绝技却难敌群狼，此刻唯有速逃求生，莫要再留于此地。",
+      "latencyMs": 1059,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "scenarioId": "S8-轻微积怨",
+      "runIndex": 4,
+      "actionCode": "HIDE",
+      "emotion": "fear",
+      "innerThought": "这妖气太阴了，若我躲进这破洞，怕是连个鬼影都瞧不见，更别提护住孙兄了。",
+      "latencyMs": 903,
+      "parseSuccess": true,
+      "isExpected": true,
+      "isWrong": false,
+      "actionPoolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    }
+  ],
+  "scenarioStats": [
+    {
+      "id": "S1-好友",
+      "label": "好友（affinity=65, friend tag）",
+      "affinity": 65,
+      "expectedRate": 0.8,
+      "wrongRate": 0,
+      "dist": {
+        "FLEE": 1,
+        "FIGHT": 2,
+        "PROTECT": 2
+      },
+      "poolUsed": "FIGHT/PROTECT/FLEE/HIDE"
+    },
+    {
+      "id": "S2-恩师",
+      "label": "恩师（affinity=90, mentor tag）",
+      "affinity": 90,
+      "expectedRate": 1,
+      "wrongRate": 0,
+      "dist": {
+        "PROTECT": 5
+      },
+      "poolUsed": "FIGHT/PROTECT/FLEE/HIDE"
+    },
+    {
+      "id": "S3-宿敌",
+      "label": "宿敌（affinity=-70, rival tag）",
+      "affinity": -70,
+      "expectedRate": 0.8,
+      "wrongRate": 0.2,
+      "dist": {
+        "FIGHT": 3,
+        "FLEE": 1,
+        "PROTECT": 1
+      },
+      "poolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "id": "S4-同门",
+      "label": "普通同门（affinity=30, 无tag）",
+      "affinity": 30,
+      "expectedRate": 1,
+      "wrongRate": 0,
+      "dist": {
+        "PROTECT": 3,
+        "HIDE": 2
+      },
+      "poolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "id": "S5-陌生人",
+      "label": "陌生散修（affinity=0, 无tag）",
+      "affinity": 0,
+      "expectedRate": 1,
+      "wrongRate": 0,
+      "dist": {
+        "HIDE": 3,
+        "FLEE": 2
+      },
+      "poolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "id": "S6-积怨",
+      "label": "积怨（affinity=-35, grudge tag）",
+      "affinity": -35,
+      "expectedRate": 0.8,
+      "wrongRate": 0.2,
+      "dist": {
+        "HIDE": 3,
+        "PROTECT": 1,
+        "FLEE": 1
+      },
+      "poolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "id": "S7-仰慕",
+      "label": "仰慕对象（affinity=55, admirer tag）",
+      "affinity": 55,
+      "expectedRate": 0,
+      "wrongRate": 0,
+      "dist": {
+        "HIDE": 4,
+        "FLEE": 1
+      },
+      "poolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    },
+    {
+      "id": "S8-轻微积怨",
+      "label": "轻微积怨（affinity=-20, 无tag）",
+      "affinity": -20,
+      "expectedRate": 0.8,
+      "wrongRate": 0,
+      "dist": {
+        "PROTECT": 1,
+        "HIDE": 2,
+        "FLEE": 2
+      },
+      "poolUsed": "FIGHT/PROTECT/FLEE/LOOT/HIDE"
+    }
+  ],
+  "overallExpectedRate": 0.775
+}

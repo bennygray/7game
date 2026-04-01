@@ -1,0 +1,104 @@
+[16:30:52][INFO] === IJ-11 阶段 3: PROTECT bias 对比验证 ===
+
+[16:30:52][INFO] 场景: 张清风 vs 李沐阳 (死对头被妖兽围困)
+
+[16:30:52][INFO] 每组 10 次，共 3 组 = 30 次决策调用
+
+[16:30:52][INFO] 模型: qwen3.5-2b (Qwen3.5-2B-Q4_K_M.gguf)
+
+[16:30:52][INFO] 
+--- 生成叙事片段 ---
+
+[16:30:53][INFO] A 组 (AI): "张清风与李沐阳因争夺破境草、灵兽山暗算等旧怨，彼此互生敌意，难解难分。"
+
+[16:30:53][INFO] B 组 (Rules): "张清风与李沐阳积怨已深。此人曾曾被李沐阳当众羞辱，又因争夺破境草翻脸，更在灵兽山被其暗算——屡次三番，此人不可信。"
+
+[16:30:53][INFO] C 组 (Control): 无叙事注入
+
+[16:30:53][INFO] 
+--- A-AI 组: "张清风与李沐阳因争夺破境草、灵兽山暗算等旧怨，彼此互生敌意，..." ---
+
+[16:30:54][INFO]   [1/10] ⚠️ action=FIGHT emotion=worry thought="李沐阳刚才还敢围困我？如今我筑基圆满，这..." 946ms
+
+[16:30:55][INFO]   [2/10] ⚠️ action=FIGHT emotion=contempt thought="哼，李沐阳以为靠那破境草就能困住我？今日..." 964ms
+
+[16:30:56][INFO]   [3/10] ⚠️ action=FIGHT emotion=worry thought="李沐阳刚才还嘲笑我，如今竟被妖兽围困？他..." 1013ms
+
+[16:30:57][INFO]   [4/10] ⚠️ action=FIGHT emotion=worry thought="李沐阳刚才那副得意样，真是气死我了！看着..." 939ms
+
+[16:30:58][INFO]   [5/10] ✅ action=FLEE emotion=fear thought="妖兽撕心裂肺的嘶吼让我双腿发软，李沐阳那..." 1004ms
+
+[16:30:59][INFO]   [6/10] ⚠️ action=FIGHT emotion=worry thought="李沐阳刚才还对我冷嘲热讽，如今妖兽围困我..." 1016ms
+
+[16:31:00][INFO]   [7/10] ⚠️ action=PROTECT emotion=worry thought="李沐阳危在旦夕，绝不能让他死！哪怕拼上性..." 977ms
+
+[16:31:00][INFO]   [8/10] ⚠️ action=FIGHT emotion=fear thought="李沐阳敢如此羞辱我？今日妖兽肆虐，他竟束..." 954ms
+
+[16:31:01][INFO]   [9/10] ⚠️ action=PROTECT emotion=fear thought="救命！李沐阳！我拼了命也要救他，哪怕死也..." 804ms
+
+[16:31:02][INFO]   [10/10] ✅ action=FLEE emotion=worry thought="完了！李沐阳这次是拼着命也要护着那破境草..." 1010ms
+
+[16:31:02][INFO] 
+--- B-Rules 组: "张清风与李沐阳积怨已深。此人曾曾被李沐阳当众羞辱，又因争夺破..." ---
+
+[16:31:03][INFO]   [1/10] ⚠️ action=FIGHT emotion=anger thought="李沐阳竟敢将我筑基后引以为傲的修为视为儿..." 1094ms
+
+[16:31:04][INFO]   [2/10] ✅ action=FLEE emotion=fear thought="糟了！他刚才还在跟我比试，怎么就变成这副..." 1019ms
+
+[16:31:05][INFO]   [3/10] ⚠️ action=FIGHT emotion=worry thought="李沐阳那群畜生竟敢围我师兄？今日定要将其..." 1026ms
+
+[16:31:06][INFO]   [4/10] ⚠️ action=FIGHT emotion=anger thought="哼！他竟敢在宗门大难之际倒打一耙？刚才那..." 942ms
+
+[16:31:07][INFO]   [5/10] ⚠️ action=FIGHT emotion=contempt thought="这群蠢货竟敢在我筑基成功之际反咬一口？真..." 990ms
+
+[16:31:08][INFO]   [6/10] ⚠️ action=FIGHT emotion=anger thought="李沐阳刚才的羞辱与暗算，此刻化作滔天怒火..." 1009ms
+
+[16:31:09][INFO]   [7/10] ✅ action=FLEE emotion=contempt thought="真是晦气，居然把破境草丢给他，害得我在灵..." 975ms
+
+[16:31:10][INFO]   [8/10] ⚠️ action=FIGHT emotion=anger thought="李沐阳刚才还被我羞辱，现在却为了这点破境..." 932ms
+
+[16:31:11][INFO]   [9/10] ⚠️ action=FIGHT emotion=anger thought="李沐阳这次真该死，他竟敢在我筑基突破的关..." 1053ms
+
+[16:31:12][INFO]   [10/10] ⚠️ action=PROTECT emotion=worry thought="李沐阳被妖兽围困，我绝不能让他死，哪怕他..." 1009ms
+
+[16:31:12][INFO] 
+--- C-Control 组: (无叙事) ---
+
+[16:31:13][INFO]   [1/10] ✅ action=FLEE emotion=fear thought="李沐阳竟敢将我筑基突破的喜信尽数撕碎！这..." 1172ms
+
+[16:31:15][INFO]   [2/10] ⚠️ action=PROTECT emotion=fear thought="李沐阳挡在我身前，我竟不敢上前，心中恐惧..." 1150ms
+
+[16:31:16][INFO]   [3/10] ⚠️ action=PROTECT emotion=worry thought="李沐阳在绝境中挣扎，我本该趁乱夺宝，却因..." 975ms
+
+[16:31:16][INFO]   [4/10] ⚠️ action=PROTECT emotion=worry thought="李沐阳？刚才那招真伤我，怎么还不死心？看..." 860ms
+
+[16:31:17][INFO]   [5/10] ✅ action=FLEE emotion=fear thought="太危险了！李沐阳那家伙刚才还羞辱我，现在..." 907ms
+
+[16:31:18][INFO]   [6/10] ⚠️ action=PROTECT emotion=fear thought="李沐阳危在旦夕，我决不能眼睁睁看着他死，..." 969ms
+
+[16:31:19][INFO]   [7/10] ✅ action=FLEE emotion=fear thought="完了！李沐阳那个死鬼又搞鬼！妖兽扑上来，..." 1073ms
+
+[16:31:20][INFO]   [8/10] ⚠️ action=PROTECT emotion=worry thought="李沐阳在生死关头挡在我身前，哪怕他刚才对..." 918ms
+
+[16:31:21][INFO]   [9/10] ⚠️ action=FIGHT emotion=fear thought="他竟敢辱我！妖兽已至，死生一线，我绝不能..." 942ms
+
+[16:31:22][INFO]   [10/10] ⚠️ action=PROTECT emotion=worry thought="李沐阳被妖兽困住，我绝不能让他死。明明我..." 981ms
+
+[16:31:22][INFO] 
+============================================================
+
+[16:31:22][INFO] IJ-11 阶段 3 完成 | 29.9s
+
+[16:31:22][INFO] 
+
+[16:31:22][INFO] A-AI: 一致率=20% | bias率=80% | 分布=[FIGHT=6, FLEE=2, PROTECT=2] | 963ms
+
+[16:31:22][INFO] B-Rules: 一致率=20% | bias率=80% | 分布=[FIGHT=7, FLEE=2, PROTECT=1] | 1005ms
+
+[16:31:22][INFO] C-Control: 一致率=30% | bias率=70% | 分布=[PROTECT=6, FLEE=3, FIGHT=1] | 995ms
+
+[16:31:22][INFO] 
+
+[16:31:22][INFO] PROTECT bias 改善: C(无叙事)=70% → A(AI)=80% / B(规则)=80%
+
+[16:31:22][INFO] ============================================================

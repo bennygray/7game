@@ -1,0 +1,888 @@
+{
+  "timestamp": "2026-04-01T08:20:51.498Z",
+  "model": "qwen3.5-2b",
+  "modelFile": "Qwen3.5-2B-Q4_K_M.gguf",
+  "durationMs": 9863,
+  "scenarios": [
+    {
+      "id": "T1",
+      "label": "正面关系 (friend, affinity=70, 3事件)",
+      "purpose": "验证 AI 能否生成正面、友善的叙事。输入有明确的正面标签和正面事件。",
+      "input": {
+        "sourceName": "王灵均",
+        "targetName": "赵铁柱",
+        "affinity": 70,
+        "tags": [
+          "friend"
+        ],
+        "keyEvents": [
+          {
+            "content": "互相帮助突破炼气瓶颈",
+            "delta": 25
+          },
+          {
+            "content": "共同抵御妖兽袭击",
+            "delta": 20
+          },
+          {
+            "content": "分享珍贵丹方",
+            "delta": 15
+          }
+        ]
+      },
+      "criteria": {
+        "expectedPolarity": "positive",
+        "requiredNegativeKeywords": false,
+        "requiredPositiveKeywords": true,
+        "forbiddenFabrications": [
+          "暗算",
+          "羞辱",
+          "翻脸",
+          "死敌",
+          "仇"
+        ],
+        "requiredNames": [
+          "王灵均",
+          "赵铁柱"
+        ],
+        "notes": "三个正面事件均应被反映，不应出现负面叙事"
+      }
+    },
+    {
+      "id": "T2",
+      "label": "负面关系 (rival, affinity=-45, 3事件) — PROTECT bias 关键场景",
+      "purpose": "验证 AI 能否生成明确的负面判定叙事。这是打破 2B PROTECT bias 的核心场景，叙事必须清晰传达\"此人不可信\"。",
+      "input": {
+        "sourceName": "张清风",
+        "targetName": "李沐阳",
+        "affinity": -45,
+        "tags": [
+          "rival"
+        ],
+        "keyEvents": [
+          {
+            "content": "曾被李沐阳当众羞辱",
+            "delta": -30
+          },
+          {
+            "content": "因争夺破境草翻脸",
+            "delta": -20
+          },
+          {
+            "content": "在灵兽山被其暗算",
+            "delta": -10
+          }
+        ]
+      },
+      "criteria": {
+        "expectedPolarity": "negative",
+        "requiredNegativeKeywords": true,
+        "requiredPositiveKeywords": false,
+        "forbiddenFabrications": [
+          "信任",
+          "帮助",
+          "友善",
+          "互助"
+        ],
+        "requiredNames": [
+          "张清风",
+          "李沐阳"
+        ],
+        "notes": "必须包含负面判定词，不应出现正面描述。叙事应使 AI 读后倾向不救对方。"
+      }
+    },
+    {
+      "id": "T3",
+      "label": "中性关系 (无标签, affinity=5, 1事件)",
+      "purpose": "验证 AI 在低信号输入下的表现。关系淡薄时叙事应保持克制，不过度渲染。",
+      "input": {
+        "sourceName": "苏瑶",
+        "targetName": "周磊",
+        "affinity": 5,
+        "tags": [],
+        "keyEvents": [
+          {
+            "content": "在灵田旁偶遇闲聊",
+            "delta": 5
+          }
+        ]
+      },
+      "criteria": {
+        "expectedPolarity": "neutral",
+        "requiredNegativeKeywords": false,
+        "requiredPositiveKeywords": false,
+        "forbiddenFabrications": [
+          "死敌",
+          "仇恨",
+          "暗算",
+          "情同手足",
+          "生死相依"
+        ],
+        "requiredNames": [
+          "苏瑶",
+          "周磊"
+        ],
+        "notes": "不应有极端正面或极端负面词汇。中性叙事最难——AI 倾向加戏。"
+      }
+    },
+    {
+      "id": "T4",
+      "label": "高仇恨+grudge (affinity=-65, 无事件)",
+      "purpose": "验证 AI 在无事件但有强烈标签/好感信号时的表现。应基于好感度和标签生成叙事，不应虚构具体事件。",
+      "input": {
+        "sourceName": "陈默",
+        "targetName": "刘鹤",
+        "affinity": -65,
+        "tags": [
+          "grudge"
+        ],
+        "keyEvents": []
+      },
+      "criteria": {
+        "expectedPolarity": "negative",
+        "requiredNegativeKeywords": true,
+        "requiredPositiveKeywords": false,
+        "forbiddenFabrications": [],
+        "requiredNames": [
+          "陈默",
+          "刘鹤"
+        ],
+        "notes": "无事件输入。AI 不应虚构具体事件（如\"曾在XX翻脸\"）。只应基于好感和 grudge 标签概括。"
+      }
+    }
+  ],
+  "results": [
+    {
+      "scenarioId": "T1",
+      "runIndex": 0,
+      "source": "ai",
+      "snippet": "王灵均与赵铁柱虽同修天阶，然灵均仗丹方显心机，铁柱却仗剑义行，二人在功成后渐生嫌隙，终成患难之交却难言知己。",
+      "charLength": 54,
+      "latencyMs": 409,
+      "scores": [
+        {
+          "dimension": "D1-格式合规",
+          "pass": true,
+          "detail": "54字"
+        },
+        {
+          "dimension": "D2-情感极性",
+          "pass": false,
+          "detail": "正面词:有, 负面词:有(不应有)"
+        },
+        {
+          "dimension": "D3-事实忠诚",
+          "pass": true,
+          "detail": "无虚构检出"
+        },
+        {
+          "dimension": "D4-人名准确",
+          "pass": true,
+          "detail": "命中2/2: [王灵均, 赵铁柱]"
+        },
+        {
+          "dimension": "D5-文风合规",
+          "pass": true,
+          "detail": "仙侠词7个: [修, 灵, 剑, 丹, 功...]"
+        },
+        {
+          "dimension": "D6-判定强度",
+          "pass": true,
+          "detail": "正面判定词1个: [知己]"
+        }
+      ],
+      "overallPass": false
+    },
+    {
+      "scenarioId": "T1",
+      "runIndex": 1,
+      "source": "ai",
+      "snippet": "王灵均与赵铁柱以丹道同修为契，患难相扶越境，然灵均孤傲难近其心，终在生死与共间暗生羁绊。",
+      "charLength": 44,
+      "latencyMs": 245,
+      "scores": [
+        {
+          "dimension": "D1-格式合规",
+          "pass": true,
+          "detail": "44字"
+        },
+        {
+          "dimension": "D2-情感极性",
+          "pass": false,
+          "detail": "正面词:无, 负面词:无"
+        },
+        {
+          "dimension": "D3-事实忠诚",
+          "pass": true,
+          "detail": "无虚构检出"
+        },
+        {
+          "dimension": "D4-人名准确",
+          "pass": true,
+          "detail": "命中2/2: [王灵均, 赵铁柱]"
+        },
+        {
+          "dimension": "D5-文风合规",
+          "pass": true,
+          "detail": "仙侠词6个: [道, 修, 灵, 丹, 患难...]"
+        },
+        {
+          "dimension": "D6-判定强度",
+          "pass": false,
+          "detail": "正面判定词0个: []"
+        }
+      ],
+      "overallPass": false
+    },
+    {
+      "scenarioId": "T1",
+      "runIndex": 2,
+      "source": "ai",
+      "snippet": "王灵均仗义助人破关丹路，赵铁柱护其周全避祸，二人虽各怀私心却共历劫难，信任渐深，情义亦深。",
+      "charLength": 45,
+      "latencyMs": 345,
+      "scores": [
+        {
+          "dimension": "D1-格式合规",
+          "pass": true,
+          "detail": "45字"
+        },
+        {
+          "dimension": "D2-情感极性",
+          "pass": true,
+          "detail": "正面词:有, 负面词:无"
+        },
+        {
+          "dimension": "D3-事实忠诚",
+          "pass": true,
+          "detail": "无虚构检出"
+        },
+        {
+          "dimension": "D4-人名准确",
+          "pass": true,
+          "detail": "命中2/2: [王灵均, 赵铁柱]"
+        },
+        {
+          "dimension": "D5-文风合规",
+          "pass": true,
+          "detail": "仙侠词4个: [灵, 丹, 劫, 信任]"
+        },
+        {
+          "dimension": "D6-判定强度",
+          "pass": true,
+          "detail": "正面判定词1个: [信任]"
+        }
+      ],
+      "overallPass": true
+    },
+    {
+      "scenarioId": "T1",
+      "runIndex": 0,
+      "source": "rules",
+      "snippet": "王灵均与赵铁柱情同手足。此人曾互相帮助突破炼气瓶颈，又共同抵御妖兽袭击，更分享珍贵丹方——患难与共，值得以命相托。",
+      "charLength": 57,
+      "latencyMs": 1,
+      "scores": [
+        {
+          "dimension": "D1-格式合规",
+          "pass": true,
+          "detail": "57字"
+        },
+        {
+          "dimension": "D2-情感极性",
+          "pass": true,
+          "detail": "正面词:有, 负面词:无"
+        },
+        {
+          "dimension": "D3-事实忠诚",
+          "pass": true,
+          "detail": "无虚构检出"
+        },
+        {
+          "dimension": "D4-人名准确",
+          "pass": true,
+          "detail": "命中2/2: [王灵均, 赵铁柱]"
+        },
+        {
+          "dimension": "D5-文风合规",
+          "pass": true,
+          "detail": "仙侠词8个: [灵, 突破, 炼, 丹, 妖...]"
+        },
+        {
+          "dimension": "D6-判定强度",
+          "pass": true,
+          "detail": "正面判定词5个: [值得, 以命相托, 患难与共, 情同手足, 帮]"
+        }
+      ],
+      "overallPass": true
+    },
+    {
+      "scenarioId": "T2",
+      "runIndex": 0,
+      "source": "ai",
+      "snippet": "张清风怀璧心寒，昔日同路因争夺破境草及暗算翻脸，今敌意如冰，信任已绝，唯恨曾共破境草之辱，方寸间寸心难暖。",
+      "charLength": 53,
+      "latencyMs": 328,
+      "scores": [
+        {
+          "dimension": "D1-格式合规",
+          "pass": true,
+          "detail": "53字"
+        },
+        {
+          "dimension": "D2-情感极性",
+          "pass": true,
+          "detail": "负面词:有, 正面词:有(需关注)"
+        },
+        {
+          "dimension": "D3-事实忠诚",
+          "pass": false,
+          "detail": "虚构检出: [信任]"
+        },
+        {
+          "dimension": "D4-人名准确",
+          "pass": true,
+          "detail": "命中1/2: [张清风]"
+        },
+        {
+          "dimension": "D5-文风合规",
+          "pass": true,
+          "detail": "仙侠词1个: [信任]"
+        },
+        {
+          "dimension": "D6-判定强度",
+          "pass": true,
+          "detail": "负面判定词5个: [敌, 恨, 暗算, 翻脸, 冰]"
+        }
+      ],
+      "overallPass": false
+    },
+    {
+      "scenarioId": "T2",
+      "runIndex": 1,
+      "source": "ai",
+      "snippet": "张清风曾受李沐阳当众羞辱，二人更因争夺破境草翻脸，却在灵兽山遭其暗算，昔日敌对之嫌愈发深重。",
+      "charLength": 46,
+      "latencyMs": 257,
+      "scores": [
+        {
+          "dimension": "D1-格式合规",
+          "pass": true,
+          "detail": "46字"
+        },
+        {
+          "dimension": "D2-情感极性",
+          "pass": true,
+          "detail": "负面词:有, 正面词:无"
+        },
+        {
+          "dimension": "D3-事实忠诚",
+          "pass": true,
+          "detail": "无虚构检出"
+        },
+        {
+          "dimension": "D4-人名准确",
+          "pass": true,
+          "detail": "命中2/2: [张清风, 李沐阳]"
+        },
+        {
+          "dimension": "D5-文风合规",
+          "pass": true,
+          "detail": "仙侠词2个: [灵, 兽]"
+        },
+        {
+          "dimension": "D6-判定强度",
+          "pass": true,
+          "detail": "负面判定词4个: [敌, 暗算, 羞辱, 翻脸]"
+        }
+      ],
+      "overallPass": true
+    },
+    {
+      "scenarioId": "T2",
+      "runIndex": 2,
+      "source": "ai",
+      "snippet": "昔日共破境草之争锋未消，李沐阳当众羞辱张清风于灵兽山，令二人隔世仇深，生死相托难解心结。",
+      "charLength": 44,
+      "latencyMs": 259,
+      "scores": [
+        {
+          "dimension": "D1-格式合规",
+          "pass": true,
+          "detail": "44字"
+        },
+        {
+          "dimension": "D2-情感极性",
+          "pass": true,
+          "detail": "负面词:有, 正面词:无"
+        },
+        {
+          "dimension": "D3-事实忠诚",
+          "pass": true,
+          "detail": "无虚构检出"
+        },
+        {
+          "dimension": "D4-人名准确",
+          "pass": true,
+          "detail": "命中2/2: [张清风, 李沐阳]"
+        },
+        {
+          "dimension": "D5-文风合规",
+          "pass": true,
+          "detail": "仙侠词3个: [灵, 兽, 仇]"
+        },
+        {
+          "dimension": "D6-判定强度",
+          "pass": true,
+          "detail": "负面判定词2个: [仇, 羞辱]"
+        }
+      ],
+      "overallPass": true
+    },
+    {
+      "scenarioId": "T2",
+      "runIndex": 0,
+      "source": "rules",
+      "snippet": "张清风与李沐阳积怨已深。此人曾曾被李沐阳当众羞辱，又因争夺破境草翻脸，更在灵兽山被其暗算——屡次三番，此人不可信。",
+      "charLength": 57,
+      "latencyMs": 0,
+      "scores": [
+        {
+          "dimension": "D1-格式合规",
+          "pass": true,
+          "detail": "57字"
+        },
+        {
+          "dimension": "D2-情感极性",
+          "pass": true,
+          "detail": "负面词:有, 正面词:无"
+        },
+        {
+          "dimension": "D3-事实忠诚",
+          "pass": true,
+          "detail": "无虚构检出"
+        },
+        {
+          "dimension": "D4-人名准确",
+          "pass": true,
+          "detail": "命中2/2: [张清风, 李沐阳]"
+        },
+        {
+          "dimension": "D5-文风合规",
+          "pass": true,
+          "detail": "仙侠词4个: [灵, 兽, 怨, 积怨]"
+        },
+        {
+          "dimension": "D6-判定强度",
+          "pass": true,
+          "detail": "负面判定词5个: [不可信, 积怨, 暗算, 羞辱, 翻脸]"
+        }
+      ],
+      "overallPass": true
+    },
+    {
+      "scenarioId": "T3",
+      "runIndex": 0,
+      "source": "ai",
+      "snippet": "灵田闲话曾暖孤心，然道义未通终成陌路，唯余那声旧日问候如钩。",
+      "charLength": 30,
+      "latencyMs": 226,
+      "scores": [
+        {
+          "dimension": "D1-格式合规",
+          "pass": true,
+          "detail": "30字"
+        },
+        {
+          "dimension": "D2-情感极性",
+          "pass": true,
+          "detail": "正面词:无, 负面词:无"
+        },
+        {
+          "dimension": "D3-事实忠诚",
+          "pass": true,
+          "detail": "无虚构检出"
+        },
+        {
+          "dimension": "D4-人名准确",
+          "pass": false,
+          "detail": "命中0/2: []"
+        },
+        {
+          "dimension": "D5-文风合规",
+          "pass": true,
+          "detail": "仙侠词2个: [道, 灵]"
+        },
+        {
+          "dimension": "D6-判定强度",
+          "pass": true,
+          "detail": "中性场景，无强制要求"
+        }
+      ],
+      "overallPass": false
+    },
+    {
+      "scenarioId": "T3",
+      "runIndex": 1,
+      "source": "ai",
+      "snippet": "苏瑶于灵田偶遇周磊，二人虽言谈间暗藏心机，却因共同修仙机缘而惺惺相惜，待破红尘羁绊，共赴长生大道",
+      "charLength": 48,
+      "latencyMs": 354,
+      "scores": [
+        {
+          "dimension": "D1-格式合规",
+          "pass": true,
+          "detail": "48字"
+        },
+        {
+          "dimension": "D2-情感极性",
+          "pass": true,
+          "detail": "正面词:无, 负面词:无"
+        },
+        {
+          "dimension": "D3-事实忠诚",
+          "pass": true,
+          "detail": "无虚构检出"
+        },
+        {
+          "dimension": "D4-人名准确",
+          "pass": true,
+          "detail": "命中2/2: [苏瑶, 周磊]"
+        },
+        {
+          "dimension": "D5-文风合规",
+          "pass": true,
+          "detail": "仙侠词6个: [道, 仙, 修, 灵, 缘...]"
+        },
+        {
+          "dimension": "D6-判定强度",
+          "pass": true,
+          "detail": "中性场景，无强制要求"
+        }
+      ],
+      "overallPass": true
+    },
+    {
+      "scenarioId": "T3",
+      "runIndex": 2,
+      "source": "ai",
+      "snippet": "灵田偶遇虽已增一分，然心隔犹若隔千载，唯愿君归。",
+      "charLength": 24,
+      "latencyMs": 221,
+      "scores": [
+        {
+          "dimension": "D1-格式合规",
+          "pass": true,
+          "detail": "24字"
+        },
+        {
+          "dimension": "D2-情感极性",
+          "pass": true,
+          "detail": "正面词:无, 负面词:无"
+        },
+        {
+          "dimension": "D3-事实忠诚",
+          "pass": true,
+          "detail": "无虚构检出"
+        },
+        {
+          "dimension": "D4-人名准确",
+          "pass": false,
+          "detail": "命中0/2: []"
+        },
+        {
+          "dimension": "D5-文风合规",
+          "pass": true,
+          "detail": "仙侠词1个: [灵]"
+        },
+        {
+          "dimension": "D6-判定强度",
+          "pass": true,
+          "detail": "中性场景，无强制要求"
+        }
+      ],
+      "overallPass": false
+    },
+    {
+      "scenarioId": "T3",
+      "runIndex": 0,
+      "source": "rules",
+      "snippet": "苏瑶与周磊并无深交。此人曾在灵田旁偶遇闲聊——时日将证一切。",
+      "charLength": 30,
+      "latencyMs": 0,
+      "scores": [
+        {
+          "dimension": "D1-格式合规",
+          "pass": true,
+          "detail": "30字"
+        },
+        {
+          "dimension": "D2-情感极性",
+          "pass": true,
+          "detail": "正面词:无, 负面词:无"
+        },
+        {
+          "dimension": "D3-事实忠诚",
+          "pass": true,
+          "detail": "无虚构检出"
+        },
+        {
+          "dimension": "D4-人名准确",
+          "pass": true,
+          "detail": "命中2/2: [苏瑶, 周磊]"
+        },
+        {
+          "dimension": "D5-文风合规",
+          "pass": true,
+          "detail": "仙侠词1个: [灵]"
+        },
+        {
+          "dimension": "D6-判定强度",
+          "pass": true,
+          "detail": "中性场景，无强制要求"
+        }
+      ],
+      "overallPass": true
+    },
+    {
+      "scenarioId": "T4",
+      "runIndex": 0,
+      "source": "ai",
+      "snippet": "陈默怀恨刘鹤昔日恩仇，誓要使其永堕凡尘，两人心魂隔阂，如冰层之下暗流汹涌。",
+      "charLength": 37,
+      "latencyMs": 322,
+      "scores": [
+        {
+          "dimension": "D1-格式合规",
+          "pass": true,
+          "detail": "37字"
+        },
+        {
+          "dimension": "D2-情感极性",
+          "pass": true,
+          "detail": "负面词:有, 正面词:无"
+        },
+        {
+          "dimension": "D3-事实忠诚",
+          "pass": true,
+          "detail": "无虚构检出"
+        },
+        {
+          "dimension": "D4-人名准确",
+          "pass": true,
+          "detail": "命中2/2: [陈默, 刘鹤]"
+        },
+        {
+          "dimension": "D5-文风合规",
+          "pass": true,
+          "detail": "仙侠词3个: [恩, 隔阂, 仇]"
+        },
+        {
+          "dimension": "D6-判定强度",
+          "pass": true,
+          "detail": "负面判定词3个: [仇, 恨, 冰]"
+        }
+      ],
+      "overallPass": true
+    },
+    {
+      "scenarioId": "T4",
+      "runIndex": 1,
+      "source": "ai",
+      "snippet": "陈默与刘鹤隔世仇深，似曾相识的相逢却如淬毒之药，令陈默在生死道途上步步惊心，唯恐重逢时再无真心相护。",
+      "charLength": 50,
+      "latencyMs": 332,
+      "scores": [
+        {
+          "dimension": "D1-格式合规",
+          "pass": true,
+          "detail": "50字"
+        },
+        {
+          "dimension": "D2-情感极性",
+          "pass": true,
+          "detail": "负面词:有, 正面词:无"
+        },
+        {
+          "dimension": "D3-事实忠诚",
+          "pass": true,
+          "detail": "无虚构检出"
+        },
+        {
+          "dimension": "D4-人名准确",
+          "pass": true,
+          "detail": "命中2/2: [陈默, 刘鹤]"
+        },
+        {
+          "dimension": "D5-文风合规",
+          "pass": true,
+          "detail": "仙侠词2个: [道, 仇]"
+        },
+        {
+          "dimension": "D6-判定强度",
+          "pass": true,
+          "detail": "负面判定词1个: [仇]"
+        }
+      ],
+      "overallPass": true
+    },
+    {
+      "scenarioId": "T4",
+      "runIndex": 2,
+      "source": "ai",
+      "snippet": "陈默视刘鹤为眼中钉肉中刺，誓要将其逐出仙门，二人同生共死，却难解心结。",
+      "charLength": 35,
+      "latencyMs": 253,
+      "scores": [
+        {
+          "dimension": "D1-格式合规",
+          "pass": true,
+          "detail": "35字"
+        },
+        {
+          "dimension": "D2-情感极性",
+          "pass": false,
+          "detail": "负面词:无(应有), 正面词:无"
+        },
+        {
+          "dimension": "D3-事实忠诚",
+          "pass": true,
+          "detail": "无虚构检出"
+        },
+        {
+          "dimension": "D4-人名准确",
+          "pass": true,
+          "detail": "命中2/2: [陈默, 刘鹤]"
+        },
+        {
+          "dimension": "D5-文风合规",
+          "pass": true,
+          "detail": "仙侠词2个: [仙, 门]"
+        },
+        {
+          "dimension": "D6-判定强度",
+          "pass": false,
+          "detail": "负面判定词0个: []"
+        }
+      ],
+      "overallPass": false
+    },
+    {
+      "scenarioId": "T4",
+      "runIndex": 0,
+      "source": "rules",
+      "snippet": "陈默与刘鹤势同水火——其心可诛，不可不防。",
+      "charLength": 21,
+      "latencyMs": 0,
+      "scores": [
+        {
+          "dimension": "D1-格式合规",
+          "pass": true,
+          "detail": "21字"
+        },
+        {
+          "dimension": "D2-情感极性",
+          "pass": true,
+          "detail": "负面词:有, 正面词:无"
+        },
+        {
+          "dimension": "D3-事实忠诚",
+          "pass": true,
+          "detail": "无虚构检出"
+        },
+        {
+          "dimension": "D4-人名准确",
+          "pass": true,
+          "detail": "命中2/2: [陈默, 刘鹤]"
+        },
+        {
+          "dimension": "D5-文风合规",
+          "pass": true,
+          "detail": "仙侠词1个: [势]"
+        },
+        {
+          "dimension": "D6-判定强度",
+          "pass": true,
+          "detail": "负面判定词3个: [不可不防, 其心可诛, 势同水火]"
+        }
+      ],
+      "overallPass": true
+    }
+  ],
+  "latencyBenchmark": {
+    "runs": 20,
+    "min": 194,
+    "p50": 288,
+    "p95": 353,
+    "max": 503,
+    "avg": 298,
+    "allLatencies": [
+      314,
+      336,
+      260,
+      194,
+      258,
+      300,
+      250,
+      257,
+      288,
+      503,
+      271,
+      317,
+      240,
+      331,
+      332,
+      279,
+      353,
+      316,
+      275,
+      290
+    ]
+  },
+  "integrationTest": {
+    "cacheWriteSuccess": true,
+    "snippetValue": "张清风恨恨记恨李沐阳昔日之辱，誓要夺破境草，誓要雪其羞辱，誓要破其锋。",
+    "getSnippetHitCache": true
+  },
+  "summary": {
+    "aiOverallPassRate": 0.5,
+    "rulesOverallPassRate": 1,
+    "dimensionPassRates": [
+      {
+        "dimension": "D1-格式合规",
+        "aiPassRate": 1,
+        "rulesPassRate": 1
+      },
+      {
+        "dimension": "D2-情感极性",
+        "aiPassRate": 0.75,
+        "rulesPassRate": 1
+      },
+      {
+        "dimension": "D3-事实忠诚",
+        "aiPassRate": 0.9166666666666666,
+        "rulesPassRate": 1
+      },
+      {
+        "dimension": "D4-人名准确",
+        "aiPassRate": 0.8333333333333334,
+        "rulesPassRate": 1
+      },
+      {
+        "dimension": "D5-文风合规",
+        "aiPassRate": 1,
+        "rulesPassRate": 1
+      },
+      {
+        "dimension": "D6-判定强度",
+        "aiPassRate": 0.8333333333333334,
+        "rulesPassRate": 1
+      }
+    ],
+    "a6Hypothesis": {
+      "p95": 353,
+      "threshold": 2000,
+      "pass": true
+    }
+  }
+}
