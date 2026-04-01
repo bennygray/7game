@@ -71,6 +71,7 @@ export const TickPhase = {
 | 11 | `encounter-tick` | 610 | 0 | `handlers/encounter-tick.handler.ts` | encounter-engine | Phase F0-α |
 | 12 | `world-event-tick` | 605 | 0 | `handlers/world-event-tick.handler.ts` | storyteller | Phase F0-β |
 | 13 | `ai-result-apply` | 625 | 5 | `handlers/ai-result-apply.handler.ts` | async-ai-buffer + soul-engine | Phase G |
+| 14 | `goal-tick` | 500 | 20 | `handlers/goal-tick.handler.ts` | goal-manager (TTL/完成/扫描) | Phase J-Goal |
 
 ### Handler 拆分判定标准
 
@@ -123,6 +124,7 @@ export interface TickContext {
   pendingStormEvent?: WorldEventPayload;   // Phase H-γ: STORM 事件信号（world-event-tick 设置）
   relationshipMemoryManager?: RelationshipMemoryManager; // Phase IJ: 关系记忆管理器（双写）
   narrativeSnippetBuilder?: NarrativeSnippetBuilder;     // Phase IJ: 叙事片段构建器
+  goalManager?: GoalManager;                             // Phase J-Goal: 目标管理器
 }
 ```
 
@@ -146,3 +148,4 @@ export interface TickContext {
 | 2026-03-30 | Phase G: +ai-result-apply(625:5) Handler; TickContext +asyncAIBuffer; Handler 12→13 |
 | 2026-03-31 | Phase H-γ: TickContext +pendingStormEvent; 裁决系统文档对齐 |
 | 2026-04-01 | Phase IJ v3.0: TickContext +relationshipMemoryManager +narrativeSnippetBuilder; encounter-tick/soul-event handler 双写关系记忆 |
+| 2026-04-01 | Phase J-Goal: +goal-tick(500:20) Handler; TickContext +goalManager; Handler 13→14 |

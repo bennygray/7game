@@ -1,6 +1,6 @@
 # 7game-lite — 全局进度追踪
 
-> **最后更新**：2026-03-31
+> **最后更新**：2026-04-01
 
 ---
 
@@ -26,28 +26,27 @@
 | Y | v0.4.10 | 前后端代码质量治理（ESLint+Hook+SGE增强+单元测试） | ✅ | ✅ | ✅ | 🟢 完成 |
 | Z | v0.5.0 | AI通信架构统一（SoulEvaluator→ai-server 通信路径重构） | ✅ | ✅ | ✅ | 🟢 完成 |
 | IJ-PoC | — | 0.8B 关系上下文利用验证（L0-L6 多层级实验） | ✅ | — | ✅ | 🟢 完成（✅ L3 甜蜜点） |
-| IJ | — | NPC 深度智能预研（关系记忆+因果+目标+T2 设计） | ✅ | ✅ | ⬜ | 🟡 SGE 待启动（PoC 结论 = L3 全量编码） |
+| IJ | — | NPC 深度智能预研（关系记忆+因果+目标+T2 设计） | ✅ | ✅ | ✅ | 🟢 完成（v3.0 Gate 3 PASSED） |
+| J-Goal | — | 个人目标系统（5 GoalType·Layer 5·事件+定期触发·v6） | ✅ | ✅ | ✅ | 🟢 完成（Gate 3 PASSED） |
 
 ---
 
 ## 当前 Phase 详情
 
-**Phase IJ-PoC** — 0.8B 关系上下文利用验证 ✅ 完成
+**Phase IJ-PoC** — 0.8B/2B 关系上下文利用验证 ✅ 完成
 
 - SPM GATE 1 ✅ → 实验执行 ✅ → Review ✅
-- 175 次 AI 调用（5用例×7层级×5轮），成功率 79%，耗时 16.3min
-- **结论：✅ L3 甜蜜点**（好感+标签+3关键事件，~360 tokens）
-- L1 最小可用，L3 最优，L4+ 收益递减
-- 对话情绪强信号，行为决策弱信号
-- Report: `docs/pipeline/phaseIJ-poc/review.md` v2.0
+- V4 基准测试：3×175 = ~735 次 AI 请求（0.8B vs 2B）
+- **结论：✅ 2B 模型 + L2/L6 双级策略**
+- Report: `docs/pipeline/phaseIJ-poc/review.md` + `review-v4-final-benchmark.md`
 
-**Phase IJ** — NPC 深度智能预研（SGE 待启动）
+**Phase IJ** — NPC 深度智能预研 ✅ 完成（v3.0 Gate 3 PASSED）
 
-- SPM GATE 1 ✅ → SGA GATE 2 ✅ (v2.0) → **SGE 待启动**
-- PRD: `docs/features/phaseIJ-PRD.md` v2.0 / TDD: `docs/design/specs/phaseIJ-TDD.md` v2.0
-- Party Review: CONDITIONAL PASS（0 BLOCK / 3 WARN）
-- **PoC 结论 = ✅ 全量编码**（T1-T12），L3 上限
-- **下一步**：走 /SGE 流程实施编码（处理 3 条 WARN）
+- SPM GATE 1 ✅ → SGA GATE 2 ✅ (v3.0) → SGE GATE 3 ✅ (v3.0)
+- PRD: `docs/features/phaseIJ-PRD.md` v3.0 / TDD: `docs/design/specs/phaseIJ-TDD.md` v3.0
+- T1-T14 全部完成；7 新文件 + 9 修改文件
+- 回归 64/64 + 专项 38/38 + tsc 零错误
+- Review: `docs/pipeline/phaseIJ/review-g3-v3.md`
 
 ---
 
@@ -58,13 +57,13 @@
 | 已实现系统 | 21 个（修炼、弟子×8、MUD、灵田、炼丹、突破、灵脉、丹药消费、AI对话、结构化日志、Intent、Tick Pipeline、灵魂事件总线、灵魂评估引擎、碰面引擎、世界事件系统、Storyteller、MUD世界呈现、AI觉醒系统、统一日志管线、掌门裁决系统） |
 | 回归测试 | 64 组全通过 |
 | UI 单元测试 | 65 组全通过（Phase Y 新增） |
-| 专项验证 | Phase E 47 + Phase F 12 + Phase F0-α 52 + Phase F0-β 108 = **219 条** |
+| 专项验证 | Phase E 47 + Phase F 12 + Phase F0-α 52 + Phase F0-β 108 + Phase IJ 38 = **257 条** |
 | 技术债务 | TD-001~TD-021（2 个已清偿：TD-001 Pipeline 重构、TD-003 Intent；TD-006 部分清偿） |
 | 需求债务 | FB-001~FB-015（3 个已清偿：FB-001 弟子对话、FB-004 关系系统、FB-011 玩家干预权；FB-005/FB-010/FB-012 部分清偿） |
-| GameState 版本 | v5（Phase G 零存档迁移） |
-| Tick Handler 数量 | 13 个 |
+| GameState 版本 | v6（Phase J-Goal +goals 字段） |
+| Tick Handler 数量 | 14 个（+goal-tick 500:20） |
 | 弟子数量 | 8 人（4 初始 + 4 Phase D 新增） |
-| AI 模型 | Qwen3.5-0.8B（llama-server 子进程，GPU -ngl 99） |
+| AI 模型 | Qwen3.5-2B（llama-server 子进程，GPU -ngl 99）；降级 0.8B |
 | 世界线推演文档 | 9 份（soul-vision-rethinking/01~09） |
 | 宪法文档版本 | MASTER-PRD v2.0 / Roadmap V4.1 / MASTER-ARCHITECTURE v1.4 |
 
@@ -91,6 +90,7 @@
 | Z | — | [TDD](../design/specs/phaseZ-TDD.md) | — | — | [spm](../pipeline/phaseZ/spm-analysis.md) [plan](../pipeline/phaseZ/plan.md) [review](../pipeline/phaseZ/review.md) [walk](../pipeline/phaseZ/walkthrough.md) |
 | IJ-PoC | [PRD](../features/phaseIJ-poc-PRD.md) | — | — | — | [spm](../pipeline/phaseIJ-poc/spm-analysis.md) [review](../pipeline/phaseIJ-poc/review.md) |
 | IJ | [PRD](../features/phaseIJ-PRD.md) | [TDD](../design/specs/phaseIJ-TDD.md) | — | — | [spm](../pipeline/phaseIJ/spm-analysis.md) [plan](../pipeline/phaseIJ/plan.md) [review](../pipeline/phaseIJ/review.md) |
+| J-Goal | [PRD](../features/phaseJ-goal-PRD.md) | [TDD](../design/specs/phaseJ-goal-TDD.md) | [stories](../design/specs/phaseJ-goal-user-stories.md) | — | [spm](../pipeline/phaseJ-goal/spm-analysis.md) [g1](../pipeline/phaseJ-goal/review-g1.md) [g2](../pipeline/phaseJ-goal/review-g2.md) |
 
 ---
 
@@ -116,3 +116,6 @@
 | 2026-03-31 | **Phase IJ-PoC 独立**：SPM ✅ GATE 1。从 IJ 中拆出独立 PoC Phase。PoC PRD v2.0（7层级×7用例×5次=245次AI调用） |
 | 2026-03-31 | **执行顺序修正**：IJ-PoC 先行 → IJ SGE 后行。PoC 结论决定编码范围（✅全量/🔶精简/❌最小） |
 | 2026-03-31 | **Phase IJ-PoC 完成**：175 次 AI 调用实验完成。结论 ✅ L3 甜蜜点（好感+标签+3事件）。IJ SGE 按全量编码推进。Review v2.0 含深度分析 |
+| 2026-04-01 | **Phase IJ v3.0 全 Pipeline 完成**：V4 基准测试驱动升级（0.8B→2B，L3→L2/L6 双级）。SGE T1-T14 全部完成。7 新文件 + 9 修改。回归 64/64 + 专项 38/38。Gate 3 PASSED（0 BLOCK / 2 WARN） |
+| 2026-04-01 | **Gap 分析 V3.4 同步**：对齐 Phase IJ 交付。总进度 63%→66%。P2"对话不读关系"清偿 |
+| 2026-04-01 | **Phase J-Goal SPM+SGA 完成**：Gate 1 PASSED (0 BLOCK/8 WARN) + Gate 2 PASSED (1 BLOCK fixed/5 WARN)。TDD v1.0 含 4 ADR。架构文档同步更新（pipeline/gamestate/schema/dependencies） |

@@ -1,34 +1,37 @@
 # 7game-lite — 会话交接文档
 
-> **上次更新**：2026-04-01 | **上次会话主题**：Phase IJ v3.0 SGE 编码实施
-> **当前活跃 Phase**：Phase IJ（NPC 深度智能预研）— ✅ 全部完成
-> **Phase 状态**：IJ-PoC: ✅ / IJ: SPM ✅ (v3.0) SGA ✅ (v3.0) SGE ✅ (Gate 3 PASSED)
+> **上次更新**：2026-04-01 | **上次会话主题**：Phase J-Goal SGE — 编码实施 + Gate 3 签章
+> **当前活跃 Phase**：Phase J-Goal（个人目标系统）— 全部完成
+> **Phase 状态**：J-Goal: SPM ✅ (Gate 1) SGA ✅ (Gate 2) SGE ✅ (Gate 3)
 
 ---
 
 ## 当前断点
 
-- **Phase IJ v3.0 全 Pipeline（SPM→SGA→SGE）完成** — V4 基准测试驱动的重大升级
-  - Gate 1 (SPM): 2 BLOCK → 修复后通过
-  - Gate 2 (SGA): 2 WARN → 修复后通过
-  - Gate 3 (SGE): 0 BLOCK / 2 WARN → PASS
-  - **审查报告**：`docs/pipeline/phaseIJ/review-g1-v3.md` + `review-g2-v3.md` + `review-g3-v3.md`
+- **Phase J-Goal 全部完成** — 三阶段门禁全通过
+  - Gate 1 (SPM): PASSED — 0 BLOCK / 8 WARN → 已修复
+  - Gate 2 (SGA): PASSED — 1 BLOCK fixed / 5 WARN
+  - Gate 3 (SGE): PASSED — 0 BLOCK / 3 WARN (WARN-3 + doc gap 已修复, WARN-7/12 推迟)
+  - **审查报告**：`docs/pipeline/phaseJ-goal/review-g{1,2,3}.md`
 
-### SGE 编码成果
+### J-Goal SGE 交付成果
 
-- **T1-T14 全部完成**（T15 AI PoC 为 optional，登记为未来任务）
-- **7 新文件**：relationship-memory.ts, causal-event.ts, personal-goal.ts, t2-npc.ts, relationship-memory-manager.ts, narrative-snippet-builder.ts, verify-phaseIJ-relationship-memory.ts
-- **9 修改文件**：tick-pipeline, idle-engine, dialogue-coordinator, soul-engine, soul-event.handler, encounter-tick.handler, soul-prompt-builder, soul-evaluator, command-handler
-- **宪法更新**：CLAUDE.md（模型 2B / prompt 1024）+ MASTER-PRD（路线图 +Phase IJ）
-- **验证**：回归 64/64 + 专项 38/38 + tsc 零错误
+- **3 新文件** + **11 修改文件** + **1 验证脚本**
+- **GameState v5→v6**：`goals: PersonalGoal[]` 空数组
+- **Pipeline**: 14 handlers（+goal-tick 500:20）
+- **行为权重**: 4 层→5 层（+Layer 5 目标乘数）
+- **事件驱动触发**: 3 个触发器（breakthrough/revenge/friendship）+ 3 个守卫
+- **Prompt 注入**: `buildGoalPromptSegment()` → `buildSoulEvalPrompt()` → `soul-evaluator.ts`
+- **验证**: 66/66 专项 + 64/64 回归 + tsc 0 errors
 
 ### 下一步（新 session 接手）
 
-1. **选择下一个 Phase**（可选方向）：
+1. **可选方向**：
    - Phase I：深度世界（T2 NPC·因果·堕落/救赎）
    - Phase H5：执法堂（deferred from H）
    - Narrative PoC（IJ-11）：验证 AI 预生成 narrative snippet 可行性
 2. **可选优化**：RelationshipMemory 持久化（当前为运行时 Map，不写存档）
+3. **技术债**：WARN-7（迁移测试弱）、WARN-12（Layer 5 计算重复）
 
 ### Phase IJ 关键文档
 

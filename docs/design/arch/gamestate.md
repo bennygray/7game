@@ -8,7 +8,7 @@
 ## §1 完整属性清单
 
 ```
-LiteGameState (v5)
+LiteGameState (v6)
 ├── version: number                          ← SaveManager 写入
 ├── aura: number                             ← IdleEngine.tick() 产出
 ├── spiritStones: number                     ← IdleEngine.tick() 产出
@@ -42,7 +42,8 @@ LiteGameState (v5)
 ├── lastOnlineTime: number                   ← IdleEngine.tick() 更新
 ├── lifetimeStats: LifetimeStats             ← IdleEngine/BreakthroughEngine/PillConsumer 写入
 ├── breakthroughBuff: BreakthroughBuffState  ← PillConsumer 服破镜丹时写入 + BreakthroughEngine 清零
-└── cultivateBoostBuff: CultivateBoostBuff|null ← PillConsumer 服修速丹时写入 + PillConsumer.tickBoostCountdown() 倒计时
+├── cultivateBoostBuff: CultivateBoostBuff|null ← PillConsumer 服修速丹时写入 + PillConsumer.tickBoostCountdown() 倒计时
+└── goals: PersonalGoal[]                       ← Phase J-Goal: GoalManager 分配/移除/TTL递减
 ```
 
 ---
@@ -92,3 +93,4 @@ LiteGameState (v5)
 |------|---------|
 | 2026-03-28 | 从 MASTER-ARCHITECTURE.md §2 拆出 |
 | 2026-03-30 | Phase F0-α: +sect.ethos +sect.discipline; LiteGameState v3→v5 |
+| 2026-04-01 | Phase J-Goal: +goals: PersonalGoal[]; LiteGameState v5→v6 |

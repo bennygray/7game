@@ -14,6 +14,7 @@
 | **v3** | C | `breakthroughBuff`, `cultivateBoostBuff`, `lifetimeStats.pillsConsumed`, `lifetimeStats.breakthroughFailed` | — | `migrateV2toV3()` |
 | **v4** | E | `disciples[].moral`, `disciples[].initialMoral`, `disciples[].traits`, `RelationshipEdge.affinity`, `RelationshipEdge.tags`, `RelationshipEdge.lastInteraction` | `RelationshipEdge.value` | `migrateV3toV4()` |
 | **v5** | F0-α | `sect.ethos`, `sect.discipline` | — | `migrateV4toV5()` |
+| **v6** | J-Goal | `goals: PersonalGoal[]` | — | `migrateV5toV6()` |
 
 ---
 
@@ -25,14 +26,15 @@ graph LR
     V2 -->|migrateV2toV3| V3["v3 存档"]
     V3 -->|migrateV3toV4| V4["v4 存档"]
     V4 -->|migrateV4toV5| V5["v5 存档"]
-    V5 -->|defaults 兜底| FINAL["最终 LiteGameState"]
+    V5 -->|migrateV5toV6| V6["v6 存档"]
+    V6 -->|defaults 兜底| FINAL["最终 LiteGameState"]
     style FINAL fill:#d4edda
-    style V5 fill:#fff3e0
+    style V6 fill:#fff3e0
 ```
 
-1. **链式迁移**：`if (version < 2) → migrateV1toV2()`，`if (version < 3) → migrateV2toV3()`，`if (version < 4) → migrateV3toV4()`，`if (version < 5) → migrateV4toV5()`
+1. **链式迁移**：`if (version < 2) → migrateV1toV2()`，...，`if (version < 5) → migrateV4toV5()`，`if (version < 6) → migrateV5toV6()`
 2. **defaults 兜底**：迁移后用 `createDefaultLiteGameState()` 的属性做浅合并，补全任何缺失字段
-3. **版本号强制更新**：最终 `result.version = SAVE_VERSION (5)`
+3. **版本号强制更新**：最终 `result.version = SAVE_VERSION (6)`
 
 ---
 
@@ -82,6 +84,14 @@ fields[], alchemy{}
 
 ---
 
+## §7 v5→v6 变更 (Phase J-Goal)
+
+- ➕ `goals: PersonalGoal[]` — 全局个人目标池（每个目标含 discipleId 归属）
+
+迁移函数 `migrateV5toV6()`：新增 `goals: []` 空数组。零风险。
+
+---
+
 ## 变更日志
 
 | 日期 | 变更内容 |
@@ -89,3 +99,4 @@ fields[], alchemy{}
 | 2026-03-28 | 从 MASTER-ARCHITECTURE.md §5 拆出 |
 | 2026-03-29 | Phase E: +v4 变更链（moral/traits/affinity/tags/lastInteraction）+ migrateV3toV4 |
 | 2026-03-30 | Phase F0-α: +v5 变更链（sect.ethos/sect.discipline）+ migrateV4toV5 |
+| 2026-04-01 | Phase J-Goal: +v6 变更链（goals: PersonalGoal[]）+ migrateV5toV6 |
