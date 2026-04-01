@@ -132,6 +132,26 @@ PRD: ${paths.features_dir}/[name]-PRD.md
 
 ## GATE 2 签章
 
+### 评审循环协议
+
+1. 执行 Party Review（调用 `@doc-reviewer`），记为第 1 轮
+2. 如果结果包含 🔴 BLOCK：
+   a. 向 USER 呈现所有 BLOCK 项 + WARN 项
+   b. 逐条修复 BLOCK 项（修改 TDD / ADR）
+   c. 重新执行 Party Review（完整四层防线，不可跳过已修复项），记为第 N+1 轮
+   d. 重复 2a-2c 直到 0 BLOCK
+3. 如果结果为 CONDITIONAL PASS（有 WARN 无 BLOCK）：
+   a. 向 USER 呈现所有 WARN 项
+   b. USER 确认接受 / 要求修复
+   c. 接受的 WARN 记入 `${paths.tech_debt}` 技术债务
+4. **评审次数上限 = 3 轮**。第 3 轮仍有 BLOCK → 停止循环，向 USER 报告累计未解决项，由 USER 决定：
+   - 接受风险继续（记入技术债务 + 风险标注）
+   - 回退到 SPM 重做（需求可能不充分）
+   - 拆分 Phase（将复杂设计拆成更小的交付单元）
+5. 评审报告版本号递增：`review-g2.md` → `review-g2-v2.md` → `review-g2-v3.md`
+
+### 签章清单
+
 ```markdown
 ## SGA Signoff
 
@@ -139,7 +159,7 @@ PRD: ${paths.features_dir}/[name]-PRD.md
 - [ ] 迁移策略完整（迁移函数已规划）
 - [ ] Pipeline 挂载方案确认
 - [ ] 依赖矩阵已更新
-- [ ] Party Review 无 BLOCK 项
+- [ ] Party Review 无 BLOCK 项（或 USER 已确认接受风险）
 - [ ] 技术债务已登记（Review WARN 项 → `${paths.tech_debt}`）
 
 签章：`[x] GATE 2 PASSED` — [日期]

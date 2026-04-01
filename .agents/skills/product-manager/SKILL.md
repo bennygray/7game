@@ -131,6 +131,23 @@ trigger: >
 - **MECE 校验**：规则是否相互独立且完全穷尽？
 - **持久化考量**：数据存储方案（不做架构设计，仅标注需求）
 
+### Step 2.1 代码对账（Code Reconciliation）
+
+> [!IMPORTANT]
+> 在定义规则/公式/数据结构之前，必须执行代码对账。
+> **禁止跳过此步**——Phase IJ v3.0 曾因跳过对账导致 Gate 1 出现 2 个 BLOCK（Big Five 术语 vs 实际五维、enemy 标签不存在）。
+
+1. **字段对账**：规则中引用的每个字段名（属性、标签、枚举值），`grep` 搜索 `src/shared/types/` 确认存在
+   - 不存在 → **暂停，向 USER 确认**：是新增字段还是笔误？
+   - 存在但名称不同 → **暂停，向 USER 确认**映射关系
+2. **类型对账**：新增的 interface/type 引用的所有已有类型，确认在代码中存在且签名匹配
+3. **枚举对账**：规则表中使用的枚举值（如 RelationshipTag、GoalType），逐一比对代码中的实际枚举定义
+
+**输出**：代码对账清单（附到 `${paths.pipeline_dir}/phaseX/spm-analysis.md`）
+**门控**：有未解决的不匹配项时，**禁止进入 Step 2.5**
+
+---
+
 ### Step 2 规格深度要求（硬约束）
 
 > [!IMPORTANT]
@@ -269,12 +286,31 @@ Review 完成后，由父 agent（非 doc-reviewer）追加执行：
 
 ## GATE 1 签章
 
+### 评审循环协议
+
+1. 执行 Party Review（调用 `@doc-reviewer`），记为第 1 轮
+2. 如果结果包含 🔴 BLOCK：
+   a. 向 USER 呈现所有 BLOCK 项 + WARN 项
+   b. 逐条修复 BLOCK 项（修改 PRD / User Stories）
+   c. 重新执行 Party Review（完整四层防线，不可跳过已修复项），记为第 N+1 轮
+   d. 重复 2a-2c 直到 0 BLOCK
+3. 如果结果为 CONDITIONAL PASS（有 WARN 无 BLOCK）：
+   a. 向 USER 呈现所有 WARN 项
+   b. USER 确认接受 / 要求修复
+   c. 接受的 WARN 记入 `${paths.feature_backlog}` 需求债务
+4. **评审次数上限 = 3 轮**。第 3 轮仍有 BLOCK → 停止循环，向 USER 报告累计未解决项，由 USER 决定：
+   - 接受风险继续（记入需求债务 + 风险标注）
+   - 回退重做（拆分需求或重新分析）
+5. 评审报告版本号递增：`review-g1.md` → `review-g1-v2.md` → `review-g1-v3.md`
+
+### 签章清单
+
 ```markdown
 ## USER Approval
 
 - [ ] USER 已审阅 PRD 内容
 - [ ] USER 已确认 User Stories
-- [ ] Party Review 无 BLOCK 项
+- [ ] Party Review 无 BLOCK 项（或 USER 已确认接受风险）
 
 签章：`[x] GATE 1 PASSED` — [日期]
 ```

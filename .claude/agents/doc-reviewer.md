@@ -3,10 +3,10 @@ name: doc-reviewer
 description: >
   Trinity Pipeline 独立审查执行器。在干净上下文中加载现有 review-protocol + personas，
   执行四层防线审查。拥有独立上下文窗口，不受父 agent 自我确认偏差影响。
-tools: Read, Glob, Grep
+tools: Read, Glob, Grep, Write, Edit
 model: opus
 memory: project
-maxTurns: 25
+maxTurns: 40
 effort: high
 ---
 

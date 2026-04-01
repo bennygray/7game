@@ -217,7 +217,53 @@ User Stories: ${paths.specs_dir}/[name]-user-stories.md
 
 ---
 
+## Step 4 硬约束
+
+> [!IMPORTANT]
+> 以下文件必须存在且非空，否则 GATE 3 签章无效。
+> Phase IJ v3.0 曾遗漏 task.md 和 walkthrough.md，事后补写。
+
+| 文件 | 最低内容要求 |
+|------|------------|
+| `${paths.pipeline_dir}/phaseX/task.md` | 每个 Task 的状态（完成/跳过/阻塞）+ 原因 |
+| `${paths.pipeline_dir}/phaseX/walkthrough.md` | 变更文件清单 + 验证结果摘要 + 遗留项 |
+| `${paths.handoff}` | 当前断点 + 下一步建议 |
+
+### GATE 3 签章前置验证
+
+在签章前，执行以下自动检查：
+
+1. `ls ${paths.pipeline_dir}/phaseX/task.md` — 文件存在
+2. `ls ${paths.pipeline_dir}/phaseX/walkthrough.md` — 文件存在
+3. 新增代码文件是否已登记到 `${paths.arch_layers}` — grep 验证
+4. 新增 Pipeline handler 是否已登记到 `${paths.arch_pipeline}` — grep 验证
+5. 新增依赖是否已登记到 `${paths.arch_dependencies}` — grep 验证
+
+任何一项失败 → 补全后再签章。
+
+---
+
 ## GATE 3 签章
+
+### 评审循环协议
+
+1. 执行 Party Review（调用 `@doc-reviewer`），记为第 1 轮
+2. 如果结果包含 🔴 BLOCK：
+   a. 向 USER 呈现所有 BLOCK 项 + WARN 项
+   b. 逐条修复 BLOCK 项（修改代码 / 测试）
+   c. 重新执行 Party Review（完整四层防线，不可跳过已修复项），记为第 N+1 轮
+   d. 重复 2a-2c 直到 0 BLOCK
+3. 如果结果为 CONDITIONAL PASS（有 WARN 无 BLOCK）：
+   a. 向 USER 呈现所有 WARN 项
+   b. USER 确认接受 / 要求修复
+   c. 接受的 WARN 记入 `${paths.tech_debt}` 技术债务
+4. **评审次数上限 = 3 轮**。第 3 轮仍有 BLOCK → 停止循环，向 USER 报告累计未解决项，由 USER 决定：
+   - 接受风险继续（记入技术债务 + 风险标注）
+   - 回退到 SGA 修改设计
+   - 拆分交付（先交付已通过部分）
+5. 评审报告版本号递增：`review-g3.md` → `review-g3-v2.md` → `review-g3-v3.md`
+
+### 签章清单
 
 ```markdown
 ## SGE Delivery
@@ -225,9 +271,10 @@ User Stories: ${paths.specs_dir}/[name]-user-stories.md
 - [ ] 所有 User Story 的 AC 已验证通过
 - [ ] 数值验证脚本退出码 0
 - [ ] 全量回归退出码 0
-- [ ] Party Review 无 BLOCK 项
+- [ ] Party Review 无 BLOCK 项（或 USER 已确认接受风险）
 - [ ] 交接文档已更新
 - [ ] Pipeline 过程资产已归档（task.md + walkthrough.md）
+- [ ] GATE 3 前置验证全部通过
 
 签章：`[x] GATE 3 PASSED` — [日期]
 ```
