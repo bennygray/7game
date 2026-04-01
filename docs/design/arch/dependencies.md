@@ -36,6 +36,7 @@
 | **async-ai-buffer** | — | — | — | — | — | — | — | — |
 | **handlers/ai-result-apply** | R/W | — | — | — | — | — | — | — |
 | **action-executor** | — | — | — | — | — | — | — | — |
+| **relationship-memory-manager** | — | — | — | — | — | — | — | — |
 
 ---
 
@@ -62,6 +63,7 @@
 | **handlers/ai-result-apply** | — | R | — | — | — | — | — |
 | **handlers/soul-event** (G扩展) | — | R | — | — | — | — | — |
 | **action-executor** | — | — | — | — | — | — | — |
+| **relationship-memory-manager** | — | — | — | — | — | — | — |
 
 ---
 
@@ -96,3 +98,4 @@
 | 2026-03-28 | Phase D: 新增 intent-executor, dialogue-coordinator, game-logger, dialogue-tick handler 依赖 |
 | 2026-03-30 | Phase F0-β: 新增 storyteller, world-event-tick handler, world-event-registry 依赖 |
 | 2026-03-30 | Phase G: +async-ai-buffer, ai-result-apply.handler, action-executor (Engine); soul-event.handler AI 路由扩展; soul-evaluator→prompt-builder/few-shot/action-pool 依赖 |
+| 2026-04-01 | Phase IJ v3.0: +relationship-memory-manager (Engine); soul-engine/dialogue-coordinator/encounter-tick 双写关系记忆; soul-evaluator 注入关系摘要; narrative-snippet-builder (AI) |

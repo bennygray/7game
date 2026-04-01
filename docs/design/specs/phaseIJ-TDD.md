@@ -1,8 +1,8 @@
 # Phase IJ — NPC 深度智能预研 TDD
 
-> **版本**：v2.0 | **日期**：2026-03-31
+> **版本**：v3.0 | **日期**：2026-04-01
 > **Phase 类型**：预研型（设计定案 + 核心 PoC）
-> **前置**：PRD v2.0 `[x] GATE 1 PASSED` — 2026-03-31
+> **前置**：PRD v3.0 `[x] GATE 1 PASSED` — 2026-04-01
 > **维护者**：/SGA
 
 ---
@@ -12,22 +12,25 @@
 | 项目 | 说明 |
 |------|------|
 | 关系记忆系统 | 设计 + PoC 代码（RelationshipMemory + Prompt 关系摘要注入） |
+| Narrative Snippet 系统 | 设计 + 代码（规则拼接器 + 模板降级 + AI 预生成接口） |
+| L2/L6 动态切换 | 按事件等级路由 context level |
 | 因果事件 / 个人目标 / T2 NPC | 仅 Interface 设计（零实现代码） |
 | 存档版本 | v5 不变，PoC 用运行时内存结构 |
 | Pipeline | 不新增 handler（关系事件记录嵌入现有写入点） |
 | 回归 | 64/64 必须通过，零 breaking change |
-| Prompt 注入量 | 不硬编码上限，由 Phase IJ-PoC 实验确定甜蜜点 |
+| Prompt 上限 | 1024 tokens（从 512 放宽，PRD §1.6 宪法变更声明） |
+| 推荐模型 | Qwen3.5-2B（降级方案 0.8B + L3 单级） |
 
-### v2.0 核心变更（对比 v1.0）
+### v3.0 核心变更（对比 v2.0）
 
-| 维度 | v1.0（已废弃） | v2.0 |
-|------|---------------|------|
-| 核心数据结构 | 个人 MemoryEntry[] 按弟子 ID 索引 | RelationshipMemory 按 A↔B pairKey 索引 |
-| Prompt 注入 | 个人记忆三层（[永]/[近]/[刻]）全量注入 | A↔B 关系摘要（好感+标签+关键事件） |
-| 注入时机 | 所有 AI 调用 | 仅当 A 与 B 发生交互时注入 A→B 摘要 |
-| 容量策略 | 20 条硬限 + 150 token 硬限 | 不硬限制，PoC 实验确定 |
-| Pipeline | 新增 memory-tick handler (505:0) | 不新增 handler，记录嵌入现有写入点 |
-| MemoryManager | 个人记忆管理（记录/淘汰/TTL/矛盾） | 关系记忆管理（记录/查询/摘要构建） |
+| 维度 | v2.0 | v3.0 |
+|------|------|------|
+| 推荐模型 | 0.8B | **2B**（0.8B 降级） |
+| 甜蜜点 | L3 单级 | **L6（决策）/ L2（日常）双级** |
+| Prompt 上限 | 512 tokens | **1024 tokens** |
+| Narrative Snippet | 不存在 | **新增三层降级系统** |
+| 新增文件 | 5 | **6**（+narrative-snippet-builder.ts） |
+| 修改文件 | 5 | **5**（同，但变更内容不同） |
 
 ---
 
@@ -42,16 +45,17 @@
 | `src/shared/types/personal-goal.ts` | Data | PersonalGoal / GoalType（仅设计） |
 | `src/shared/types/t2-npc.ts` | Data | T2NpcProfile（仅设计） |
 | `src/engine/relationship-memory-manager.ts` | Engine | RelationshipMemoryManager 类 |
+| `src/ai/narrative-snippet-builder.ts` | AI | NarrativeSnippetBuilder（规则拼接 + 模板 + AI 预生成接口） |
 
 ### 修改文件
 
 | 文件 | 变更 |
 |------|------|
-| `src/ai/soul-prompt-builder.ts` | +`buildRelationshipPromptSegment()` + `buildSoulEvalPrompt()` 注入关系摘要 |
-| `src/engine/idle-engine.ts` | 实例化 RelationshipMemoryManager + `recordAIMemory()` 双写关系事件 |
-| `src/engine/dialogue-coordinator.ts` | 双写 RelationshipMemoryManager.recordEvent() |
-| `src/ai/soul-evaluator.ts` | evaluateEmotion/evaluateDecisionAndMonologue 注入关系摘要段 |
-| `src/engine/soul-engine.ts` | updateRelationshipTags() 后双写 keyEvent |
+| `src/ai/soul-prompt-builder.ts` | +`buildRelationshipPromptSegment()` L2/L6 双级 + 事件等级路由 |
+| `src/engine/idle-engine.ts` | 实例化 RelationshipMemoryManager + NarrativeSnippetBuilder + 双写 |
+| `src/engine/dialogue-coordinator.ts` | 双写 RelationshipMemoryManager.recordDialogue() |
+| `src/ai/soul-evaluator.ts` | evaluateEmotion/evaluateDecisionAndMonologue 按事件等级选 L2/L6 注入关系摘要 |
+| `src/engine/soul-engine.ts` | updateRelationshipTags() 后双写 keyEvent + 触发 narrativeSnippet 更新 |
 
 ---
 
@@ -60,7 +64,7 @@
 ### 3.1 关系记忆类型 (`src/shared/types/relationship-memory.ts`)
 
 ```typescript
-import type { RelationshipTag } from './game-state';
+import type { RelationshipTag } from './soul';
 
 /**
  * R-M01: 扩展现有 RelationshipEdge，增加关系记忆
@@ -73,12 +77,15 @@ export interface RelationshipMemory {
 
   /** 已有数据（从 RelationshipEdge 实时读取，此处为缓存引用） */
   affinity: number;           // 好感 [-100, +100]
-  tags: RelationshipTag[];    // friend / rival / ...
+  tags: RelationshipTag[];    // friend / rival / mentor / admirer / grudge
 
-  /** 新增：改变关系的关键事件摘要 */
+  /** 改变关系的关键事件摘要 */
   keyEvents: KeyRelationshipEvent[];
 
-  /** 新增：统计量（不注入 prompt，仅用于规则引擎） */
+  /** 叙事片段缓存（由 NarrativeSnippetBuilder 生成，L6 Prompt 注入用） */
+  narrativeSnippet?: string;  // ≤80 字符
+
+  /** 统计量（不注入 prompt，仅用于规则引擎） */
   encounterCount: number;     // 碰面次数
   lastEncounterTick: number;  // 上次碰面 tick
   dialogueCount: number;      // 对话次数
@@ -100,22 +107,34 @@ export interface KeyRelationshipEvent {
 /** R-M02: 关键事件记录阈值 */
 export const EVENT_THRESHOLD = 5;
 
-/** R-M02: 每对关系的 keyEvents 存储上限（防止无限增长，溢出淘汰 |delta| 最小的） */
+/** R-M02: 每对关系的 keyEvents 存储上限 */
 export const KEY_EVENTS_SOFT_LIMIT = 10;
 
 /** R-M03: 矛盾覆盖窗口（同类事件在此 tick 范围内替换而非追加） */
 export const CONTRADICTION_TICK_WINDOW = 50;
 
+/** v3.0: Prompt 总量上限（从 512 放宽） */
+export const MAX_PROMPT_TOKENS = 1024;
+
+/** v3.0: Narrative snippet 最大字符数 */
+export const NARRATIVE_SNIPPET_MAX_CHARS = 80;
+
 /**
- * 生成关系对的唯一键
- * 注意：A→B 和 B→A 是两个不同的 RelationshipMemory
+ * 生成关系对的唯一��
+ * A→B 和 B→A 是两个不同的 RelationshipMemory
  */
 export function makePairKey(sourceId: string, targetId: string): string {
   return `${sourceId}:${targetId}`;
 }
+
+/**
+ * v3.0: Context level 枚举
+ * 由事件等级决定使用哪个级别（PRD R-M08）
+ */
+export type ContextLevel = 'L0' | 'L2' | 'L6';
 ```
 
-### 3.2 因果事件 (`src/shared/types/causal-event.ts`) — 仅设计
+### 3.2 因果��件 (`src/shared/types/causal-event.ts`) — 仅设计
 
 ```typescript
 /** R-C01: 因果触发类型 */
@@ -140,11 +159,11 @@ export interface CausalRule {
   resultSeverity: number;
   /** R-C02: 冷却（ticks） */
   cooldownTicks: number;
-  /** 优先级（同时触发时取最高） */
+  /** 优先��（同时触发时取最高） */
   priority: number;
 }
 
-/** R-C02: 冷却状态 */
+/** R-C02: 冷���状态 */
 export interface CausalCooldownState {
   ruleId: string;
   disciplePairKey: string;
@@ -163,7 +182,7 @@ export type GoalType =
   | 'friendship'
   | 'ambition';
 
-/** R-G01: 个人目标实例 */
+/** R-G01: 个���目标实例 */
 export interface PersonalGoal {
   id: string;
   type: GoalType;
@@ -242,14 +261,13 @@ export class RelationshipMemoryManager {
 
   /**
    * 更新统计量（碰面/对话计数）
-   * 每次 A↔B 交互时调用，不产生 keyEvent
    */
   recordEncounter(sourceId: string, targetId: string, tick: number): void;
   recordDialogue(sourceId: string, targetId: string, tick: number): void;
 
   /**
-   * 获取 A→B 的关系记忆
-   * 如果不存在，返回基于 RelationshipEdge 的初始值
+   * 获取 A→B ��关系记忆
+   * 不存在则返回 null
    */
   getMemory(sourceId: string, targetId: string): RelationshipMemory | null;
 
@@ -261,16 +279,24 @@ export class RelationshipMemoryManager {
 
   /**
    * 构建 Prompt 用的关系摘要文本
-   * 输出格式：
-   *   【与{targetName}的关系】
-   *   好感：{affinity}（{tag}）
-   *   关键经历：{event1}({delta})；{event2}({delta})；...
+   * 输出格式由 contextLevel 决定（L2 或 L6）
    */
   buildRelationshipSummary(
     sourceId: string,
     targetId: string,
-    targetName: string
+    targetName: string,
+    contextLevel: ContextLevel
   ): string | null;
+
+  /**
+   * v3.0: 更新 narrative snippet 缓存
+   * 由 NarrativeSnippetBuilder 生成后写入
+   */
+  updateNarrativeSnippet(
+    sourceId: string,
+    targetId: string,
+    snippet: string
+  ): void;
 }
 ```
 
@@ -279,76 +305,192 @@ export class RelationshipMemoryManager {
 **R-M02 关键事件记录：**
 ```
 IF |affinityDelta| >= EVENT_THRESHOLD:
-  检查矛盾覆盖（同类事件 ≤50 tick 内）
+  检查矛盾覆盖（同类事件 ≤50 tick 内，同类 = 同 content 前缀 或 ��� CausalRule ID）
   IF 有矛盾 → REPLACE
   ELSE → APPEND
   IF keyEvents.length > KEY_EVENTS_SOFT_LIMIT:
-    淘汰 |affinityDelta| 最小的事件
+    淘汰 |affinityDelta| 最小的事件（同 |delta| 按 tick 升序淘汰最旧的）
+  触发 NarrativeSnippetBuilder.rebuild()
 ```
 
-**R-M03 矛盾覆盖：**
-```
-IF 已有事件 WHERE |tick差| ≤ CONTRADICTION_TICK_WINDOW:
-  REPLACE 旧事件 WITH 新事件
-ELSE:
-  APPEND 新事件
-```
-
-**关系摘要构建：**
+**关系摘要构建（L2/L6 双级）：**
 ```
 1. syncFromEdge() 同步最新 affinity/tags
-2. 拼接好感值 + 标签
-3. keyEvents 按 |affinityDelta| 降序排列
-4. 每条事件格式："{content}({delta})"，分号连接
-5. 返回完整摘要文本
+2. IF contextLevel == 'L0': return null
+3. 拼接好感值 + 标签
+4. IF contextLevel == 'L2':
+     取 |affinityDelta| 最大的 1 条事件（无事件则跳过）
+5. IF contextLevel == 'L6':
+     取 |affinityDelta| 降序前 3 条事件（无事件则跳过）
+     + narrativeSnippet（从 memory.narrativeSnippet 读取，undefined 则省略此段）
+     + 个人近况（如有，undefined 则省略）
+6. 返回完整摘要文本
 ```
 
-### 4.3 双写策略（ADR-IJ-03）
-
-PoC 阶段所有写入点同时调用：
-1. 旧路径（`addShortTermMemory()` / `updateRelationshipTags()` 等）— 保持不变
-2. 新路径（`relationshipMemoryManager.recordEvent()` / `.recordEncounter()` 等）— 运行时，不持久化
+### 4.3 双写��略（ADR-IJ-03，继承 v2.0）
 
 | 调用点 | 文件 | 旧路径 | 新路径 |
 |--------|------|--------|--------|
-| 关系变更 | `soul-engine.ts` | `updateRelationshipTags()` | +`recordEvent()` |
+| 关系变更 | `soul-engine.ts` | `updateRelationshipTags()` | +`recordEvent()` + 触发 snippet rebuild |
 | 对话 | `dialogue-coordinator.ts` | `addShortTermMemory()` | +`recordDialogue()` |
 | AI 记忆 | `idle-engine.ts:recordAIMemory()` | `addShortTermMemory()` | +`recordEvent()`（如达阈值） |
 | 碰面 | `encounter-tick handler` | — | +`recordEncounter()` |
 
 ---
 
+## §4.5 NarrativeSnippetBuilder 架构
+
+### 4.5.1 类设计 (`src/ai/narrative-snippet-builder.ts`)
+
+```typescript
+import type { RelationshipMemory } from '../shared/types/relationship-memory';
+import type { RelationshipTag } from '../shared/types/soul';
+
+/**
+ * PRD R-M07~R-M10: Narrative Snippet 三��降级构建器
+ * 层级 1: AI 预生成（需 PoC 验证，接口预留）
+ * 层级 2: 规则拼接（本 Phase 实现）
+ * 层级 3: 模板插值（本 Phase 实现）
+ */
+export class NarrativeSnippetBuilder {
+
+  /**
+   * 规则拼接生成 narrative snippet（层级 2）
+   * PRD R-M09 完整逻辑
+   * @returns ≤80 字符的叙事段落（超限时从事件串联末尾截断）
+   * 边界：keyEvents 为空时跳过事件串联，仅输出框架短语+归纳定性
+   */
+  buildByRules(
+    sourceName: string,
+    targetName: string,
+    memory: RelationshipMemory
+  ): string;
+
+  /**
+   * 模板插值生成 narrative snippet（层级 3 降级）
+   * PRD R-M10 8 个模板
+   * @returns 模板填充后的叙事段落
+   */
+  buildByTemplate(
+    sourceName: string,
+    targetName: string,
+    affinity: number,
+    tags: RelationshipTag[]
+  ): string;
+
+  /**
+   * AI 预生成接口（层级 1，PoC 阶段）
+   * IJ-11: 异步调用 AI 生成叙事摘要
+   * @returns Promise<string | null> — null 表示 AI 不可用，fallback 到规则拼接
+   */
+  buildByAI(
+    sourceName: string,
+    targetName: string,
+    memory: RelationshipMemory
+  ): Promise<string | null>;
+
+  /**
+   * 统一入口：按三层降级策略��成 snippet
+   * 1. 尝试返回已缓存的 AI 预生成结果
+   * 2. 无缓存 → 规则拼接
+   * 3. 规则拼接异常 → 模板插值
+   */
+  getSnippet(
+    sourceName: string,
+    targetName: string,
+    memory: RelationshipMemory
+  ): string;
+
+  /**
+   * 触发 AI 预生成（异步，不阻塞）
+   * 在 keyEvent 记录后调用
+   */
+  triggerAIPregenerate(
+    sourceName: string,
+    targetName: string,
+    memory: RelationshipMemory
+  ): void;
+}
+```
+
+### 4.5.2 规则拼接数据表
+
+**框架短语表（PRD R-M09 步骤 1）：**
+
+```typescript
+const FRAMING_PHRASES: Array<{ min: number; max: number; template: string }> = [
+  { min: -100, max: -60, template: '{A}与{B}势同水火' },
+  { min: -59,  max: -30, template: '{A}与{B}积怨已深' },
+  { min: -29,  max: -10, template: '{A}与{B}关系不睦' },
+  { min: -9,   max: 9,   template: '{A}与{B}并无深交' },
+  { min: 10,   max: 29,  template: '{A}与{B}颇有好感' },
+  { min: 30,   max: 59,  template: '{A}与{B}交情匪浅' },
+  { min: 60,   max: 100, template: '{A}与{B}情同手足' },
+];
+```
+
+**归纳定性表（PRD R-M09 步骤 3）：**
+
+```typescript
+const CONCLUSION_PHRASES: Record<string, string> = {
+  rival:   '——屡次三番，此人不可信。',
+  grudge:  '——其心可诛，不可不防。',
+  friend:  '——患难与共，值得以命相托。',
+  mentor:  '——恩重如山，当铭记于心。',
+  admirer: '——仰慕之情溢于言表。',
+  default: '——时日将证一切。',
+};
+```
+
+**模板表（PRD R-M10，8 个）：**
+
+```typescript
+const TEMPLATES: Array<{ condition: (a: number, t: RelationshipTag[]) => boolean; template: string }> = [
+  // T1-T8 按 PRD R-M10 定义
+];
+```
+
+---
+
 ## §5 Prompt 注入设计
 
-### 5.1 新增函数 (`soul-prompt-builder.ts`)
+### 5.1 L2/L6 动态切换（soul-prompt-builder.ts）
 
 ```typescript
 /**
- * 构建关系摘要注入段
- * @param summary - RelationshipMemoryManager.buildRelationshipSummary() 的输出
- * @returns 可直接拼入 prompt 的关系摘要文本，null 时不注入
+ * v3.0: 根据事件等级选择 context level
+ * PRD R-M08
+ */
+export function getContextLevel(eventSeverity: number): ContextLevel {
+  if (eventSeverity >= 2) return 'L6';  // Lv.2+ 浪花/风暴/天劫
+  return 'L2';                           // Lv.0-1 呼吸/涟漪
+}
+
+/**
+ * v3.0: 构建关系摘要注入段（L2/L6 双级）
  */
 export function buildRelationshipPromptSegment(
-  summary: string | null
+  summary: string | null,
+  contextLevel: ContextLevel
 ): string;
 ```
 
 ### 5.2 输出格式
 
-**标准格式（L1-L3 层级，PoC 确定后生产使用）：**
+**L2 格式（≤ ~40 tokens）：**
 ```
 【与李沐阳的关系】
 好感：-45（死对头）
-关键经历：因争夺破境草翻脸(-20)；裁决中被掌门判有过(-15)；在灵兽山被其暗算(-10)
+关键经历：上月因争夺破境草翻脸(-20)
 ```
 
-**扩展格式（L4+ 层级，PoC 验证后可选）：**
+**L6 格式（≤ ~150 tokens）：**
 ```
-个人经历：筑基突破成功
 【与李沐阳的关系】
 好感：-45（死对头）
 关键经历：因争夺破境草翻脸(-20)；裁决中被掌门判有过(-15)；在灵兽山被其暗算(-10)
-【间接关系】你的好友王灵均也与李沐阳不合（好感：-30）
+张清风与李沐阳积怨已深。此人曾因争夺破境草翻脸，又在裁决中被掌门判有���，更在灵兽山暗中算计——屡次三番，此人不可信。
+个人近况：筑基突破成功，实力大增
 ```
 
 ### 5.3 注入位置
@@ -358,7 +500,7 @@ export function buildRelationshipPromptSegment(
 ```
 {身份段落}
 
-{关系摘要段}          ← 新增
+{关系摘要段（L2 或 L6）}          ← 新增
 
 刚才发生了：{事件描述}
 从以下情绪中选择...
@@ -366,33 +508,42 @@ export function buildRelationshipPromptSegment(
 
 ### 5.4 SoulEvaluator 集成
 
-`SoulEvaluator` 的评估方法增加可选 `relationshipMemoryManager` 参数：
-- 有 + 当前有交互对象 → 调用 `buildRelationshipSummary()` + `buildRelationshipPromptSegment()` 注入
-- 无或无交互对象 → 行为不变（无关系摘要注入）
+`SoulEvaluator` 的评估方法签名变更：
 
-### 5.5 Token 预估（非硬限）
+```typescript
+evaluateEmotion(params: {
+  // ...现有参数
+  relationshipMemoryManager?: RelationshipMemoryManager;
+  narrativeSnippetBuilder?: NarrativeSnippetBuilder;
+  targetDiscipleId?: string;
+  targetDiscipleName?: string;
+  eventSeverity?: number;  // v3.0: 用于 L2/L6 切换
+}): Promise<EmotionResult>;
+```
 
-| 层级 | 预估新增 tokens | 总 prompt tokens |
-|:----:|:--------------:|:----------------:|
-| L0 | 0 | ~200 |
-| L1（好感+标签） | ~20 | ~220 |
-| L2（+1 事件） | ~40 | ~240 |
-| L3（+3 事件） | ~80 | ~280 |
-| L4（+个人经历） | ~100 | ~300 |
-| L5（+间接关系） | ~130 | ~330 |
+逻辑：
+1. 有 `relationshipMemoryManager` + `targetDiscipleId` + `eventSeverity` → 调用 `getContextLevel(eventSeverity)` 选择 L2/L6
+2. L6 时：先调用 `narrativeSnippetBuilder.getSnippet()` → 写入 `memory.narrativeSnippet`（确保缓存最新）
+3. 调用 `buildRelationshipSummary(sourceId, targetId, targetName, contextLevel)`（L6 时从 memory.narrativeSnippet 读取已缓存的 snippet）
+4. 注入 prompt
+5. 无上述参数 → 行为不变
 
-> 具体注入量的最优值由 Phase IJ-PoC 多层级实验确定，此处仅为预估。
+### 5.5 0.8B 降级路径
+
+当 ai-server 检测到加载的模型为 0.8B 时：
+- `getContextLevel()` 始终返回 `'L2'`（忽略事件等级）
+- `buildRelationshipSummary()` 使用 L3 级别（好感+标签+3事件，无 narrative snippet）
+- narrative snippet 构建器不触发
+
+实现方式：SoulEvaluator 启动时通过 `/api/health` 查询 `modelSizeMB` 字段（ai-server.ts L455），据此推断模型规格（≤1000MB → '0.8B'，>1000MB → '2B'），缓存为 `cachedModelSize` 并据此路由。后续推理请求无需重复查询。
 
 ---
 
 ## §6 Pipeline 影响
 
-### 不新增 Handler
+### 不新增 Handler（继承 v2.0 ADR-IJ-04）
 
-v2.0 不再需要独立的 memory-tick handler（v1.0 的 505:0），原因：
-- 关系记忆没有 TTL 衰减需求（keyEvents 是历史事实，不会过期）
-- 统计量（encounterCount 等）在交互时同步更新
-- 溢出淘汰在 recordEvent() 内即时执行
+v3.0 同样不新增 Pipeline Handler。Narrative snippet 的规则拼接在 prompt 构建时同步执行（≤5ms），AI 预生成通过 AsyncAIBuffer 异步执行。
 
 ### 现有 Pipeline 序列不变（13 handlers）
 
@@ -405,8 +556,8 @@ v2.0 不再需要独立的 memory-tick handler（v1.0 的 505:0），原因：
 500:10 soul-tick
 600:0  disciple-tick
 605:0  world-event-tick
-610:0  encounter-tick       ← 双写 recordEncounter()
-625:0  soul-event           ← 双写 recordEvent()
+610:0  encounter-tick       ← ��写 recordEncounter()
+625:0  soul-event           ← 双写 recordEvent() + triggerAIPregenerate()
 625:5  ai-result-apply
 650:0  dialogue-tick        ← 双写 recordDialogue()
 700:0  cultivate-boost
@@ -419,6 +570,8 @@ export interface TickContext {
   // ... 现有字段 ...
   /** Phase IJ PoC: 关系记忆管理器（运行时，不持久化） */
   relationshipMemoryManager?: RelationshipMemoryManager;
+  /** Phase IJ v3.0: 叙事片段构建器 */
+  narrativeSnippetBuilder?: NarrativeSnippetBuilder;
 }
 ```
 
@@ -426,21 +579,21 @@ export interface TickContext {
 
 ## §7 迁移策略
 
-### PoC 阶段（本 Phase）
+### PoC 阶段（�� Phase）
 
 - **不改存档 schema**，v5 不变
 - RelationshipMemoryManager 数据在 `Map<string, RelationshipMemory>` 中，页面刷新即清空
 - 旧 `shortTermMemory: string[]` 和 `RelationshipEdge` 持续工作
-- 新的 keyEvents 和统计量仅在运行时可用
+- NarrativeSnippet 缓存在 RelationshipMemory.narrativeSnippet 中，同样页面刷新清空
 
 ### 未来正式化路径
 
 ```
-1. RelationshipEdge 扩展字段：keyEvents / encounterCount / dialogueCount
+1. RelationshipEdge 扩展字段：keyEvents / narrativeSnippet / encounterCount / dialogueCount
 2. migrateV5toV6(): 为所有 relationships 初始化新字段
 3. SAVE_VERSION 升级到 6
 4. 移除双写，RelationshipMemoryManager 直接操作 GameState
-5. 根据 PoC 结论决定是否也正式化个人记忆系统
+5. 根据 Narrative PoC 结论决定 AI 预生成是否正式化
 ```
 
 ---
@@ -453,115 +606,54 @@ export interface TickContext {
 | RelationshipEdge 序列化 | ✅ 零影响 | 不修改接口，不增加持久化字段 |
 | 64 组回归测试 | ✅ 零影响 | 新代码全部 additive，旧路径不变 |
 | soul-prompt-builder | ⚠️ 低风险 | 仅在有关系摘要时插入文本，无则不变 |
-| dialogue-coordinator | ⚠️ 低风险 | 追加双写调用，不影响原有逻辑 |
-| soul-engine | ⚠️ 低风险 | updateRelationshipTags() 后追加双写 |
+| soul-evaluator | ⚠️ 低风险 | 新参数均为 optional，不传则行为不变 |
+| narrative-snippet-builder | ✅ 零影响 | 纯新增文件，不影响现有代码 |
 
 ---
 
 ## §9 ADR 决策日志
 
-### ADR-IJ-01：RelationshipMemoryManager 作为 Engine 层独立类
+### ADR-IJ-01~06（继承 v2.0，不变）
 
-**背景**：关系记忆逻辑（事件记录/摘要构建/矛盾覆盖）需被多个调用点使用。
-**决策**：创建 `RelationshipMemoryManager` 类在 `engine/relationship-memory-manager.ts`，由 IdleEngine 实例化，通过 TickContext 注入。
-**理由**：与 AsyncAIBuffer 模式一致。类封装便于独立测试。按 pairKey 索引的 Map 结构天然匹配关系对模型。
-**备选**：① 直接扩展 RelationshipEdge → 需改存档 schema ② 静态函数 → 需模块级状态
+| ADR | 决策 | 状态 |
+|-----|------|:----:|
+| ADR-IJ-01 | RelationshipMemoryManager 作为 Engine 层独立类 | 保留 |
+| ADR-IJ-02 | 运行时内存，PoC 不持久化 | 保留 |
+| ADR-IJ-03 | 双写策略 | 保留 |
+| ADR-IJ-04 | 不新增 Pipeline Handler | 保留 |
+| ADR-IJ-05 | 不硬编码 Prompt 注入量上限 | **更新**：上限从 512→1024 |
+| ADR-IJ-06 | 设计接口放 shared/types | 保留 |
 
-### ADR-IJ-02：运行时内存，PoC 不持久化
+### ADR-IJ-07：NarrativeSnippetBuilder 放 AI 层（v3.0 新增）
 
-**背景**：PRD 明确不做存档迁移。
-**决策**：RelationshipMemoryManager 持有 `Map<string, RelationshipMemory>`，页面刷新即清空。
-**理由**：零回归风险，零存档影响。PoC 阶段只需在活跃会话中验证关系摘要对 AI 的影响。
-**代价**：页面刷新后关系记忆丢失。可接受。
+**背景**：Narrative snippet 需要文本生成能力（规则拼接 + 未来 AI 预生成）。
+**决策**：创建 `src/ai/narrative-snippet-builder.ts`，归属 AI 层。
+**理由**：(1) 规则拼接是"文本生成"而非"引擎逻辑"，属于 AI 层职责 (2) AI 预生成需要调用 LLM，必须在 AI 层 (3) 统一放 AI ���避免分裂
+**备选**：① 放 Engine 层 → 规则拼接可以，但 AI 预生成调用违反层级约束 ② 拆两个文件 → 不必要的复杂度
 
-### ADR-IJ-03：双写策略
+### ADR-IJ-08：L2/L6 按事件等级切换（v3.0 新增）
 
-**背景**：多个调用点当前已有关系/对话写入逻辑。
-**决策**：每个调用点同时保留旧路径 + 新增 RelationshipMemoryManager 调用。
-**理由**：旧路径不变 → 零回归。新路径并行 → 可评估。易 grep 移除。
+**背景**：V4 基准测试证明 2B 在 L3 的决策正确率仅 20%，L6 达 80%。但 L6 token 开销较大，日常场景不需要。
+**决策**：事件等级 Lv.0-1 用 L2，Lv.2+ 用 L6。
+**理由**：(1) 与现有五级漏斗自然对齐 (2) Lv.2+ 是需要 NPC 做道德判断的场景，正是 PROTECT bias 出现的场景 (3) 切换逻辑极简（一个 if），不增加复杂度
+**备选**：① 按 AI 调用类型切换 → 情绪评估也可能需要叙事上下文 ② 全部 L6 → 日常��景浪费 token
 
-### ADR-IJ-04：不新增 Pipeline Handler（废弃 v1.0 的 505:0）
+### ADR-IJ-09：Prompt 上限 512→1024（v3.0 新增）
 
-**背景**：v1.0 设计了 memory-tick handler 处理 TTL 衰减。
-**决策**：v2.0 不再需要独立 handler。关系事件是历史事实无需衰减，统计量在交互时即时更新，溢出淘汰在 recordEvent() 内执行。
-**理由**：减少 Pipeline 复杂度。关系记忆的写入天然跟随交互事件发生。
-
-### ADR-IJ-05：不硬编码 Prompt 注入量上限（废弃 v1.0 的 150 token 限制）
-
-**背景**：v1.0 拍脑袋定了 150 token 预算。用户反馈：本地模型 token 代价低，瓶颈是 0.8B 理解力上限，应由 PoC 实验确定。
-**决策**：代码中不硬编码注入量上限。总 prompt 仍遵守 512 token 上限（I1），但关系摘要在其中占多少比例由 PoC L0-L6 实验结论决定。
-**理由**：避免过早优化。实验数据比直觉更可靠。
-
-### ADR-IJ-06：设计接口放 shared/types
-
-**背景**：因果/目标/T2 仅设计，无实现代码。
-**决策**：接口放最终位置 `src/shared/types/`，doc comment 标注"Phase IJ 设计，未消费"。
-**理由**：未来实施可直接 import，零文件移动。零运行时开销。
+**背景**：L6 含 narrative snippet + 个人近况预估需 ~400-450 tokens，���上基础 prompt ~200 tokens，总量 ~650，超过 512。
+**决策**：放宽到 1024 tokens。
+**理由**：(1) 2B 模型 32K 上下文窗口，1024 仅占 3% (2) V4 测试中 2B 在 ~450 token prompt 下表现最佳 (3) 预留未来扩展空间
+**宪法变更**：需同步更新 CLAUDE.md L184（PRD §1.6 宪法变更声明）
 
 ---
 
-## §10 Party Review Gate
-
-### R4 项目经理
-
-| 维度 | 评分 | 评语 |
-|------|:----:|------|
-| D1 工作量 | 8/10 | 5 新文件 + 5 修改文件，PoC 级别合理 |
-| D2 依赖链 | 9/10 | 零外部依赖，仅内部模块扩展 |
-| D3 进度风险 | 9/10 | 双写策略 + 不新增 handler = 低回归风险 |
-| D4 文档对齐 | 9/10 | v2.0 对齐 PRD 关系记忆模型 |
-| D5 技术债 | 8/10 | 双写本身是临时债务，promotion 路径清晰 |
-
-**BLOCK**: 无
-
-### R5 偏执架构师
-
-| 维度 | 评分 | 评语 |
-|------|:----:|------|
-| D1 耦合度 | 9/10 | RelationshipMemoryManager 通过 TickContext 注入，不增加直接耦合 |
-| D2 性能 | 9/10 | 8×8=64 对关系 Map，摘要构建 O(events)，可忽略 |
-| D3 Pipeline 一致性 | 10/10 | 不新增 handler，零 Pipeline 影响 |
-| D4 迁移安全 | 10/10 | 不改存档，零迁移风险 |
-| D5 数据一致性 | 8/10 | WARN: affinity/tags 需从 RelationshipEdge 同步，syncFromEdge 调用时机需明确 |
-
-**BLOCK**: 无
-**WARN**: syncFromEdge 调用时机
-
-### R6 找茬QA
-
-| 维度 | 评分 | 评语 |
-|------|:----:|------|
-| D1 测试覆盖 | 8/10 | 事件记录/矛盾覆盖/摘要构建/Prompt 注入 4 类测试场景 |
-| D2 边界条件 | 8/10 | WARN: keyEvents 溢出淘汰后仍可能有多条同等 |delta| 的事件，需明确 tie-breaking 规则 |
-| D3 回归安全 | 9/10 | 双写 + 不改接口 + 不改存档 = 回归安全 |
-| D4 错误处理 | 8/10 | WARN: 无对应 RelationshipEdge 时 getMemory() 行为需明确 |
-| D5 可观测性 | 8/10 | WARN: 需 debug 命令查看关系记忆（`relationships <弟子名>`） |
-
-**BLOCK**: 无
-**WARN**: tie-breaking / 无 edge 时行为 / debug 命令
-
-### Review 汇总
-
-| 级别 | 数量 | 详情 |
-|------|:----:|------|
-| BLOCK | 0 | — |
-| WARN | 4 | syncFromEdge 时机 / tie-breaking / 无 edge 行为 / debug 命令 |
-
-**WARN 处理**：
-1. syncFromEdge → 在 buildRelationshipSummary() 内自动调用（每次构建摘要前同步）
-2. tie-breaking → 同等 |delta| 时按 tick 升序淘汰最旧的
-3. 无对应 RelationshipEdge → getMemory() 返回 null，buildRelationshipSummary() 返回 null
-4. debug 命令 → SGE 实施 scope 添加 `relationships <弟子名>` 命令（T10）
-
----
-
-## §11 实施计划
+## §10 实施计划
 
 ### 第一批（类型定义，可并行）
 
 | # | 任务 | 文件 | 复杂度 |
 |---|------|------|:------:|
-| T1 | RelationshipMemory / KeyRelationshipEvent / 常量 | `shared/types/relationship-memory.ts` | S |
+| T1 | RelationshipMemory / KeyRelationshipEvent / 常量 / ContextLevel | `shared/types/relationship-memory.ts` | S |
 | T2 | 设计接口（CausalRule / PersonalGoal / T2NpcProfile） | `shared/types/causal-event.ts` + `personal-goal.ts` + `t2-npc.ts` | S |
 
 ### 第二批（核心逻辑）
@@ -569,25 +661,33 @@ export interface TickContext {
 | # | 任务 | 文件 | 依赖 |
 |---|------|------|:----:|
 | T3 | RelationshipMemoryManager 类 | `engine/relationship-memory-manager.ts` | T1 |
+| T4 | NarrativeSnippetBuilder（规则拼接 + 模板） | `ai/narrative-snippet-builder.ts` | T1 |
 
 ### 第三批（集成）
 
 | # | 任务 | 文件 | 依赖 |
 |---|------|------|:----:|
-| T4 | TickContext 扩展 | `engine/tick-pipeline.ts` | T3 |
-| T5 | idle-engine 实例化 + 注册 + 双写 | `engine/idle-engine.ts` | T3, T4 |
-| T6 | dialogue-coordinator 双写 | `engine/dialogue-coordinator.ts` | T3 |
-| T7 | soul-engine 双写 | `engine/soul-engine.ts` | T3 |
-| T8 | buildRelationshipPromptSegment() | `ai/soul-prompt-builder.ts` | T1 |
-| T9 | SoulEvaluator 关系摘要注入 | `ai/soul-evaluator.ts` | T3, T8 |
+| T5 | TickContext 扩展 | `engine/tick-pipeline.ts` | T3, T4 |
+| T6 | idle-engine 实例化 + 注册 + 双写 | `engine/idle-engine.ts` | T3, T4, T5 |
+| T7 | dialogue-coordinator 双写 | `engine/dialogue-coordinator.ts` | T3 |
+| T8 | soul-engine 双写 + snippet 触发 | `engine/soul-engine.ts` | T3, T4 |
+| T9 | buildRelationshipPromptSegment() L2/L6 | `ai/soul-prompt-builder.ts` | T1, T4 |
+| T10 | SoulEvaluator 关系摘要注入 | `ai/soul-evaluator.ts` | T3, T4, T9 |
 
 ### 第四批（验证 + 收尾）
 
 | # | 任务 | 文件 | 依赖 |
 |---|------|------|:----:|
-| T10 | debug 命令 `relationships <弟子名>` | `ui/command-handler.ts` | T3 |
-| T11 | 回归测试 + 关系记忆专项测试 | `scripts/` | T1~T9 |
-| T12 | 更新 arch/ 文档 | `docs/design/arch/` | T4 |
+| T11 | debug 命令 `relationships <弟子名>` | `ui/command-handler.ts` | T3 |
+| T12 | 回归测试 + 关系记忆专项测试 + narrative snippet 测试 | `scripts/` | T1~T10 |
+| T13 | 更新 arch/ 文档 | `docs/design/arch/` | T5 |
+| T14 | 宪��文档更新（CLAUDE.md + MASTER-PRD） | `CLAUDE.md`, `docs/project/MASTER-PRD.md` | GATE 2 通过后 |
+
+### 第五批（PoC，可选）
+
+| # | 任务 | 文件 | 依赖 |
+|---|------|------|:----:|
+| T15 | Narrative Snippet AI 预生成 PoC | `docs/pipeline/phaseIJ-poc/scripts/` | T4, T6 |
 
 ---
 
@@ -596,14 +696,15 @@ export interface TickContext {
 ```
 ## SGA Signoff
 
-- [x] Interface 设计完整（RelationshipMemory / KeyRelationshipEvent 有 Owner）
+- [x] Interface 设计完整（所有新字段有 Owner）
 - [x] 迁移策略完整（PoC 不迁移，正式化路径已规划）
 - [x] Pipeline 方案确认（不新增 handler，双写嵌入现有写入点）
 - [x] 依赖矩阵已规划（实施时更新 dependencies.md）
-- [x] Party Review 无 BLOCK 项
-- [x] 技术债务已识别（双写临时债务，promotion 时清偿）
+- [x] Party Review 无 BLOCK 项（review-g2-v3.md: 0 BLOCK / 2 WARN 已修复）
+- [x] 技术债务已识别（双写临时债务 + narrative snippet AI 预生成待 PoC）
+- [x] 宪法变更声明已确认（PRD §1.6，T14 实施）
 
-签章：[x] GATE 2 PASSED — 2026-03-31
+签章：[x] GATE 2 PASSED — 2026-04-01
 ```
 
 ---
@@ -613,4 +714,5 @@ export interface TickContext {
 | 日期 | 版本 | 变更 |
 |------|------|------|
 | 2026-03-31 | v1.0 | 初始创建（基于个人 MemoryEntry 模型） |
-| 2026-03-31 | **v2.0** | 重大重写：核心数据从 MemoryEntry 改为 RelationshipMemory；MemoryManager 改为 RelationshipMemoryManager；Prompt 注入从个人三层改为关系摘要；废弃 memory-tick handler 和 150 token 硬限；更新 ADR / Review / 实施计划 |
+| 2026-03-31 | v2.0 | 重大重写：核心数据从 MemoryEntry 改为 RelationshipMemory |
+| 2026-04-01 | **v3.0** | **V4 基准测试驱动升级**：新增 NarrativeSnippetBuilder（§4.5）；soul-prompt-builder 重写为 L2/L6 双级（§5）；SoulEvaluator 增加事件等级路由（§5.4）；新增 0.8B 降级路径（§5.5）；新增 ADR-IJ-07/08/09；实施计划新增 T4/T14/T15；常量 MAX_PROMPT_TOKENS=1024 |

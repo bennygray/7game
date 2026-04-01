@@ -180,8 +180,8 @@ server/        → Node.js 后端（AI 推理端点 + 模型管理）
 
 | 规则 | 说明 |
 |------|------|
-| 模型规格 | Qwen3.5-0.8B（GGUF Q4_K_M），llama-server 子进程 |
-| 推理预算 | 输出 ≤ 256 tokens，prompt ≤ 512 tokens |
+| 模型规格 | Qwen3.5-2B（推荐）/ 0.8B（降级），GGUF Q4_K_M，llama-server 子进程 |
+| 推理预算 | 输��� ≤ 256 tokens，prompt ≤ 1024 tokens |
 | 上下文管理 | `AISoulContext.shortTermMemory` FIFO 上限 10 条 |
 | Fallback | 后端不可用时 fallback 到模板台词，不阻塞引擎 tick |
 | Prompt 版本化 | 所有 prompt 在 `src/ai/prompts/`，禁止硬编码 |

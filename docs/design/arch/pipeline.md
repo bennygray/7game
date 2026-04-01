@@ -121,6 +121,8 @@ export interface TickContext {
   logger: GameLogger;                      // Phase D: 结构化日志
   asyncAIBuffer?: AsyncAIBuffer;           // Phase G: 异步 AI 缓冲区
   pendingStormEvent?: WorldEventPayload;   // Phase H-γ: STORM 事件信号（world-event-tick 设置）
+  relationshipMemoryManager?: RelationshipMemoryManager; // Phase IJ: 关系记忆管理器（双写）
+  narrativeSnippetBuilder?: NarrativeSnippetBuilder;     // Phase IJ: 叙事片段构建器
 }
 ```
 
@@ -143,3 +145,4 @@ export interface TickContext {
 | 2026-03-30 | Phase F0-β: +WORLD_EVENT=605 阶段; +world-event-tick(605:0) Handler; Handler 11→12 |
 | 2026-03-30 | Phase G: +ai-result-apply(625:5) Handler; TickContext +asyncAIBuffer; Handler 12→13 |
 | 2026-03-31 | Phase H-γ: TickContext +pendingStormEvent; 裁决系统文档对齐 |
+| 2026-04-01 | Phase IJ v3.0: TickContext +relationshipMemoryManager +narrativeSnippetBuilder; encounter-tick/soul-event handler 双写关系记忆 |

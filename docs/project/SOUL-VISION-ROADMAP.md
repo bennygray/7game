@@ -5,7 +5,7 @@
 >
 > **创建日期**：2026-03-29 | **维护者**：/SPM
 > **索引入口**：[docs/INDEX.md](../INDEX.md)
-> **最后更新**：2026-03-31 V4.1（Phase IJ v2.0 修正 + PoC 先行执行顺序）
+> **最后更新**：2026-04-01 V4.3（Phase IJ v3.0 — SGE 编码完成，全 Pipeline 交付）
 
 ---
 
@@ -249,27 +249,33 @@
 
 ### Phase IJ — NPC 深度智能预研 `[预研型 · 合并 I+J · PoC 后执行]`
 
-> **一句话**：统一设计记忆/因果事件/个人目标/T2 NPC 四大子系统，编码范围由 PoC 结论决定。
-> **前置**：Phase IJ-PoC 结论 | **状态**：SPM ✅ SGA ✅ (v2.0) GATE 2 通过，SGE 待 PoC 结论
-> **类型**：预研型（设计定案 + 按 PoC 结论编码，非全量实施）
-> **版本**：v2.0（核心模型从个人 MemoryEntry 改为关系 RelationshipMemory）
+> **一句话**：统一设计记忆/因果事件/个人目标/T2 NPC 四大子系统，V4 基准测试驱动 2B+L6/L2 双级升级。
+> **前置**：Phase IJ-PoC ✅ + V4 基准测试 ✅ | **状态**：✅ 全部完成（SPM + SGA + SGE，Gate 1/2/3 PASSED）
+> **类型**：预研型（设计定案 + 核心 PoC）
+> **版本**：v3.0（V4 基准测试驱动：2B 替代 0.8B + NarrativeSnippet + L2/L6 双级切换）
+
+**v3.0 核心变更（vs v2.0）**：
+
+| 维度 | v2.0 | v3.0 |
+|------|------|------|
+| 推荐模型 | 0.8B | **2B**（0.8B 降级方案保留） |
+| 甜蜜点 | L3 单级 | **L6（决策）/ L2（日常）双级** |
+| Prompt 上限 | 512 tokens | **1024 tokens** |
+| Narrative Snippet | 不存在 | **新增三层降级**（AI预生成→规则拼接→模板） |
+| 实施任务 | T1-T12 | **T1-T15**（+NarrativeSnippetBuilder + 宪法更新 + AI PoC） |
 
 **交付物**：
 
 | # | 子系统 | 交付深度 | 说明 |
 |---|--------|:-------:|------|
-| IJ-1~5 | 关系记忆系统 | 设计+编码（范围由 PoC 定） | RelationshipMemory + 关键事件记录 + Prompt 关系摘要注入 |
-| IJ-6 | 因果/目标/T2 | 仅设计 | 统一 TDD（接口定义，零实现代码） |
+| IJ-01~05 | 关系记忆系统 | 设计+编码 | RelationshipMemory + 关键事件记录 + L2/L6 双级 Prompt 注入 |
+| IJ-06 | 因果/目标/T2 | 仅设计 | 统一 TDD（接口定义，零实现代码） |
+| IJ-08 | Narrative Snippet | 设计+编码 | 规则拼接器 + 模板降级 |
+| IJ-09 | L2/L6 切换 | 设计+编码 | 按事件等级路由 context level |
+| IJ-10 | 模型检测对齐 | 编码 | ai-server 2B/0.8B 自动检测 |
+| IJ-11 | AI 预生成 PoC | PoC | 验证 AI 生成 narrative snippet 可行性 |
 
-**PoC 结论 → 编码范围映射**：
-
-| PoC 结论 | IJ 编码范围 |
-|----------|-----------|
-| ✅ L3+ 有效 | 全量：RelationshipMemoryManager + Prompt 注入 + 双写集成 |
-| 🔶 仅 L1-L2 | 精简：仅注入好感+标签，keyEvents 仅供规则引擎 |
-| ❌ 全部无效 | 最小：仅 RelationshipMemory 类型定义 + 规则引擎统计量 |
-
-**验收标准**：统一设计文档完成 + 按 PoC 结论编码实施 + 回归 64/64
+**验收标准**：回归 64/64 + tsc 零错误 + narrative snippet 专项测试 + L2/L6 切换验证
 
 ---
 
@@ -330,10 +336,10 @@ Phase X ✅            └────────────────┴─
 (掌门视界)
 ```
 
-**关键路径**：`Z ✅ → **IJ-PoC** 🟡 → **IJ**（按结论编码）→ I → J`
-**已完成**：A~H + X-α/X-β + Y + Z（X-γ 面板系统待启动）
-**当前**：Phase IJ-PoC（0.8B 关系上下文验证）— SPM ✅，待执行实验
-**下一步**：执行 IJ-PoC 245 次实验 → 拿到结论 → IJ SGE 按结论编码 → Phase I
+**关键路径**：`Z ✅ → IJ-PoC ✅ → **IJ**（SGE 编码）→ I → J`
+**已完成**：A~H + X-α/X-β + Y + Z + IJ-PoC（X-γ 面板系统待启动）
+**当前**：Phase IJ v3.0 — ✅ 全部完成（SPM + SGA + SGE，T1-T14 编码 + 测试 + 文档 + Gate 3 PASSED）
+**下一步**：IJ SGE 编码（T1-T15）→ Narrative PoC（T15）→ Phase I
 
 ---
 
@@ -373,3 +379,5 @@ Phase X ✅            └────────────────┴─
 | 2026-03-31 | **V3.9 Phase Y 完成**：Phase Y 标记 ✅（ESLint/Hook/Quality Gate/单元测试全交付）；Phase Z 状态更新为可启动 |
 | 2026-03-31 | **V4.0 Phase IJ 预研启动**：Phase Z 标记 ✅（V0.5.0）；新增 Phase IJ（NPC 深度智能预研，合并 I+J+Supermemory）+ Phase IJ-PoC（0.8B 记忆验证）；全景依赖图 V4.0 |
 | 2026-03-31 | **V4.1 Phase IJ v2.0 修正 + 执行顺序调整**：IJ 核心模型从个人 MemoryEntry 改为关系 RelationshipMemory；IJ-PoC 从"A/B 对比"改为"L0-L6 多层级实验 245 次 AI 调用"；**执行顺序调整为 PoC 先行**（IJ-PoC → IJ SGE），因 PoC 结论决定编码范围；全景依赖图 V4.1 |
+| 2026-04-01 | **V4.2 Phase IJ v3.0 升级**：V4 基准测试驱动重大升级——2B 替代 0.8B（+10pp 情绪/+13pp 行为/+15pp 稳定性）；新增 NarrativeSnippet 三层降级系统（AI预生成→规则拼接→模板）；L2/L6 双级切换（按事件等级）；Prompt 上限 512→1024；IJ-PoC ���记 ✅；Phase IJ SPM+SGA v3.0 GATE 1+2 通过 |
+| 2026-04-01 | **V4.3 Phase IJ v3.0 SGE 完成**：T1-T14 编码全部完成；7 新文件 + 9 修改文件；回归 64/64 + 专项 38/38 + tsc 零错误；Gate 3 PASSED（0 BLOCK / 2 WARN）；宪法更新（CLAUDE.md + MASTER-PRD）；Phase IJ 全 Pipeline 完成 |
