@@ -1,6 +1,6 @@
 # 7game-lite — 全局产品需求文档 (MASTER-PRD)
 
-> **版本**：v2.0 | **最后更新**：2026-03-29
+> **版本**：v2.1 | **最后更新**：2026-04-02
 > **文档角色**：宪法层索引 - 所有 Phase 的产品需求总纲
 > **阅读策略**：本文件为索引，永远在 Bootstrap 时读取。按需阅读 detail 文件。
 > **远景索引**：[SOUL-VISION-ROADMAP.md](SOUL-VISION-ROADMAP.md)
@@ -46,28 +46,7 @@
 
 ## §2 核心体验闭环
 
-> 弟子修炼产灵气 → 弟子种田产灵草 → 弟子炼丹产丹药 → 服用丹药加速/突破 → 突破升境界 → 灵脉密度↑ → 全局灵气加速
-
-```mermaid
-graph LR
-    subgraph 产出["产出引擎"]
-        MEDITATE["修炼<br>（灵气/悟性/灵石）"]
-        FARM["灵田<br>（灵草产出）"]
-        ALCHEMY["炼丹<br>（丹药产出）"]
-    end
-    subgraph 消耗["消耗引擎"]
-        BREAKTHROUGH["突破<br>（消耗灵气+破镜丹）"]
-        USE_PILL["服丹<br>（消耗丹药）"]
-    end
-    MEDITATE -->|灵气| BREAKTHROUGH
-    MEDITATE -->|灵石| FARM
-    FARM -->|灵草| ALCHEMY
-    ALCHEMY -->|破镜丹| BREAKTHROUGH
-    ALCHEMY -->|修速丹/回灵丹| USE_PILL
-    USE_PILL -->|灵气速率×2| MEDITATE
-    BREAKTHROUGH -->|升境界| VEIN["灵脉密度↑"]
-    VEIN -->|灵气倍率↑| MEDITATE
-```
+> 修炼产灵气/灵石 → 灵田产灵草 → 炼丹产丹药 → 服丹加速+突破升境界 → 灵脉密度↑ → 全局灵气倍率↑ → 循环加速（详见 economy.md）
 
 ---
 
@@ -124,15 +103,21 @@ graph LR
 
 | 系统 | 原计划 Phase | 暂缓原因 | 计划重新排入 |
 |------|:----------:|---------|:-----------:|
-| 天劫系统 | D（旧） | 不影响灵魂/世界验证，优先级下降 | Phase H 或 I |
-| 悬赏任务完整实现 | D（旧） | 骨架已有，完善可延后 | Phase H |
-| 丹毒系统 | E（旧） | 不影响灵魂/世界验证 | Phase H 或 I |
+| 天劫系统 | D（旧） | 不影响灵魂/世界验证，优先级下降 ⏸ 暂缓，见 FB-013 | Phase H 或 I |
+| 悬赏任务完整实现 | D（旧） | 骨架已有，完善可延后 ⏸ 暂缓，见 FB-014 | Phase H |
+| 丹毒系统 | E（旧） | 不影响灵魂/世界验证 ⏸ 暂缓，见 FB-015 | Phase H 或 I |
 
 ---
 
 ## §6 数值基线索引 → [detail](prd/formulas.md)
 
 > 13 个公式函数 + 3 个数据表文件的完整清单。涉及公式变更时必读。
+
+---
+
+## §6.5 需求追溯链 → [detail](prd/traceability.md)
+
+> System → Phase → PRD → User Stories → 验证脚本完整映射。验证覆盖度时必读。
 
 ---
 
@@ -143,8 +128,6 @@ graph LR
 | A / B-α / C（已有） | 旧 SGPA 十步 | `features/xxx-analysis.md`（保留不动） |
 | D+（新增） | 新 Trinity 三文件 | `features/[name]-PRD.md` + `design/specs/[name]-TDD.md` |
 
----
-
 ## Detail 文件清单
 
 | 文件 | 内容 | 维护 Skill |
@@ -152,6 +135,7 @@ graph LR
 | [`prd/economy.md`](prd/economy.md) | 资源总表 + 漏斗图 + 通胀分析 | /SPM |
 | [`prd/systems.md`](prd/systems.md) | 已实现 + 规划中系统清单 | /SPM, /SGE |
 | [`prd/formulas.md`](prd/formulas.md) | 公式函数 + 数据表索引 | /SPM, /SGE |
+| [`prd/traceability.md`](prd/traceability.md) | 需求追溯链（系统→Phase→PRD→验证脚本） | /SPM |
 
 ---
 
@@ -161,4 +145,5 @@ graph LR
 |------|------|---------|
 | 2026-03-28 | v1.0 | 初始创建，整合 Phase A/B-α/C 三份 analysis 文档 |
 | 2026-03-28 | v1.1 | 模块化拆分：§3→economy.md, §4.2~4.3→systems.md, §6→formulas.md |
-| 2026-03-29 | **v2.0** | **重大对齐**：反映 Phase D/E 已完成；弟子 4→8 人；新增 F0~J 路线图；产品定位升级为「有灵魂的活世界」；IN/OUT 表新增灵魂/世界/道风系统；天劫/悬赏/丹毒标记为暂缓；新增远景索引 |
+| 2026-03-29 | **v2.0** | 重大对齐：D/E 完成；弟子 4→8 人；F0~J 路线图；灵魂/世界/道风系统；天劫/悬赏/丹毒暂缓 |
+| 2026-04-02 | v2.1 | Phase TG-3: §2 Mermaid→文字瘦身 + §5.1 暂缓系统标注 FB-013~015 + §6.5 需求追溯链指针 + traceability.md 注册 |

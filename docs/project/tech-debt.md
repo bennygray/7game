@@ -35,6 +35,8 @@
 | TD-025 | `require-await`：4 处 async 函数无 await — `llm-adapter.ts:72,90,94,98`（TemplateLLMAdapter 的 mock 方法）。要么去掉 async，要么确认接口需要 | ESLint 审计 (V0.4.10) | P3 | llm-adapter.ts | 下次触及时 |
 | TD-026 | `unbound-method`：4 处方法引用未绑定 this — `main.ts:74` / `command-handler.ts:212` / `engine-bindings.ts:68(×2)`。可能导致运行时 this 指向错误 | ESLint 审计 (V0.4.10) | P3 | main, command-handler, engine-bindings | 下次触及时 |
 | TD-027 | `prefer-promise-reject-errors`：2 处 reject 非 Error 对象 — `game-logger.ts:65,79`。不利于错误追踪 | ESLint 审计 (V0.4.10) | P4 | game-logger.ts | 下次触及时 |
+| TD-028 | `arch/layers.md` §2 缺少 9 个 Data 层文件注册（encounter-templates.ts、world-event-registry.ts、zone-descriptions.ts、ruling.ts、ruling-registry.ts、encounter.ts、world-event.ts、relationship-formulas.ts、causal-rule-registry.ts），导致 MASTER-ARCH §1 文件计数不准 | Phase TG-3 Gate 1 R5-D5 WARN | P2 | arch/layers.md, MASTER-ARCHITECTURE.md | 下次触及架构文档时 |
+| TD-029 | CLAUDE.md "灵田(2格)" vs MASTER-PRD "无限格，弟子×3块" 数值不一致，属历史遗留。两个文档对灵田格数描述矛盾 | Phase TG-3 Gate 1 R1-D3 WARN | P3 | CLAUDE.md, MASTER-PRD.md | 下次触及灵田系统时 |
 
 ---
 

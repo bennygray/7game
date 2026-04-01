@@ -1,7 +1,53 @@
 # Party Review 四层防线执行协议
 
-> **版本**：v1.2 | **适用场景**：SPM / SGA / SGE 各阶段 Review Gate
+> **版本**：v1.3 | **适用场景**：SPM / SGA / SGE 各阶段 Review Gate
 > **引用方**：各 Skill 的 Party Review Gate 段落
+
+---
+
+## §0：上下文交付清单（调用方必读）
+
+> **此段面向调用 @doc-reviewer 的父 agent**。
+> doc-reviewer 在独立上下文中启动，无法访问父 agent 已加载的文件。
+> 在发起审查前，**必须**将以下文件交付给 doc-reviewer。
+> 缺失文件 → **停止调用**，向 USER 报告缺失项。
+
+### Gate 1 (SPM → doc-reviewer)
+
+| # | 交付内容 | 路径 |
+|---|---------|------|
+| 1 | 审查协议（本文件） | `.agents/skills/_shared/review-protocol.md` |
+| 2 | 角色定义 | `.agents/skills/_shared/personas/` 下本次激活的角色文件 |
+| 3 | PRD 文件 | `${paths.features_dir}/[name]-PRD.md` |
+| 4 | User Stories | `${paths.specs_dir}/[name]-user-stories.md` |
+| 5 | 项目约束摘要 | CLAUDE.md §版本边界 + §模块边界（≤30 行摘要） |
+| 6 | 前置 review（如有） | 上一 Phase 的 review 报告（延续 WARN 追踪时） |
+
+### Gate 2 (SGA → doc-reviewer)
+
+| # | 交付内容 | 路径 |
+|---|---------|------|
+| 1 | 审查协议（本文件） | `.agents/skills/_shared/review-protocol.md` |
+| 2 | 角色定义 | `.agents/skills/_shared/personas/` 下本次激活的角色文件 |
+| 3 | TDD 文件 | `${paths.specs_dir}/[name]-TDD.md` |
+| 4 | PRD 文件（已签章） | `${paths.features_dir}/[name]-PRD.md` |
+| 5 | 架构索引 | `${paths.master_arch}` |
+| 6 | Pipeline + 依赖 | `${paths.arch_pipeline}` + `${paths.arch_dependencies}` |
+| 7 | Gate 1 review | `${paths.pipeline_dir}/phaseX/review-g1.md` |
+
+### Gate 3 (SGE → doc-reviewer)
+
+| # | 交付内容 | 路径 |
+|---|---------|------|
+| 1 | 审查协议（本文件） | `.agents/skills/_shared/review-protocol.md` |
+| 2 | 角色定义 | `.agents/skills/_shared/personas/` 下本次激活的角色文件 |
+| 3 | TDD 文件 | `${paths.specs_dir}/[name]-TDD.md` |
+| 4 | 代码变更清单 | 文件名 + 变更摘要（由 SGE 编译） |
+| 5 | 验证脚本输出 | tsc / lint / regression / 专项测试结果摘要 |
+| 6 | Gate 2 review | `${paths.pipeline_dir}/phaseX/review-g2.md` |
+
+> **已知限制**：`.agents/` 路径在 project.yaml 中无 paths 条目，使用硬编码路径。
+> 这是可接受的 — `.agents/` 目录结构在项目间固定。
 
 ---
 
@@ -10,6 +56,22 @@
 ```
 L0 Content Traceability → L1 维度穷举签字 → L2 CoVe 证据验证（仅 WARN/BLOCK）→ L3 结构化辩论（仅评审者矛盾）
 ```
+
+---
+
+## §0.1：变更模式→检查项速查
+
+> 审查时先识别变更模式，再按对应检查项逐一验证。
+
+| 变更模式 | 必检项 |
+|---------|-------|
+| 新增 enum/union 成员 | 运行时穷举（switch/includes）是否遗漏新值 |
+| 新增 GameState 字段 | 存档迁移 + createDefault + schema.md 注册 |
+| 修改函数签名 | 全量调用方 grep，确认全部适配 |
+| 新增 Handler | pipeline.md 注册 + dependencies.md 依赖行 |
+| 引入运行时数据结构 | init→write→read→cleanup→persist 生命周期完整性 |
+| 修改现有逻辑 | 向后兼容 + 旧调用方行为验证 |
+| 新增 API 参数 | 参数数 ≥6 → 建议 options 对象重构 |
 
 ---
 

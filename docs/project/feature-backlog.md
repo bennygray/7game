@@ -29,7 +29,7 @@
 | FB-017 | **展现层面板 X-γ**：look/inspect 浮层面板（不随日志滚走）、STORM 裁决弹窗居中面板、sect 面板化、ESC 关闭交互 | Phase X-α PRD §5 OUT | P2 | ui/, styles/ | Phase X-γ（依赖 X-β） |
 | FB-018 | **弟子性别系统缺失**：当前所有弟子隐性为男性，缺少 gender 字段。影响范围广：弟子生成（disciple-generator 姓名池）、LiteDiscipleState 类型（+gender 字段）、关系叙事（碰面/因果/独白模板需区分性别称谓）、AI prompt（性别描述注入）、MUD 文案（"他/她"代词）、inspect/look 命令输出、存档迁移（+gender 字段）。需独立 Phase 规划，预估 M~L 规模。 | Phase I-alpha SPM 用户反馈 | **P1** | disciple-generator, game-state, encounter-templates, soul-prompt-builder, mud-formatter, zone-descriptions, save-manager, AI prompt 层 | 独立 Phase（建议 I-alpha 之后、I-beta 之前） |
 | ~~FB-019~~ | ~~**SGA 关联性审计缺陷（流程 P0）**~~ | Phase I-alpha SGA 用户发现 | ~~**P0**~~ | `.agents/skills/architect/SKILL.md` | ✅ **已清偿** — SGA SKILL.md +Step 5 关联性影响审计（5.1 类型引用追踪 + 5.2 签名影响面 + 5.3 副效果映射 + 5.4 Handler 联动） |
-| FB-020 | **Trinity Pipeline 重审循环 + 审查上下文 + 影响分析扩展**: ~~(a) TG-1 重审执行保障（判定校验/禁止自审/签章检查）~~; (b) TG-2 reviewer 上下文交付 + Step 5 扩展 5.5-5.9 + INDEX 补全; (c) TG-3 START-HERE + 交叉索引 + 追溯链 | Phase TG 流程审计 2026-04-01 | **P1** | review-protocol.md, 三个 SKILL.md, docs/ | ✅ **(a) 已清偿** Phase TG-1; TG-2/TG-3 后续 |
+| ~~FB-020~~ | ~~**Trinity Pipeline 重审循环 + 审查上下文 + 影响分析扩展**: (a) TG-1 重审执行保障; (b) TG-2 reviewer 上下文交付 + Step 5 扩展; (c) TG-3 文档关系梳理+交叉索引+追溯链~~ | Phase TG 流程审计 2026-04-01 | ~~**P1**~~ | review-protocol.md, 三个 SKILL.md, docs/ | ✅ **(a) 已清偿** TG-1; ✅ **(b) 已清偿** TG-2; ✅ **(c) 已清偿** TG-3 |
 ---
 
 ## 已清偿
@@ -41,3 +41,4 @@
 | FB-011 | 玩家干预权（掌门裁决弹窗） | 2026-03-31 | Phase H-γ（STORM 裁决窗口 + judge 命令） |
 | FB-016 | 展现层增强 X-β（Tab补全+别名+图标+闪烁） | 2026-03-31 | Phase X-β（命令增强 + 视觉反馈） |
 | FB-019 | SGA 关联性审计流程缺陷 | 2026-04-01 | SGA SKILL.md +Step 5（4 项强制审计） |
+| FB-020 | Trinity Pipeline 重审循环 (a)(b)(c) | 2026-04-02 | TG-1(重审保障) + TG-2(上下文+Step5) + TG-3(文档梳理+索引+追溯) |

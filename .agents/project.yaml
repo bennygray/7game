@@ -33,6 +33,9 @@ paths:
   arch_pipeline: "docs/design/arch/pipeline.md"
   arch_dependencies: "docs/design/arch/dependencies.md"
   arch_schema: "docs/design/arch/schema.md"
+  arch_cross_index: "docs/design/arch/cross-index.md"
+  prd_traceability: "docs/project/prd/traceability.md"
+  skills_dir: ".agents/skills"
   
   # 产出物基础目录
   features_dir: "docs/features"

@@ -150,9 +150,62 @@ trigger: >
 2. 确认 Pipeline 时序是否满足（数据写入阶段 < 数据消费阶段）
 3. 将联动修改的 Handler 列入修改文件清单
 
-### 5.5 产出与校验
+### 5.5 测试脚本影响审计
 
-完成 5.1-5.4 后，**重新核对 TDD 文件变更汇总表**：
+当 TDD 涉及公式文件（`src/shared/formulas/`）或核心逻辑文件时：
+
+1. 列出 TDD 修改/新增的所有公式/逻辑文件
+2. Grep `scripts/verify-*.ts` 和 `scripts/regression-*.ts` 中对这些文件的 import
+3. 被引用的脚本 → 评估是否需要更新断言或新增 case
+4. **产出**：测试脚本影响表
+
+```markdown
+| 公式/逻辑文件 | 引用脚本 | 需更新 | 说明 |
+|-------------|---------|:-----:|------|
+```
+
+> 零代码 Phase → 标注"N/A — 零代码变更"。
+
+### 5.6 文档一致性审计
+
+检查 TDD 的修改清单是否已包含必要的文档更新：
+
+| # | 检查项 | 判定 |
+|---|--------|------|
+| 1 | 新增代码文件 → `docs/INDEX.md` 更新计划？ | ✅/❌/N/A |
+| 2 | 新增 GameState 字段 → `arch/gamestate.md` 更新计划？ | ✅/❌/N/A |
+| 3 | 新增 Pipeline Handler → `arch/pipeline.md` 更新计划？ | ✅/❌/N/A |
+| 4 | 新增依赖 → `arch/dependencies.md` 更新计划？ | ✅/❌/N/A |
+| 5 | 新增资源/公式 → `prd/economy.md` 或 `prd/formulas.md` 更新计划？ | ✅/❌/N/A |
+
+❌ 项 → 必须补充到 TDD 修改文件清单。
+
+### 5.7 回归测试范围确定
+
+根据 TDD 的修改文件清单，确定必须运行的测试套件：
+
+| 条件 | 必须运行 |
+|------|---------|
+| 修改 Pipeline / Handler / GameState | `npm run test:regression`（regression-all.ts） |
+| 修改对应 Phase 的公式或逻辑 | `npx tsx scripts/verify-phaseX.ts` |
+| 修改 UI 格式化 | `npx tsx scripts/verify-ui-formatter.ts` |
+| 修改 AI 后端 | `npm run test:ai-stress` |
+| 零代码变更（纯文档） | 无需运行（标注"零代码 Phase"） |
+
+**产出**：回归测试执行清单（SGE 在编码完成后执行）。
+
+### 5.8 存档迁移链完整性
+
+| 检查项 | 结果 |
+|--------|------|
+| TDD 是否新增 GameState 持久化字段？ | 是 / 否 |
+| 如是：migrateVxToVy 已规划？ | ✅/❌ |
+| 如是：schema.md 更新已列入？ | ✅/❌ |
+| 如否：标注"零迁移" | — |
+
+### 5.9 产出与校验
+
+完成 5.1-5.8 后，**重新核对 TDD 文件变更汇总表**：
 - 新发现的文件必须加入修改清单
 - 比对前后文件数量差异（如有变化须在 TDD 变更日志中注明）
 
@@ -185,18 +238,30 @@ SGA 的 Review 角色均为"挑刺者"——专注于发现架构缺陷而非业
 
 ### 执行流程
 
-调用 `@doc-reviewer` 在独立上下文中执行审查：
+调用 `@doc-reviewer` 在独立上下文中执行审查。
+
+**上下文交付**（参照 `review-protocol.md §0 Gate 2` 清单）：
 
 ```
 @doc-reviewer 审查 Phase [X] Gate 2。
-TDD: ${paths.specs_dir}/[name]-TDD.md
-PRD: ${paths.features_dir}/[name]-PRD.md
+
+上下文交付：
+  1. 审查协议: .agents/skills/_shared/review-protocol.md
+  2. 角色定义: [列出本次激活的 .agents/skills/_shared/personas/*.md 文件]
+  3. TDD: ${paths.specs_dir}/[name]-TDD.md
+  4. PRD（已签章）: ${paths.features_dir}/[name]-PRD.md
+  5. 架构索引: ${paths.master_arch}
+  6. Pipeline + 依赖: ${paths.arch_pipeline} + ${paths.arch_dependencies}
+  7. Gate 1 review: ${paths.pipeline_dir}/phaseX/review-g1.md
+
 角色配置:
   必选: R4(项目经理) R5(偏执架构师) R6(找茬QA)
   适配: [参照上方角色适配规则表]
+
+⚠️ 调用前检查：上述所有文件必须存在。缺失 → 停止，向 USER 报告。
 ```
 
-> doc-reviewer 在独立上下文中加载 `_shared/review-protocol.md` 和对应 `personas/*.md`，
+> doc-reviewer 在独立上下文中加载审查协议和角色定义，
 > 执行四层防线（L1→L2→L3）+ Devil's Advocate。
 > 审查报告由父 agent 写入 `${paths.pipeline_dir}/phaseX/review-g2.md`。
 
@@ -241,7 +306,7 @@ PRD: ${paths.features_dir}/[name]-PRD.md
 - [ ] 迁移策略完整（迁移函数已规划）
 - [ ] Pipeline 挂载方案确认
 - [ ] 依赖矩阵已更新
-- [ ] **Step 5 关联性审计已执行**（类型引用追踪 + 签名影响面 + 副效果映射 + Handler 联动）
+- [ ] **Step 5 关联性审计已执行**（类型引用追踪 + 签名影响面 + 副效果映射 + Handler 联动 + 测试脚本 + 文档一致性 + 回归范围 + 迁移链）
 - [ ] **评审文件完整性**：如第 1 轮有 BLOCK，则 `review-g2-v2.md`（或更高版本）必须存在
 - [ ] Party Review 无 BLOCK 项（或 USER 已确认接受风险）
 - [ ] 技术债务已登记（Review WARN 项 → `${paths.tech_debt}`）

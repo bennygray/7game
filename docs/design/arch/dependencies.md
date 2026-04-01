@@ -3,6 +3,7 @@
 > **来源**：MASTER-ARCHITECTURE 拆分 | **维护者**：/SGA
 > **索引入口**：[MASTER-ARCHITECTURE.md](../MASTER-ARCHITECTURE.md) §4
 > **最后更新**：Phase 4 Pipeline 重构
+> **同级互引**：执行顺序见 [pipeline.md](pipeline.md)
 
 ---
 

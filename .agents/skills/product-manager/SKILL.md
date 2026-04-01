@@ -260,19 +260,30 @@ trigger: >
 
 ### 执行流程
 
-调用 `@doc-reviewer` 在独立上下文中执行审查：
+调用 `@doc-reviewer` 在独立上下文中执行审查。
+
+**上下文交付**（参照 `review-protocol.md §0 Gate 1` 清单）：
 
 ```
 @doc-reviewer 审查 Phase [X] Gate 1。
-PRD: ${paths.features_dir}/[name]-PRD.md
-User Stories: ${paths.specs_dir}/[name]-user-stories.md
+
+上下文交付：
+  1. 审查协议: .agents/skills/_shared/review-protocol.md
+  2. 角色定义: [列出本次激活的 .agents/skills/_shared/personas/*.md 文件]
+  3. PRD: ${paths.features_dir}/[name]-PRD.md
+  4. User Stories: ${paths.specs_dir}/[name]-user-stories.md
+  5. 项目约束: CLAUDE.md §版本边界 + §模块边界 摘要（≤30行）
+  6. 前置 review: [如有前置 Phase WARN 延续，附 review 文件路径]
+
 角色配置:
   必选: R1(魔鬼PM) R3(数值策划) R5(偏执架构师)
   按需: R2(资深玩家,条件:涉及核心体验变更) R4(项目经理,条件:涉及跨版本影响)
   适配: [参照上方角色适配规则表]
+
+⚠️ 调用前检查：上述所有文件必须存在。缺失 → 停止，向 USER 报告。
 ```
 
-> doc-reviewer 在独立上下文中加载 `_shared/review-protocol.md` 和对应 `personas/*.md`，
+> doc-reviewer 在独立上下文中加载审查协议和角色定义，
 > 执行四层防线（L0→L1→L2→L3）+ Devil's Advocate。
 > 审查报告由父 agent 写入 `${paths.pipeline_dir}/phaseX/review-g1.md`。
 

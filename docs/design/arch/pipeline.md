@@ -3,6 +3,7 @@
 > **来源**：MASTER-ARCHITECTURE 拆分 | **维护者**：/SGA
 > **索引入口**：[MASTER-ARCHITECTURE.md](../MASTER-ARCHITECTURE.md) §3
 > **硬约束**：修改此文件必须同步运行 `npm run test:regression`
+> **同级互引**：影响分析见 [dependencies.md](dependencies.md)
 
 ---
 

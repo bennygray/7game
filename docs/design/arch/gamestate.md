@@ -2,6 +2,7 @@
 
 > **来源**：MASTER-ARCHITECTURE 拆分 | **维护者**：/SGA
 > **索引入口**：[MASTER-ARCHITECTURE.md](../MASTER-ARCHITECTURE.md) §2
+> **同级互引**：版本迁移见 [schema.md](schema.md)
 
 ---
 

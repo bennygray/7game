@@ -169,19 +169,29 @@ AI 推理:
 
 ### 执行流程
 
-调用 `@doc-reviewer` 在独立上下文中执行审查：
+调用 `@doc-reviewer` 在独立上下文中执行审查。
+
+**上下文交付**（参照 `review-protocol.md §0 Gate 3` 清单）：
 
 ```
 @doc-reviewer 审查 Phase [X] Gate 3。
-TDD: ${paths.specs_dir}/[name]-TDD.md
-User Stories: ${paths.specs_dir}/[name]-user-stories.md
-变更文件: [列出本次变更的文件]
+
+上下文交付：
+  1. 审查协议: .agents/skills/_shared/review-protocol.md
+  2. 角色定义: [列出本次激活的 .agents/skills/_shared/personas/*.md 文件]
+  3. TDD: ${paths.specs_dir}/[name]-TDD.md
+  4. 代码变更清单: [文件名 + 变更摘要]
+  5. 验证脚本输出: [tsc / lint / regression / 专项测试结果摘要]
+  6. Gate 2 review: ${paths.pipeline_dir}/phaseX/review-g2.md
+
 角色配置:
   必选: R1(魔鬼PM) R6(找茬QA) R7(资深程序员)
   适配: [参照上方角色适配规则表]
+
+⚠️ 调用前检查：上述所有文件必须存在。缺失 → 停止，向 USER 报告。
 ```
 
-> doc-reviewer 在独立上下文中加载 `_shared/review-protocol.md` 和对应 `personas/*.md`，
+> doc-reviewer 在独立上下文中加载审查协议和角色定义，
 > 执行四层防线（L1→L2→L3）+ Devil's Advocate。
 > 审查报告由父 agent 写入 `${paths.pipeline_dir}/phaseX/review-g3.md`。
 

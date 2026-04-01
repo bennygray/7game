@@ -2,6 +2,7 @@
 
 > **来源**：MASTER-ARCHITECTURE 拆分 | **维护者**：/SGA, /SGE
 > **索引入口**：[MASTER-ARCHITECTURE.md](../MASTER-ARCHITECTURE.md) §5
+> **同级互引**：字段定义见 [gamestate.md](gamestate.md)
 
 ---
 

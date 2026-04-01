@@ -1,6 +1,6 @@
 # 7game-lite — 全局进度追踪
 
-> **最后更新**：2026-04-01
+> **最后更新**：2026-04-02
 
 ---
 
@@ -42,6 +42,8 @@
 | J-Goal | — | 个人目标系统（5 GoalType·Layer 5·事件+定期触发·v6） | ✅ | ✅ | ✅ | 🟢 完成（Gate 3 PASSED） |
 | I-alpha | — | 因果引擎 + 高级关系标签（6 规则·3 标签·causal-tick 612） | ✅ | ✅ | ✅ | 🟢 完成（Gate 3 COND. PASS） |
 | TG-1 | — | Trinity Pipeline 重审执行保障（判定校验·禁止自审·签章检查） | ✅ | ✅ | ✅ | 🟢 完成（Gate 3 COND. PASS） |
+| TG-2 | — | 审查上下文交付+影响审计扩展+INDEX补全（§0·Step 5.5-5.9·全量补全） | ✅ | ✅ | ✅ | 🟢 完成（Gate 3 COND. PASS） |
+| TG-3 | — | 文档关系梳理+交叉索引+追溯链（Option B·Quick Orient·11交付物） | ✅ | ✅ | ✅ | 🟢 完成 |
 
 ---
 
@@ -79,7 +81,7 @@
 | 弟子数量 | 8 人（4 初始 + 4 Phase D 新增） |
 | AI 模型 | Qwen3.5-2B（llama-server 子进程，GPU -ngl 99）；降级 0.8B |
 | 世界线推演文档 | 9 份（soul-vision-rethinking/01~09） |
-| 宪法文档版本 | MASTER-PRD v2.0 / Roadmap V4.1 / MASTER-ARCHITECTURE v1.4 |
+| 宪法文档版本 | MASTER-PRD v2.1 / Roadmap V4.1 / MASTER-ARCHITECTURE v1.8 |
 
 ---
 
@@ -139,3 +141,4 @@
 | 2026-04-01 | **Phase I-alpha SGE 完成**：Gate 3 CONDITIONAL PASS (0 BLOCK/2 WARN)。5 新+13 改文件。6 因果规则+3 高级标签。Handler 14→15（+causal-tick 612:0）。验证 30/30 + regression 64/64 + Monte Carlo avg 4.0/30min。GameState v6 不变 |
 | 2026-04-01 | **Phase TG-1 SPM 完成**：流程审计 → PRD v1.0 + 3 User Stories。Gate 1 CONDITIONAL PASS (0 BLOCK/3 WARN)。FB-020 登记。W2(TG命名) W3(task-tracker注册) 已补完 |
 | 2026-04-01 | **Phase TG-1 全 Pipeline 完成**：Gate 1 COND.PASS(3W) → Gate 2 COND.PASS(3W) → Gate 3 COND.PASS(2W)。4 文件修改：review-protocol.md +判定校验段，3 个 SKILL.md +禁止自审+签章检查。FB-020(a) 清偿 |
+| 2026-04-02 | **Phase TG-2 全 Pipeline 完成**：Gate 1 COND.PASS(3W) → Gate 2 COND.PASS(4W) → Gate 3 COND.PASS(2W)，WARN 全修复。5 文件修改：review-protocol.md v1.3（+§0 上下文交付清单）+SGA Step 5.5-5.9（+4 审计维度）+3 SKILL.md 调用模板+INDEX.md 全量补全（+9 PRD +9 TDD +5 US +9 脚本 +11 Phase pipeline）。FB-020(b) 清偿 |
