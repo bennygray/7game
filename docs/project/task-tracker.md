@@ -28,6 +28,7 @@
 | IJ-PoC | — | 0.8B 关系上下文利用验证（L0-L6 多层级实验） | ✅ | — | ✅ | 🟢 完成（✅ L3 甜蜜点） |
 | IJ | — | NPC 深度智能预研（关系记忆+因果+目标+T2 设计） | ✅ | ✅ | ✅ | 🟢 完成（v3.0 Gate 3 PASSED） |
 | J-Goal | — | 个人目标系统（5 GoalType·Layer 5·事件+定期触发·v6） | ✅ | ✅ | ✅ | 🟢 完成（Gate 3 PASSED） |
+| I-alpha | — | 因果引擎 + 高级关系标签（6 规则·3 标签·causal-tick 612） | ✅ | ✅ | ✅ | 🟢 完成（Gate 3 COND. PASS） |
 
 ---
 
@@ -57,11 +58,11 @@
 | 已实现系统 | 21 个（修炼、弟子×8、MUD、灵田、炼丹、突破、灵脉、丹药消费、AI对话、结构化日志、Intent、Tick Pipeline、灵魂事件总线、灵魂评估引擎、碰面引擎、世界事件系统、Storyteller、MUD世界呈现、AI觉醒系统、统一日志管线、掌门裁决系统） |
 | 回归测试 | 64 组全通过 |
 | UI 单元测试 | 65 组全通过（Phase Y 新增） |
-| 专项验证 | Phase E 47 + Phase F 12 + Phase F0-α 52 + Phase F0-β 108 + Phase IJ 38 = **257 条** |
+| 专项验证 | Phase E 47 + Phase F 12 + Phase F0-α 52 + Phase F0-β 108 + Phase IJ 38 + Phase I-α 30 = **287 条** |
 | 技术债务 | TD-001~TD-021（2 个已清偿：TD-001 Pipeline 重构、TD-003 Intent；TD-006 部分清偿） |
-| 需求债务 | FB-001~FB-015（3 个已清偿：FB-001 弟子对话、FB-004 关系系统、FB-011 玩家干预权；FB-005/FB-010/FB-012 部分清偿） |
+| 需求债务 | FB-001~FB-019（3 个已清偿：FB-001 弟子对话、FB-004 关系系统、FB-011 玩家干预权；FB-005/FB-010/FB-012 部分清偿；**FB-019 P0 流程缺陷 待修复**） |
 | GameState 版本 | v6（Phase J-Goal +goals 字段） |
-| Tick Handler 数量 | 14 个（+goal-tick 500:20） |
+| Tick Handler 数量 | 15 个（+causal-tick 612:0） |
 | 弟子数量 | 8 人（4 初始 + 4 Phase D 新增） |
 | AI 模型 | Qwen3.5-2B（llama-server 子进程，GPU -ngl 99）；降级 0.8B |
 | 世界线推演文档 | 9 份（soul-vision-rethinking/01~09） |
@@ -91,6 +92,7 @@
 | IJ-PoC | [PRD](../features/phaseIJ-poc-PRD.md) | — | — | — | [spm](../pipeline/phaseIJ-poc/spm-analysis.md) [review](../pipeline/phaseIJ-poc/review.md) |
 | IJ | [PRD](../features/phaseIJ-PRD.md) | [TDD](../design/specs/phaseIJ-TDD.md) | — | — | [spm](../pipeline/phaseIJ/spm-analysis.md) [plan](../pipeline/phaseIJ/plan.md) [review](../pipeline/phaseIJ/review.md) |
 | J-Goal | [PRD](../features/phaseJ-goal-PRD.md) | [TDD](../design/specs/phaseJ-goal-TDD.md) | [stories](../design/specs/phaseJ-goal-user-stories.md) | — | [spm](../pipeline/phaseJ-goal/spm-analysis.md) [g1](../pipeline/phaseJ-goal/review-g1.md) [g2](../pipeline/phaseJ-goal/review-g2.md) |
+| I-alpha | [PRD](../features/phaseI-alpha-PRD.md) | [TDD](../design/specs/phaseI-alpha-TDD.md) | [stories](../design/specs/phaseI-alpha-user-stories.md) | — | [spm](../pipeline/phaseI-alpha/spm-analysis.md) [g1](../pipeline/phaseI-alpha/review-g1.md) [g2](../pipeline/phaseI-alpha/review-g2.md) [g3](../pipeline/phaseI-alpha/review-g3.md) [task](../pipeline/phaseI-alpha/task.md) [walk](../pipeline/phaseI-alpha/walkthrough.md) |
 
 ---
 
@@ -119,3 +121,5 @@
 | 2026-04-01 | **Phase IJ v3.0 全 Pipeline 完成**：V4 基准测试驱动升级（0.8B→2B，L3→L2/L6 双级）。SGE T1-T14 全部完成。7 新文件 + 9 修改。回归 64/64 + 专项 38/38。Gate 3 PASSED（0 BLOCK / 2 WARN） |
 | 2026-04-01 | **Gap 分析 V3.4 同步**：对齐 Phase IJ 交付。总进度 63%→66%。P2"对话不读关系"清偿 |
 | 2026-04-01 | **Phase J-Goal SPM+SGA 完成**：Gate 1 PASSED (0 BLOCK/8 WARN) + Gate 2 PASSED (1 BLOCK fixed/5 WARN)。TDD v1.0 含 4 ADR。架构文档同步更新（pipeline/gamestate/schema/dependencies） |
+| 2026-04-01 | **Phase I-alpha SPM+SGA 完成**：Gate 1 CONDITIONAL PASS (1 BLOCK fixed/4 WARN) + Gate 2 CONDITIONAL PASS (0 BLOCK/5 WARN)。TDD v1.2（**关联性审计修复：4 项遗漏，修改文件 8→11**）。FB-018 性别系统缺失登记。**FB-019 P0 流程缺陷**：SGA 关联性审计不完整，需流程层面修复 |
+| 2026-04-01 | **Phase I-alpha SGE 完成**：Gate 3 CONDITIONAL PASS (0 BLOCK/2 WARN)。5 新+13 改文件。6 因果规则+3 高级标签。Handler 14→15（+causal-tick 612:0）。验证 30/30 + regression 64/64 + Monte Carlo avg 4.0/30min。GameState v6 不变 |

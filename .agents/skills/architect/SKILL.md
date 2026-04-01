@@ -86,6 +86,78 @@ trigger: >
 
 ---
 
+## Step 5：关联性影响审计（硬约束，FB-019 教训）
+
+> **背景**：Phase I-alpha Gate 2 中 TDD v1.0 遗漏 4 项关联变更（修改文件 8→11），
+> 由用户人工审查发现。根因：缺少强制性的代码引用追踪步骤。
+> 此步骤在 Step 4 完成后、Party Review 之前**必须执行**。
+
+### 5.1 类型扩展引用追踪
+
+当 TDD 新增联合类型成员（如 `SoulEventType`）或扩展 `interface` 时：
+
+1. **Grep 全量类型引用**：对每个被扩展的类型 T，执行 `grep "Record<T"` + `grep ": T[]"` + `grep ": T ="` 搜索全部 `src/` 和 `server/`
+2. **逐个判定**：每个引用点是 `Record<T, ...>`（全量）还是 `Partial<Record<T, ...>>`：
+   - **全量 Record**：新增成员后若不补条目 → **tsc 编译错误** → 必须列入修改文件
+   - **Partial Record**：不补也不报错，但应评估是否需要补
+3. **产出**：类型引用追踪表（追加到 TDD 文件变更汇总前）
+
+```markdown
+### 类型扩展引用追踪
+
+| 扩展类型 | 引用文件 | 引用形式 | 是否全量 | 需修改 |
+|---------|---------|---------|:-------:|:-----:|
+| SoulEventType | emotion-pool.ts L23 | Record<SoulEventType, ...> | ✅ 全量 | ✅ |
+| SoulEventType | emotion-pool.ts L189 | Record<SoulEventType, string> | ✅ 全量 | ✅ |
+| SoulEventType | soul-prompt-builder.ts L248 | Record<SoulEventType, string> | ✅ 全量 | ✅ |
+```
+
+### 5.2 函数签名变更影响面扫描
+
+当 TDD 修改现有函数签名（新增/删除/改类型参数）时：
+
+1. **Grep 所有调用处**：对每个签名变更的函数 F，执行 `grep "F("` 搜索全部 `src/` 和 `scripts/`
+2. **逐个判定**：每个调用处是否需要适配新签名
+3. **特别注意**：
+   - 可选参数 `?` 新增：现有调用不报错但可能需要传值才能激活新功能
+   - 必选参数新增：所有调用处必须修改
+   - 参数类型变更：检查传入值是否兼容
+4. **产出**：签名变更影响表
+
+```markdown
+### 函数签名变更影响
+
+| 函数 | 变更 | 调用处 | 需适配 |
+|------|------|--------|:-----:|
+| updateRelationshipTags | +RM? 可选参数 | soul-engine.ts L383 | ✅ 需传 RM |
+| updateRelationshipTags | +RM? 可选参数 | ai-result-apply.handler.ts L59 | ✅ 需传 RM |
+| updateRelationshipTags | +RM? 可选参数 | verify-phaseE.ts L165 | ⚠️ 测试脚本，传 undefined 可接受 |
+```
+
+### 5.3 PRD 副效果→TDD 执行位置映射
+
+当 PRD 描述了"副效果"（如资源扣除、状态赋予）时：
+
+1. 逐条列出 PRD 中所有副效果描述
+2. 确认 TDD 中每条副效果有**明确的执行位置**（哪个文件、哪个函数、哪个阶段）
+3. 无执行位置的副效果 → 必须补充
+
+### 5.4 Handler 联动检查
+
+当新系统依赖其他 Handler 产出的数据（如"最近突破记录"）时：
+
+1. 确认数据源 Handler 是否需要修改（追加 record/notify 调用）
+2. 确认 Pipeline 时序是否满足（数据写入阶段 < 数据消费阶段）
+3. 将联动修改的 Handler 列入修改文件清单
+
+### 5.5 产出与校验
+
+完成 5.1-5.4 后，**重新核对 TDD 文件变更汇总表**：
+- 新发现的文件必须加入修改清单
+- 比对前后文件数量差异（如有变化须在 TDD 变更日志中注明）
+
+---
+
 ## Party Review Gate
 
 ### 角色配置
@@ -159,6 +231,7 @@ PRD: ${paths.features_dir}/[name]-PRD.md
 - [ ] 迁移策略完整（迁移函数已规划）
 - [ ] Pipeline 挂载方案确认
 - [ ] 依赖矩阵已更新
+- [ ] **Step 5 关联性审计已执行**（类型引用追踪 + 签名影响面 + 副效果映射 + Handler 联动）
 - [ ] Party Review 无 BLOCK 项（或 USER 已确认接受风险）
 - [ ] 技术债务已登记（Review WARN 项 → `${paths.tech_debt}`）
 

@@ -1,37 +1,62 @@
 # 7game-lite — 会话交接文档
 
-> **上次更新**：2026-04-01 | **上次会话主题**：Phase J-Goal SGE — 编码实施 + Gate 3 签章
-> **当前活跃 Phase**：Phase J-Goal（个人目标系统）— 全部完成
-> **Phase 状态**：J-Goal: SPM ✅ (Gate 1) SGA ✅ (Gate 2) SGE ✅ (Gate 3)
+> **上次更新**：2026-04-01 | **上次会话主题**：Phase I-alpha SGE — 因果引擎编码实施 + Gate 3 CONDITIONAL PASS
+> **当前活跃 Phase**：Phase I-alpha 完成，待启动 I-beta
+> **Phase 状态**：I-alpha: SPM ✅ (Gate 1) SGA ✅ (Gate 2) SGE ✅ (Gate 3 CONDITIONAL PASS)
 
 ---
 
 ## 当前断点
 
-- **Phase J-Goal 全部完成** — 三阶段门禁全通过
-  - Gate 1 (SPM): PASSED — 0 BLOCK / 8 WARN → 已修复
-  - Gate 2 (SGA): PASSED — 1 BLOCK fixed / 5 WARN
-  - Gate 3 (SGE): PASSED — 0 BLOCK / 3 WARN (WARN-3 + doc gap 已修复, WARN-7/12 推迟)
-  - **审查报告**：`docs/pipeline/phaseJ-goal/review-g{1,2,3}.md`
+- **Phase I-alpha SGE 完成** — Gate 3 CONDITIONAL PASS (0 BLOCK / 2 WARN)
+  - Gate 1 (SPM): CONDITIONAL PASS — 1 BLOCK fixed / 4 WARN
+  - Gate 2 (SGA): CONDITIONAL PASS — 0 BLOCK / 5 WARN
+  - Gate 3 (SGE): CONDITIONAL PASS — 0 BLOCK / 2 WARN
+  - **审查报告**：`docs/pipeline/phaseI-alpha/review-g{1,2,3}.md`
+  - **过程资产**：`docs/pipeline/phaseI-alpha/{spm-analysis,task,walkthrough}.md`
 
-### J-Goal SGE 交付成果
+### I-alpha SGE 交付成果
+
+- **5 新文件 + 13 修改文件**
+- **6 条因果规则** (C1-C6): 挑衅/赠礼/窃取/嫉妒/闭关/道风冲突
+- **3 种高级标签**: mentor (修炼×1.2) / grudge (冲突 75%) / admirer (正面情绪+0.2)
+- **Handler 14→15**：+causal-tick (TickPhase 612:0)
+- **GameState v6 不变**，零迁移，运行时 Map 不持久化
+- **验证**: tsc 0 / lint 0 / regression 64/64 / 专项 30/30 / Monte Carlo avg 4.0 events/30min
+
+### Gate 3 WARN (tech debt)
+
+1. `causal-evaluator.ts` L319 `state as LiteGameState` 绕过 Readonly (C5 GoalManager)
+2. `soul-event.handler.ts` L94 `spiritStones - 20` 硬编码
+
+### 下一步（新 session 接手）
+
+1. **Phase I-beta**：道风转折 + 宗门冲突 + 社交事件（扩展因果规则 C7-C10）
+2. **Phase I-gamma**：T2 幕后 NPC（30-50 个 NPC + 行为循环）
+
+### Phase I-alpha 关键文档
+
+| 文档 | 路径 | 状态 |
+|------|------|:----:|
+| Phase I-alpha PRD | `docs/features/phaseI-alpha-PRD.md` | ✅ v1.1 |
+| Phase I-alpha TDD | `docs/design/specs/phaseI-alpha-TDD.md` | ✅ v1.2 |
+| Phase I-alpha User Stories | `docs/design/specs/phaseI-alpha-user-stories.md` | ✅ v1.0 |
+| Phase I-alpha SPM 分析 | `docs/pipeline/phaseI-alpha/spm-analysis.md` | ✅ |
+| Phase I-alpha Gate 1 Review | `docs/pipeline/phaseI-alpha/review-g1.md` | ✅ |
+| Phase I-alpha Gate 2 Review | `docs/pipeline/phaseI-alpha/review-g2.md` | ✅ |
+| Phase I-alpha Gate 3 Review | `docs/pipeline/phaseI-alpha/review-g3.md` | ✅ |
+| Phase I-alpha Task | `docs/pipeline/phaseI-alpha/task.md` | ✅ |
+| Phase I-alpha Walkthrough | `docs/pipeline/phaseI-alpha/walkthrough.md` | ✅ |
+| Phase I-alpha 专项测试 | `scripts/verify-phaseI-alpha-causal.ts` | ✅ |
+
+### J-Goal 已完成（上一会话）
 
 - **3 新文件** + **11 修改文件** + **1 验证脚本**
 - **GameState v5→v6**：`goals: PersonalGoal[]` 空数组
 - **Pipeline**: 14 handlers（+goal-tick 500:20）
 - **行为权重**: 4 层→5 层（+Layer 5 目标乘数）
 - **事件驱动触发**: 3 个触发器（breakthrough/revenge/friendship）+ 3 个守卫
-- **Prompt 注入**: `buildGoalPromptSegment()` → `buildSoulEvalPrompt()` → `soul-evaluator.ts`
 - **验证**: 66/66 专项 + 64/64 回归 + tsc 0 errors
-
-### 下一步（新 session 接手）
-
-1. **可选方向**：
-   - Phase I：深度世界（T2 NPC·因果·堕落/救赎）
-   - Phase H5：执法堂（deferred from H）
-   - Narrative PoC（IJ-11）：验证 AI 预生成 narrative snippet 可行性
-2. **可选优化**：RelationshipMemory 持久化（当前为运行时 Map，不写存档）
-3. **技术债**：WARN-7（迁移测试弱）、WARN-12（Layer 5 计算重复）
 
 ### Phase IJ 关键文档
 
@@ -284,6 +309,7 @@
 
 | 风险 | 严重度 | 说明 |
 |------|:------:|------|
+| ~~SGA 关联性审计流程缺陷~~ | ~~高~~ | ~~FB-019 P0~~ ✅ 已清偿 — SGA SKILL.md +Step 5 关联性影响审计 |
 | 关系数值参数未经模拟验证 | 中 | TD-012，需 Monte Carlo 模拟 |
 | 17 条技术债务活跃 | 低 | 见 tech-debt.md（TD-020/021 新增于 H-γ） |
 | 经济系统三件套暂缓 | 低 | 天劫/悬赏/丹毒已注册为 FB-013~015，不影响灵魂/世界验证 |

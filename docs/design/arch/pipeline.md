@@ -22,11 +22,13 @@ graph LR
         P600["600 DISCIPLE_AI"]
         P605["605 WORLD_EVENT<br>(Phase F0-β)"]
         P610["610 ENCOUNTER<br>(Phase F0-α)"]
+        P612["612 CAUSAL_EVAL<br>(Phase I-α)"]
         P625["625 SOUL_EVAL<br>(Phase E)"]
         P650["650 DIALOGUE<br>(Phase D)"]
         P700["700 POST_PRODUCTION"]
     end
-    P100 --> P200 --> P300 --> P500 --> P600 --> P605 --> P610 --> P625 --> P650 --> P700
+    P100 --> P200 --> P300 --> P500 --> P600 --> P605 --> P610 --> P612 --> P625 --> P650 --> P700
+    style P612 fill:#f3e5f5
     style P400 fill:#f5f5f5,stroke-dasharray: 5 5
     style P605 fill:#fce4ec
     style P610 fill:#e3f2fd
@@ -46,6 +48,7 @@ export const TickPhase = {
   DISCIPLE_AI:      600,
   WORLD_EVENT:      605,  // Phase F0-β: 世界事件抽取
   ENCOUNTER:        610,  // Phase F0-α: 碰面检定 (ADR-F0α-01)
+  CAUSAL_EVAL:      612,  // Phase I-alpha: 因果规则扫描
   SOUL_EVAL:        625,  // Phase E: 灵魂事件评估
   DIALOGUE:         650,  // Phase D: 弟子间对话触发
   POST_PRODUCTION:  700,
@@ -72,6 +75,7 @@ export const TickPhase = {
 | 12 | `world-event-tick` | 605 | 0 | `handlers/world-event-tick.handler.ts` | storyteller | Phase F0-β |
 | 13 | `ai-result-apply` | 625 | 5 | `handlers/ai-result-apply.handler.ts` | async-ai-buffer + soul-engine | Phase G |
 | 14 | `goal-tick` | 500 | 20 | `handlers/goal-tick.handler.ts` | goal-manager (TTL/完成/扫描) | Phase J-Goal |
+| 15 | `causal-tick` | 612 | 0 | `handlers/causal-tick.handler.ts` | causal-evaluator (因果规则扫描) | Phase I-alpha |
 
 ### Handler 拆分判定标准
 
@@ -125,6 +129,7 @@ export interface TickContext {
   relationshipMemoryManager?: RelationshipMemoryManager; // Phase IJ: 关系记忆管理器（双写）
   narrativeSnippetBuilder?: NarrativeSnippetBuilder;     // Phase IJ: 叙事片段构建器
   goalManager?: GoalManager;                             // Phase J-Goal: 目标管理器
+  causalEvaluator?: CausalRuleEvaluator;                 // Phase I-alpha: 因果规则评估器
 }
 ```
 
@@ -149,3 +154,4 @@ export interface TickContext {
 | 2026-03-31 | Phase H-γ: TickContext +pendingStormEvent; 裁决系统文档对齐 |
 | 2026-04-01 | Phase IJ v3.0: TickContext +relationshipMemoryManager +narrativeSnippetBuilder; encounter-tick/soul-event handler 双写关系记忆 |
 | 2026-04-01 | Phase J-Goal: +goal-tick(500:20) Handler; TickContext +goalManager; Handler 13→14 |
+| 2026-04-01 | Phase I-alpha: +CAUSAL_EVAL=612 阶段; +causal-tick(612:0) Handler; TickContext +causalEvaluator; Handler 14→15 |
