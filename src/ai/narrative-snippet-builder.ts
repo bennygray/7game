@@ -10,6 +10,27 @@ import type { RelationshipMemory } from '../shared/types/relationship-memory';
 import { NARRATIVE_SNIPPET_MAX_CHARS } from '../shared/types/relationship-memory';
 import type { RelationshipTag } from '../shared/types/soul';
 
+// ===== AI 预生成配置（IJ-11 PoC） =====
+
+const AI_SERVER_URL = 'http://localhost:3001';
+/** PRD A-6: P95 ≤ 2000ms */
+const AI_SNIPPET_TIMEOUT_MS = 2000;
+/** 中文 ≤80 字符 ≈ 50-80 tokens，留余量 */
+const AI_SNIPPET_MAX_TOKENS = 100;
+
+/** IJ-11: AI 叙事片段的结构化输出 Schema */
+const AI_SNIPPET_SCHEMA = {
+  type: 'object',
+  properties: {
+    snippet: {
+      type: 'string',
+      maxLength: 80,
+      description: '两个角色之间的关系叙事归纳（≤80字，古典仙侠文风，第三人称）',
+    },
+  },
+  required: ['snippet'],
+};
+
 // ===== 数据表 =====
 
 /** PRD R-M09 步骤 1: 框架短语表（按 affinity 区间） */
@@ -109,17 +130,111 @@ export class NarrativeSnippetBuilder {
   }
 
   /**
-   * AI 预生成接口（层级 1，PoC 阶段）
-   * IJ-11: 异步调用 AI 生成叙事摘要
-   * @returns null 表示 AI 不可用，fallback 到规则拼接
+   * AI 预生成接口（层级 1，IJ-11 PoC）
+   * 调用 ai-server /api/infer 结构化补全生成叙事摘要
+   *
+   * 调用路径: buildByAI() → fetch /api/infer → llama-server → Qwen3.5-2B
+   * 超时: 2000ms（PRD A-6）
+   * 降级: 返回 null，由 getSnippet() fallback 到规则拼接
+   *
+   * @returns 叙事片段字符串，或 null（不可用/超时/解析失败）
    */
-  buildByAI(
-    _sourceName: string,
-    _targetName: string,
-    _memory: RelationshipMemory
+  async buildByAI(
+    sourceName: string,
+    targetName: string,
+    memory: RelationshipMemory
   ): Promise<string | null> {
-    // PoC 阶段：接口预留，始终返回 null
-    return Promise.resolve(null);
+    // 1. 构造输入数据
+    const sorted = [...memory.keyEvents].sort(
+      (a, b) => Math.abs(b.affinityDelta) - Math.abs(a.affinityDelta)
+    );
+    const top3 = sorted.slice(0, 3);
+
+    const eventsDesc = top3.length > 0
+      ? top3.map(e => `- ${e.content}（好感${e.affinityDelta > 0 ? '+' : ''}${e.affinityDelta}）`).join('\n')
+      : '（暂无关键事件）';
+
+    const tagsDesc = memory.tags.length > 0 ? memory.tags.join('、') : '无';
+
+    // 2. 构造 prompt（v2: 修复加戏/省名/极性偏移）
+    const polarityHint = memory.affinity >= 30 ? '正面（友善、信任）'
+      : memory.affinity <= -30 ? '负面（敌意、不信任）'
+      : '中性（淡漠、无特殊关系）';
+
+    const systemMsg = '你是修仙世界叙事器。根据两个角色的关系数据，用一句话概括他们的关系本质。\n' +
+      '硬性要求：\n' +
+      '1. ≤80字，古典仙侠文风，第三人称\n' +
+      '2. 必须包含角色A和角色B的完整姓名\n' +
+      '3. 严格遵循好感度极性——正面关系只写正面，负面关系只写负面，不得反转\n' +
+      '4. 只引用关键事件中已有的内容，不得虚构事件\n' +
+      '5. 只输出JSON';
+
+    const userMsg = `角色A: ${sourceName}\n` +
+      `角色B: ${targetName}\n` +
+      `好感度: ${memory.affinity}（极性: ${polarityHint}）\n` +
+      `关系标签: ${tagsDesc}\n` +
+      `关键事件:\n${eventsDesc}\n\n` +
+      `请输出一句叙事归纳。`;
+
+    // 3. 调用 ai-server
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), AI_SNIPPET_TIMEOUT_MS);
+
+      const res = await fetch(`${AI_SERVER_URL}/api/infer`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [
+            { role: 'system', content: systemMsg },
+            { role: 'user', content: userMsg },
+          ],
+          max_tokens: AI_SNIPPET_MAX_TOKENS,
+          temperature: 0.5,       // v2: 降低创造性，提高可控性
+          top_p: 0.9,
+          timeout_ms: AI_SNIPPET_TIMEOUT_MS,
+          response_format: {
+            type: 'json_schema',
+            json_schema: {
+              name: 'narrative_snippet',
+              strict: true,
+              schema: AI_SNIPPET_SCHEMA,
+            },
+          },
+        }),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timer);
+
+      if (!res.ok) return null;
+
+      const data = await res.json() as { content?: string; parsed?: { snippet?: string } };
+
+      // 4. 解析结果
+      let snippet: string | null = null;
+
+      if (data.parsed?.snippet) {
+        snippet = data.parsed.snippet;
+      } else if (data.content) {
+        try {
+          const obj = JSON.parse(data.content) as { snippet?: string };
+          snippet = obj.snippet ?? null;
+        } catch {
+          return null;
+        }
+      }
+
+      // 5. 截断保护
+      if (snippet && snippet.length > NARRATIVE_SNIPPET_MAX_CHARS) {
+        snippet = snippet.substring(0, NARRATIVE_SNIPPET_MAX_CHARS - 1) + '…';
+      }
+
+      return snippet || null;
+    } catch {
+      // 超时/网络错误 → 返回 null，降级到规则拼接
+      return null;
+    }
   }
 
   /**
@@ -148,17 +263,29 @@ export class NarrativeSnippetBuilder {
   }
 
   /**
-   * 触发 AI 预生成（异步，不阻塞）
-   * 在 keyEvent 记录后调用
-   * PoC 阶段为空实现
+   * 触发 AI 预生成（异步，不阻塞调用方）
+   * IJ-11 PoC: 在 keyEvent 记录后调用
+   *
+   * 效果：成功时将 snippet 写入 memory.narrativeSnippet 缓存
+   * 失败时：静默失败，下次 getSnippet() 走规则拼接
    */
   triggerAIPregenerate(
-    _sourceName: string,
-    _targetName: string,
-    _memory: RelationshipMemory
+    sourceName: string,
+    targetName: string,
+    memory: RelationshipMemory,
+    onSuccess?: (snippet: string) => void,
   ): void {
-    // PoC 阶段：空实现
-    // 未来通过 AsyncAIBuffer 提交异步任务
+    // 异步调用，不 await（不阻塞 tick pipeline）
+    this.buildByAI(sourceName, targetName, memory)
+      .then(snippet => {
+        if (snippet) {
+          memory.narrativeSnippet = snippet;
+          onSuccess?.(snippet);
+        }
+      })
+      .catch(() => {
+        // 静默失败 — 规则拼接作为 fallback
+      });
   }
 
   // ===== 内部方法 =====
