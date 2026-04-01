@@ -37,6 +37,7 @@
 | **handlers/ai-result-apply** | R/W | — | — | — | — | — | — | — |
 | **action-executor** | — | — | — | — | — | — | — | — |
 | **relationship-memory-manager** | — | — | — | — | — | — | — | — |
+| **narrative-snippet-builder** (AI) | — | — | — | — | — | — | — | — |
 
 ---
 
@@ -64,6 +65,7 @@
 | **handlers/soul-event** (G扩展) | — | R | — | — | — | — | — |
 | **action-executor** | — | — | — | — | — | — | — |
 | **relationship-memory-manager** | — | — | — | — | — | — | — |
+| **narrative-snippet-builder** (AI) | — | — | — | — | — | — | — |
 
 ---
 

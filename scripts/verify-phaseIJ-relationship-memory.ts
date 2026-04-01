@@ -80,7 +80,6 @@ console.log('\n--- 2. recordEvent + 矛盾覆盖 ---');
   // 2.1 低于阈值不记录
   mgr.recordEvent('a', 'b', {
     tick: 10,
-    eventType: 'alchemy-success',
     content: '炼丹成功',
     affinityDelta: EVENT_THRESHOLD - 1,
   });
@@ -89,7 +88,6 @@ console.log('\n--- 2. recordEvent + 矛盾覆盖 ---');
   // 2.2 达到阈值记录
   const ev1: KeyRelationshipEvent = {
     tick: 10,
-    eventType: 'alchemy-success',
     content: '炼丹成功令人羡慕',
     affinityDelta: EVENT_THRESHOLD,
   };
@@ -99,7 +97,6 @@ console.log('\n--- 2. recordEvent + 矛盾覆盖 ---');
   // 2.3 矛盾覆盖：同类事件（前4字符相同）在 CONTRADICTION_TICK_WINDOW 内替换
   const ev2: KeyRelationshipEvent = {
     tick: 10 + CONTRADICTION_TICK_WINDOW, // 刚好在窗口内
-    eventType: 'alchemy-fail',
     content: '炼丹成功却品质低劣', // 前4字符 "炼丹成功" 与 ev1 相同
     affinityDelta: -EVENT_THRESHOLD,
   };
@@ -111,7 +108,6 @@ console.log('\n--- 2. recordEvent + 矛盾覆盖 ---');
   // 2.4 不同类事件（前4字符不同）不覆盖
   const ev3: KeyRelationshipEvent = {
     tick: 15,
-    eventType: 'breakthrough-success',
     content: '突破成功很振奋呀',
     affinityDelta: EVENT_THRESHOLD + 2,
   };
@@ -128,7 +124,6 @@ console.log('\n--- 3. 软上限淘汰 ---');
   for (let i = 0; i <= KEY_EVENTS_SOFT_LIMIT; i++) {
     mgr.recordEvent('a', 'b', {
       tick: i * 100, // 间隔足够大，不触发矛盾覆盖
-      eventType: `event-${i}` as KeyRelationshipEvent['eventType'],
       content: `事件${String(i).padStart(4, '0')}独特描述`, // 保证前4字符不同
       affinityDelta: EVENT_THRESHOLD + i, // 递增，最后一个 delta 最大
     });
@@ -156,7 +151,7 @@ console.log('\n--- 4. NarrativeSnippetBuilder ---');
   // 4.1 规则拼接 — 高好感 + friend tag
   mgr.syncFromEdge({ sourceId: 'a', targetId: 'b', affinity: 70, tags: ['friend'] });
   mgr.recordEvent('a', 'b', {
-    tick: 100, eventType: 'breakthrough-success',
+    tick: 100,
     content: '突破成功时互相鼓励', affinityDelta: 8,
   });
   const mem4_1 = mgr.getMemory('a', 'b')!;
@@ -169,7 +164,7 @@ console.log('\n--- 4. NarrativeSnippetBuilder ---');
   const mgr2 = new RelationshipMemoryManager();
   mgr2.syncFromEdge({ sourceId: 'x', targetId: 'y', affinity: -50, tags: ['rival'] });
   mgr2.recordEvent('x', 'y', {
-    tick: 50, eventType: 'encounter-conflict',
+    tick: 50,
     content: '碰面冲突争吵不休', affinityDelta: -7,
   });
   const mem4_2 = mgr2.getMemory('x', 'y')!;
@@ -199,11 +194,11 @@ console.log('\n--- 5. buildRelationshipSummary L0/L2/L6 ---');
   const mgr = new RelationshipMemoryManager();
   mgr.syncFromEdge({ sourceId: 'a', targetId: 'b', affinity: 35, tags: ['friend'] });
   mgr.recordEvent('a', 'b', {
-    tick: 100, eventType: 'breakthrough-success',
+    tick: 100,
     content: '突破成功振奋人心', affinityDelta: 8,
   });
   mgr.recordEvent('a', 'b', {
-    tick: 300, eventType: 'encounter-discuss',
+    tick: 300,
     content: '交流心得颇有共鸣', affinityDelta: 5,
   });
   mgr.updateNarrativeSnippet('a', 'b', '与李青交情匪浅');
