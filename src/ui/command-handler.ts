@@ -52,6 +52,7 @@ const COMMAND_ALIASES: Record<string, string> = {
   s: 'status',
   j: 'judge',
   h: 'help',
+  rel: 'relationships',
 };
 
 // ===== 命令历史（PRD §2.6）=====
@@ -64,7 +65,7 @@ let historyIndex = -1;
 
 /** 可补全的命令名列表（按字母序） */
 const COMPLETABLE_COMMANDS = [
-  'ai', 'bt', 'clear', 'help', 'inspect', 'judge', 'look', 'reset', 'sect', 'status',
+  'ai', 'bt', 'clear', 'help', 'inspect', 'judge', 'look', 'relationships', 'reset', 'sect', 'status',
 ];
 
 interface TabCompletionState {
@@ -296,6 +297,7 @@ function handleCommand(cmd: string, ctx: CommandContext): void {
       addMainLog('  bt              — 尝试突破');
       addMainLog('  clear           — 清空日志');
       addMainLog('  reset           — 清除存档（重新开始）');
+      addMainLog('  relationships / rel &lt;弟子名&gt; — 查看弟子关系记忆（debug）');
       addMainLog('  ai              — 连接 AI 后端');
       addMainLog('  help / h        — 显示帮助');
       addMainLog(`<span class="mud-text-mute">  提示：Tab 补全命令/弟子名 | ↑/↓ 翻阅历史</span>`);
@@ -363,6 +365,46 @@ function handleCommand(cmd: string, ctx: CommandContext): void {
       ctx.onReset();
       ctx.clearSave();
       setTimeout(() => window.location.reload(), 300);
+      break;
+    }
+
+    case 'relationships':
+    case 'rel': {
+      if (!arg) {
+        addMainLog(`<span class="mud-text-mute">[系统] 用法：relationships <弟子名></span>`);
+        break;
+      }
+      const result = matchDisciple(arg, state.disciples);
+      if (result.type === 'none') {
+        addMainLog(`<span class="mud-text-mute">[系统] 未找到名为「${escapeHtml(arg)}」的弟子。</span>`);
+        break;
+      }
+      if (result.type === 'multiple') {
+        addMainLog(`<span class="mud-text-cyan">[系统] 找到多位弟子：${result.candidates.map(c => escapeHtml(c.name)).join('、')}... 请输入更完整的名字。</span>`);
+        break;
+      }
+      {
+        const d = result.disciple;
+        const mgr = engine.getRelationshipMemoryManager();
+        const lines: string[] = [`<span class="mud-text-cyan">[关系记忆] ${escapeHtml(d.name)}</span>`];
+        let hasAny = false;
+        for (const other of state.disciples) {
+          if (other.id === d.id) continue;
+          const mem = mgr.getMemory(d.id, other.id);
+          if (!mem) continue;
+          hasAny = true;
+          const tagsStr = mem.tags.length > 0 ? ` [${mem.tags.join('/')}]` : '';
+          const snippet = mem.narrativeSnippet ? ` 「${mem.narrativeSnippet}」` : '';
+          lines.push(`  → ${escapeHtml(other.name)}: 好感${mem.affinity}${tagsStr} | 碰面${mem.encounterCount} 对话${mem.dialogueCount}${snippet}`);
+          for (const ev of mem.keyEvents) {
+            lines.push(`    · ${escapeHtml(ev.content)} (${ev.affinityDelta > 0 ? '+' : ''}${ev.affinityDelta}, tick${ev.tick})`);
+          }
+        }
+        if (!hasAny) {
+          lines.push(`  <span class="mud-text-mute">（暂无关系记忆数据）</span>`);
+        }
+        for (const line of lines) addMainLog(line);
+      }
       break;
     }
 

@@ -28,6 +28,9 @@ import type {
 } from '../shared/types/soul';
 import { RELATIONSHIP_TAG_THRESHOLDS, EMOTION_LABEL } from '../shared/types/soul';
 import type { SoulEvent } from './event-bus';
+import type { RelationshipMemoryManager } from './relationship-memory-manager';
+import type { NarrativeSnippetBuilder } from '../ai/narrative-snippet-builder';
+import { EVENT_THRESHOLD } from '../shared/types/relationship-memory';
 import {
   buildCandidatePool,
   correctDeltaDirection,
@@ -347,6 +350,8 @@ export function processSoulEvent(
   logger: GameLogger,
   onSoulLog?: (msg: string) => void,
   emotionMap?: Map<string, DiscipleEmotionState>,
+  relationshipMemoryManager?: RelationshipMemoryManager,
+  narrativeSnippetBuilder?: NarrativeSnippetBuilder,
 ): void {
   const actor = state.disciples.find(d => d.id === event.actorId);
   if (!actor) return;
@@ -372,6 +377,39 @@ export function processSoulEvent(
     // 写入 GameState
     applyEvaluationResult(state, disciple, result, role);
     updateRelationshipTags(state, disciple.id);
+
+    // Phase IJ 双写：记录关键事件到关系记忆 + 同步 edge + 触发 snippet rebuild
+    if (relationshipMemoryManager) {
+      for (const rd of result.relationshipDeltas) {
+        if (Math.abs(rd.delta) >= EVENT_THRESHOLD) {
+          relationshipMemoryManager.recordEvent(disciple.id, rd.targetId, {
+            content: rd.reason.substring(0, 30),
+            tick: Math.floor(state.inGameWorldTime),
+            affinityDelta: rd.delta,
+          });
+          // 触发 narrative snippet 重建
+          if (narrativeSnippetBuilder) {
+            const targetDisc = state.disciples.find(d => d.id === rd.targetId);
+            if (targetDisc) {
+              const mem = relationshipMemoryManager.getMemory(disciple.id, rd.targetId);
+              if (mem) {
+                narrativeSnippetBuilder.triggerAIPregenerate(disciple.name, targetDisc.name, mem);
+                // 同步更新规则拼接 snippet 缓存
+                const snippet = narrativeSnippetBuilder.buildByRules(disciple.name, targetDisc.name, mem);
+                relationshipMemoryManager.updateNarrativeSnippet(disciple.id, rd.targetId, snippet);
+              }
+            }
+          }
+        }
+        // 同步 edge 到关系记忆
+        const edge = state.relationships.find(
+          e => e.sourceId === disciple.id && e.targetId === rd.targetId
+        );
+        if (edge) {
+          relationshipMemoryManager.syncFromEdge(edge);
+        }
+      }
+    }
 
     // 记录行为计数（用于后天特性触发）
     if (role === 'self') {

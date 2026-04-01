@@ -21,6 +21,7 @@ import type {
 import { EMOTION_LABEL } from '../shared/types/soul';
 import type { SoulEvent } from '../engine/event-bus';
 import { getTraitDef } from '../shared/data/trait-registry';
+import type { ContextLevel } from '../shared/types/relationship-memory';
 
 // ===== JSON Schema for AI 响应 =====
 
@@ -207,6 +208,29 @@ export function buildSoulEvalPrompt(input: SoulPromptInput): string {
 请用JSON格式输出你的内心反应。innerThought写你此刻的内心独白（20-30字，第一人称）。`;
 
   return prompt;
+}
+
+// ===== Phase IJ v3.0: L2/L6 动态切换 =====
+
+/**
+ * 根据事件等级选择 context level（PRD R-M08）
+ * Lv.0-1 → L2, Lv.2+ → L6
+ */
+export function getContextLevel(eventSeverity: number): ContextLevel {
+  if (eventSeverity >= 2) return 'L6';
+  return 'L2';
+}
+
+/**
+ * 构建关系摘要注入段（L2/L6 双级）
+ * 插入在身份段落之后、事件描述之前
+ */
+export function buildRelationshipPromptSegment(
+  summary: string | null,
+  _contextLevel: ContextLevel
+): string {
+  if (!summary) return '';
+  return `\n${summary}\n`;
 }
 
 function getEventDescription(

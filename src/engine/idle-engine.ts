@@ -69,6 +69,8 @@ import { worldEventTickHandler } from './handlers/world-event-tick.handler';
 import { aiResultApplyHandler } from './handlers/ai-result-apply.handler';
 import { AsyncAIBuffer } from './async-ai-buffer';
 import { createDefaultAISoulContext, addShortTermMemory } from '../shared/types/ai-soul';
+import { RelationshipMemoryManager } from './relationship-memory-manager';
+import { NarrativeSnippetBuilder } from '../ai/narrative-snippet-builder';
 
 /** Tick 回调：引擎每次 tick 后通知上层 */
 export type TickCallback = (state: LiteGameState, deltaS: number) => void;
@@ -133,6 +135,12 @@ export class IdleEngine {
   /** Phase G: 异步 AI 缓冲区 */
   private asyncAIBuffer = new AsyncAIBuffer();
 
+  /** Phase IJ: 关系记忆管理器（运行时，不持久化） */
+  private relationshipMemoryManager = new RelationshipMemoryManager();
+
+  /** Phase IJ v3.0: 叙事片段构建器 */
+  private narrativeSnippetBuilder = new NarrativeSnippetBuilder();
+
   /** Tick 间隔（毫秒） */
   static readonly TICK_INTERVAL_MS = 1000;
 
@@ -146,6 +154,8 @@ export class IdleEngine {
 
     // Phase D: 初始化对话协调器
     this.dialogueCoordinator = new DialogueCoordinator(llmAdapter ?? null, logger);
+    // Phase IJ: 注入关系记忆管理器
+    this.dialogueCoordinator.setRelationshipMemoryManager(this.relationshipMemoryManager);
 
     // 初始化 Pipeline 并注册所有 Handler（13 个）
     this.pipeline = new TickPipeline();
@@ -298,6 +308,8 @@ export class IdleEngine {
       eventBus: new EventBus(),   // Phase E: 每 tick 创建新实例，生命周期与 tick 绑定
       emotionMap: this.emotionMap, // Phase F: 弟子情绪运行时状态 (ADR-F-01)
       asyncAIBuffer: this.asyncAIBuffer, // Phase G: 异步 AI 缓冲区
+      relationshipMemoryManager: this.relationshipMemoryManager, // Phase IJ: 关系记忆
+      narrativeSnippetBuilder: this.narrativeSnippetBuilder, // Phase IJ v3.0: 叙事片段
     };
 
     // 执行 Pipeline（13 个 Handler 按 phase+order 顺序执行）
@@ -390,6 +402,11 @@ export class IdleEngine {
     const ctx = this.getOrCreateAIContext(discipleId);
     addShortTermMemory(ctx, memory);
     ctx.lastInferenceTime = Date.now();
+  }
+
+  /** Phase IJ: 获取关系记忆管理器引用（debug 命令用） */
+  getRelationshipMemoryManager(): RelationshipMemoryManager {
+    return this.relationshipMemoryManager;
   }
 
   // ===== Phase H-γ: 裁决管理私有方法 =====

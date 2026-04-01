@@ -22,6 +22,8 @@ import type { EventBus } from './event-bus';
 import type { DiscipleEmotionState } from '../shared/types/soul';
 import type { AsyncAIBuffer } from './async-ai-buffer';
 import type { WorldEventPayload } from '../shared/types/world-event';
+import type { RelationshipMemoryManager } from './relationship-memory-manager';
+import type { NarrativeSnippetBuilder } from '../ai/narrative-snippet-builder';
 
 /** 突破事件回调（定义在 tick-pipeline 以避免循环依赖） */
 export type BreakthroughCallback = (
@@ -102,6 +104,10 @@ export interface TickContext {
   asyncAIBuffer?: AsyncAIBuffer;
   /** Phase H-γ: 本 tick 触发的 STORM 事件载荷（world-event-tick 设置） */
   pendingStormEvent?: WorldEventPayload;
+  /** Phase IJ PoC: 关系记忆管理器（运行时，不持久化） */
+  relationshipMemoryManager?: RelationshipMemoryManager;
+  /** Phase IJ v3.0: 叙事片段构建器 */
+  narrativeSnippetBuilder?: NarrativeSnippetBuilder;
 }
 
 // ===== TickPipeline 类 =====

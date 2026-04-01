@@ -82,7 +82,7 @@ export const soulEventHandler: TickHandler = {
     for (const event of toProcess) {
       try {
         // 1. 同步 fallback 评估（始终执行，保证游戏流畅）
-        processSoulEvent(event, ctx.state, ctx.logger, undefined, ctx.emotionMap);
+        processSoulEvent(event, ctx.state, ctx.logger, undefined, ctx.emotionMap, ctx.relationshipMemoryManager, ctx.narrativeSnippetBuilder);
 
         // 2. Phase G: 异步 AI 评估提交（按 severity 路由）
         if (evaluator && evaluator.canCall() && ctx.asyncAIBuffer) {

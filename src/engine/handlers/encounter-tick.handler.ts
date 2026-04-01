@@ -133,6 +133,12 @@ export const encounterTickHandler: TickHandler = {
           // 更新冷却
           cooldownMap.set(key, now);
 
+          // Phase IJ 双写：记录碰面到关系记忆（双向）
+          if (ctx.relationshipMemoryManager) {
+            ctx.relationshipMemoryManager.recordEncounter(a.id, b.id, Math.floor(state.inGameWorldTime));
+            ctx.relationshipMemoryManager.recordEncounter(b.id, a.id, Math.floor(state.inGameWorldTime));
+          }
+
           const eventType = ENCOUNTER_RESULT_TO_EVENT[result as Exclude<EncounterResult, 'none'>];
           const locationLabel = LOCATION_LABEL[location];
 

@@ -16,7 +16,9 @@
 import type { SoulEvaluationResult, EmotionTag, SoulRole } from '../shared/types/soul';
 import type { SoulEvent } from '../engine/event-bus';
 import type { LiteDiscipleState, LiteGameState } from '../shared/types/game-state';
-import { buildSoulEvalPrompt, SOUL_EVAL_JSON_SCHEMA, type SoulPromptInput, type SectContext, describeEthos, describeMoral } from './soul-prompt-builder';
+import { buildSoulEvalPrompt, SOUL_EVAL_JSON_SCHEMA, type SoulPromptInput, type SectContext, describeEthos, describeMoral, getContextLevel, buildRelationshipPromptSegment } from './soul-prompt-builder';
+import type { RelationshipMemoryManager } from '../engine/relationship-memory-manager';
+import type { NarrativeSnippetBuilder } from './narrative-snippet-builder';
 import { buildCandidatePool } from '../shared/data/emotion-pool';
 import { getTraitDef } from '../shared/data/trait-registry';
 import { selectFewShotExamples } from './few-shot-examples';
@@ -101,12 +103,18 @@ export class SoulEvaluator {
    * 用于所有 severity 的 AI 情绪评估。
    * 返回完整的 SoulEvaluationResult。
    */
-  async evaluateEmotion(
-    event: SoulEvent,
-    subject: LiteDiscipleState,
-    role: SoulRole,
-    state: LiteGameState,
-  ): Promise<SoulEvaluationResult> {
+  async evaluateEmotion(params: {
+    event: SoulEvent;
+    subject: LiteDiscipleState;
+    role: SoulRole;
+    state: LiteGameState;
+    relationshipMemoryManager?: RelationshipMemoryManager;
+    narrativeSnippetBuilder?: NarrativeSnippetBuilder;
+    targetDiscipleId?: string;
+    targetDiscipleName?: string;
+    eventSeverity?: number;
+  }): Promise<SoulEvaluationResult> {
+    const { event, subject, role, state, relationshipMemoryManager, narrativeSnippetBuilder, targetDiscipleId, targetDiscipleName, eventSeverity } = params;
     const actor = state.disciples.find(d => d.id === event.actorId);
     const candidates = buildCandidatePool(event.type, role);
     const otherIds = state.disciples
@@ -131,7 +139,34 @@ export class SoulEvaluator {
       sectContext,
     };
 
-    const prompt = buildSoulEvalPrompt(input);
+    let prompt = buildSoulEvalPrompt(input);
+
+    // Phase IJ v3.0: 关系摘要注入
+    if (relationshipMemoryManager && targetDiscipleId && targetDiscipleName && eventSeverity !== undefined) {
+      const contextLevel = getContextLevel(eventSeverity);
+      // L6: 先更新 snippet 缓存，再构建摘要
+      if (contextLevel === 'L6' && narrativeSnippetBuilder) {
+        const mem = relationshipMemoryManager.getMemory(subject.id, targetDiscipleId);
+        if (mem) {
+          const snippet = narrativeSnippetBuilder.getSnippet(subject.name, targetDiscipleName, mem);
+          relationshipMemoryManager.updateNarrativeSnippet(subject.id, targetDiscipleId, snippet);
+        }
+      }
+      const edge = state.relationships.find(
+        e => e.sourceId === subject.id && e.targetId === targetDiscipleId
+      );
+      if (edge) {
+        relationshipMemoryManager.syncFromEdge(edge);
+      }
+      const summary = relationshipMemoryManager.buildRelationshipSummary(
+        subject.id, targetDiscipleId, targetDiscipleName, contextLevel
+      );
+      const segment = buildRelationshipPromptSegment(summary, contextLevel);
+      if (segment) {
+        // 在身份段落之后插入（在"刚才发生了"之前）
+        prompt = prompt.replace('\n刚才发生了', `${segment}\n刚才发生了`);
+      }
+    }
 
     // G3: Few-shot 示例注入（按道德阵营选择）
     const fewShotMessages = selectFewShotExamples(subject.moral?.goodEvil ?? 0);

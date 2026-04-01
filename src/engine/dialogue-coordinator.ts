@@ -30,6 +30,7 @@ import type { LLMAdapter } from '../ai/llm-adapter';
 import type { GameLogger } from '../shared/types/logger';
 import { LogCategory } from '../shared/types/logger';
 import { addShortTermMemory } from '../shared/types/ai-soul';
+import type { RelationshipMemoryManager } from './relationship-memory-manager';
 
 // ===== 配置 =====
 
@@ -64,6 +65,9 @@ export class DialogueCoordinator {
   /** 处理队列锁（防止并发） */
   private processing = false;
 
+  /** Phase IJ: 关系记忆管理器引用（双写用） */
+  private relationshipMemoryManager: RelationshipMemoryManager | null = null;
+
   constructor(
     adapter: LLMAdapter | null,
     logger: GameLogger,
@@ -72,6 +76,11 @@ export class DialogueCoordinator {
     this.adapter = adapter;
     this.logger = logger;
     this.config = { ...DEFAULT_CONFIG, ...config };
+  }
+
+  /** Phase IJ: 注入关系记忆管理器 */
+  setRelationshipMemoryManager(mgr: RelationshipMemoryManager): void {
+    this.relationshipMemoryManager = mgr;
   }
 
   /**
@@ -241,6 +250,13 @@ export class DialogueCoordinator {
         const speakerName = state.disciples.find(d => d.id === round.speakerId)?.name ?? '某人';
         addShortTermMemory(otherCtx, `[对话] ${speakerName}说：${round.line}`);
       }
+    }
+
+    // Phase IJ 双写：记录对话到关系记忆
+    if (this.relationshipMemoryManager) {
+      const tick = Math.floor(state.inGameWorldTime);
+      this.relationshipMemoryManager.recordDialogue(exchange.triggerId, exchange.responderId, tick);
+      this.relationshipMemoryManager.recordDialogue(exchange.responderId, exchange.triggerId, tick);
     }
   }
 }
