@@ -50,6 +50,16 @@ export const autoBreakthroughHandler: TickHandler = {
               successRate: btLog.result.successRate,
             },
           });
+
+          // Phase I-alpha: 因果系统联动（C4/C5 数据源）
+          if (ctx.causalEvaluator) {
+            if (btLog.success) {
+              ctx.causalEvaluator.recordBreakthrough(actorId, Math.floor(ctx.state.inGameWorldTime));
+              ctx.causalEvaluator.resetBreakthroughFailure(actorId);
+            } else {
+              ctx.causalEvaluator.recordBreakthroughFailure(actorId);
+            }
+          }
         }
       }
     }

@@ -7,7 +7,7 @@
  * Phase F0-α: +碰面系统（encounter-tick）
  * Phase G: +异步 AI 缓冲区（async-ai-buffer + ai-result-apply）
  *
- * Pipeline 执行顺序（14 个 Handler）：
+ * Pipeline 执行顺序（15 个 Handler）：
  *   100 BUFF_COUNTDOWN  — boost-countdown: 修速丹 buff 倒计时
  *   200 PRE_PRODUCTION   — breakthrough-aid: 自动服破镜丹
  *   200 PRE_PRODUCTION   — auto-breakthrough: 自动突破检测+执行
@@ -17,6 +17,7 @@
  *   500 SYSTEM_TICK(20)  — goal-tick: 目标生命周期（Phase J-Goal）
  *   600 DISCIPLE_AI      — disciple-tick: 弟子行为树 tick（Phase D Intent 模式）
  *   610 ENCOUNTER        — encounter-tick: 碰面检定引擎（Phase F0-α）
+ *   612 CAUSAL_EVAL      — causal-tick: 因果规则扫描（Phase I-alpha）
  *   625 SOUL_EVAL        — soul-event: 灵魂事件评估（Phase E）
  *   625 SOUL_EVAL(5)     — ai-result-apply: AI 结果异步应用（Phase G）
  *   650 DIALOGUE         — dialogue-tick: 弟子间对话触发（Phase D）
@@ -74,6 +75,8 @@ import { RelationshipMemoryManager } from './relationship-memory-manager';
 import { NarrativeSnippetBuilder } from '../ai/narrative-snippet-builder';
 import { GoalManager } from './goal-manager';
 import { goalTickHandler } from './handlers/goal-tick.handler';
+import { CausalRuleEvaluator } from './causal-evaluator';
+import { causalTickHandler } from './handlers/causal-tick.handler';
 
 /** Tick 回调：引擎每次 tick 后通知上层 */
 export type TickCallback = (state: LiteGameState, deltaS: number) => void;
@@ -147,6 +150,9 @@ export class IdleEngine {
   /** Phase J-Goal: 目标管理器 */
   private goalManager = new GoalManager();
 
+  /** Phase I-alpha: 因果规则评估器 */
+  private causalEvaluator = new CausalRuleEvaluator();
+
   /** Tick 间隔（毫秒） */
   static readonly TICK_INTERVAL_MS = 1000;
 
@@ -174,6 +180,7 @@ export class IdleEngine {
     this.pipeline.register(discipleTickHandler);
     this.pipeline.register(worldEventTickHandler); // Phase F0-β: 605 世界事件
     this.pipeline.register(encounterTickHandler); // Phase F0-α: 610 碰面检定
+    this.pipeline.register(causalTickHandler);   // Phase I-alpha: 612 因果规则扫描
     this.pipeline.register(soulEventHandler);    // Phase E: 625 灵魂事件评估
     this.pipeline.register(aiResultApplyHandler); // Phase G: 625:5 AI 结果异步应用
     this.pipeline.register(dialogueTickHandler);
@@ -318,6 +325,7 @@ export class IdleEngine {
       relationshipMemoryManager: this.relationshipMemoryManager, // Phase IJ: 关系记忆
       narrativeSnippetBuilder: this.narrativeSnippetBuilder, // Phase IJ v3.0: 叙事片段
       goalManager: this.goalManager, // Phase J-Goal: 目标管理器
+      causalEvaluator: this.causalEvaluator, // Phase I-alpha: 因果规则评估器
     };
 
     // 执行 Pipeline（14 个 Handler 按 phase+order 顺序执行）

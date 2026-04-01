@@ -24,6 +24,7 @@ import {
   FRIEND_COOPERATIVE_MULTIPLIER,
   RIVAL_COMPETITIVE_MULTIPLIER,
   RIVAL_MEDITATION_MULTIPLIER,
+  MENTOR_MEDITATE_MULTIPLIER,
   COOPERATIVE_BEHAVIORS,
   COMPETITIVE_BEHAVIORS,
 } from '../shared/data/emotion-behavior-modifiers';
@@ -194,6 +195,24 @@ export function getEnhancedPersonalityWeights(
       }
       if (w.behavior === DB.MEDITATE) {
         w.weight *= RIVAL_MEDITATION_MULTIPLIER;
+      }
+    }
+  }
+
+  // Phase I-alpha: mentor 在同地时被辅导方修炼权重提升
+  let hasMentorNearby = false;
+  for (const other of state.disciples) {
+    if (other.id === d.id) continue;
+    if (getDiscipleLocation(other.behavior) !== myLocation) continue;
+    const edge = state.relationships.find(
+      r => r.sourceId === d.id && r.targetId === other.id,
+    );
+    if (edge?.tags.includes('mentor')) hasMentorNearby = true;
+  }
+  if (hasMentorNearby) {
+    for (const w of weights) {
+      if (w.behavior === DB.MEDITATE) {
+        w.weight *= MENTOR_MEDITATE_MULTIPLIER;
       }
     }
   }

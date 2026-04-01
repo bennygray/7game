@@ -56,7 +56,7 @@ export const aiResultApplyHandler: TickHandler = {
 
       // 应用修正到 GameState
       applyEvaluationResult(ctx.state, disciple, correctionResult, 'observer');
-      updateRelationshipTags(ctx.state, disciple.id);
+      updateRelationshipTags(ctx.state, disciple.id, ctx.relationshipMemoryManager);
 
       // 覆写 emotionMap（last-write-wins）
       ctx.emotionMap.set(disciple.id, {

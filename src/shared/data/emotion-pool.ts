@@ -67,6 +67,31 @@ export const EMOTION_CANDIDATE_POOL: Record<SoulEventType, Record<SoulRole, Emot
     self:     ['joy', 'fear', 'worry', 'pride', 'neutral', 'sadness'],
     observer: ['worry', 'neutral', 'admiration', 'fear'],
   },
+  // Phase I-alpha: 因果事件情绪候选池
+  'causal-provoke': {
+    self:     ['anger', 'contempt', 'pride', 'neutral'],
+    observer: ['fear', 'worry', 'anger', 'neutral'],
+  },
+  'causal-gift': {
+    self:     ['joy', 'gratitude', 'pride', 'neutral'],
+    observer: ['admiration', 'joy', 'envy', 'neutral'],
+  },
+  'causal-theft': {
+    self:     ['guilt', 'pride', 'contempt', 'neutral'],
+    observer: ['anger', 'contempt', 'fear', 'neutral'],
+  },
+  'causal-jealousy': {
+    self:     ['envy', 'anger', 'shame', 'neutral'],
+    observer: ['contempt', 'sadness', 'neutral', 'worry'],
+  },
+  'causal-seclusion': {
+    self:     ['sadness', 'worry', 'relief', 'neutral'],
+    observer: ['admiration', 'worry', 'neutral', 'sadness'],
+  },
+  'causal-ethos-clash': {
+    self:     ['anger', 'contempt', 'sadness', 'neutral'],
+    observer: ['worry', 'fear', 'neutral', 'anger'],
+  },
 };
 
 // ===== 候选池查询 =====
@@ -200,6 +225,13 @@ export function fallbackGenerateThought(
       'encounter-conflict':  `${discipleName}怒道：「今日受了气，必须记住这笔账！」`,
       // Phase F0-β: 世界事件
       'world-event':         `${discipleName}喊道：「宗门出了异事，不知是福是祸…」`,
+      // Phase I-alpha: 因果事件
+      'causal-provoke':     `${discipleName}冷哼一声："今日且让你知道厉害。"`,
+      'causal-gift':        `${discipleName}微微一笑，将礼物递了出去。`,
+      'causal-theft':       `${discipleName}心中暗忖："这些灵石，不过是取回该拿的。"`,
+      'causal-jealousy':    `${discipleName}攥紧了拳头，心中难以平静。`,
+      'causal-seclusion':   `${discipleName}叹了口气，默默走向闭关洞。`,
+      'causal-ethos-clash': `${discipleName}低声道："此道非我道……"`,
     };
     return templates[eventType] ?? `${discipleName}陷入沉思。`;
   } else {

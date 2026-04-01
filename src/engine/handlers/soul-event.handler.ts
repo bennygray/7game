@@ -58,6 +58,11 @@ function getEventSeverity(event: SoulEvent): number {
     const severity = (event.metadata as Record<string, unknown> | undefined)?.severity;
     return typeof severity === 'number' ? severity : EventSeverity.RIPPLE;
   }
+  // Phase I-alpha: 因果事件从 metadata.severity 读取
+  if (event.type.startsWith('causal-')) {
+    const severity = (event.metadata as Record<string, unknown> | undefined)?.severity;
+    return typeof severity === 'number' ? severity : EventSeverity.RIPPLE;
+  }
   if (event.type === 'breakthrough-success' || event.type === 'breakthrough-fail') {
     return EventSeverity.SPLASH;
   }
@@ -83,6 +88,12 @@ export const soulEventHandler: TickHandler = {
       try {
         // 1. 同步 fallback 评估（始终执行，保证游戏流畅）
         processSoulEvent(event, ctx.state, ctx.logger, undefined, ctx.emotionMap, ctx.relationshipMemoryManager, ctx.narrativeSnippetBuilder, ctx.goalManager);
+
+        // Phase I-alpha: C3 窃取副效果 — 扣除宗门灵石
+        if (event.type === 'causal-theft') {
+          ctx.state.spiritStones = Math.max(0, ctx.state.spiritStones - 20);
+          ctx.systemLogs.push('[系统] 宗门灵石库失窃，损失灵石 20 枚。');
+        }
 
         // 2. Phase G: 异步 AI 评估提交（按 severity 路由）
         if (evaluator && evaluator.canCall() && ctx.asyncAIBuffer) {

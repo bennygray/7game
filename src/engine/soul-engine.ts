@@ -46,6 +46,11 @@ import { LogCategory } from '../shared/types/logger';
 import type { GoalManager } from './goal-manager';
 import { getRealmAuraCost } from '../shared/formulas/realm-formulas';
 import { GOAL_LABEL, GOAL_MUD_TEXT } from '../shared/data/goal-data';
+import {
+  shouldAssignMentor,
+  shouldAssignGrudge,
+  shouldAssignAdmirer,
+} from '../shared/formulas/relationship-formulas';
 
 // ===== 常量 =====
 
@@ -132,6 +137,20 @@ export function fallbackEvaluate(
   actorName: string,
 ): SoulEvaluationResult {
   const weightedCandidates = applyTraitWeights(buildCandidatePool(event.type, role), subject);
+
+  // Phase I-alpha: admirer 正面情绪加权
+  const hasAdmirer = _state.relationships.some(
+    r => r.sourceId === subject.id && r.targetId === event.actorId && r.tags.includes('admirer'),
+  );
+  if (hasAdmirer) {
+    const positiveEmotions: EmotionTag[] = ['joy', 'gratitude', 'admiration', 'pride', 'relief'];
+    for (const e of positiveEmotions) {
+      if (weightedCandidates.includes(e)) {
+        weightedCandidates.push(e); // 增加 1 次出现 ≈ +0.2 概率
+      }
+    }
+  }
+
   const emotion = weightedCandidates.length > 0
     ? weightedCandidates[Math.floor(Math.random() * weightedCandidates.length)]
     : fallbackSelectEmotion(event.type, role);
@@ -192,24 +211,45 @@ export function applyEvaluationResult(
 }
 
 /**
- * 更新关系标签（R-E10）
+ * 更新关系标签 — 统一管理所有 5 种标签（INV-5）
  *
- * Story #4 AC4
+ * Phase I-alpha: 新增 mentor/grudge/admirer 自动管理。
+ * 不再"保留手动标签"——所有标签均由此函数统一计算。
+ *
+ * Story #4 AC4, Phase I-alpha S2.6
  */
-export function updateRelationshipTags(state: LiteGameState, subjectId: string): void {
+export function updateRelationshipTags(
+  state: LiteGameState,
+  subjectId: string,
+  relationshipMemoryManager?: RelationshipMemoryManager,
+): void {
   for (const edge of state.relationships) {
     if (edge.sourceId !== subjectId) continue;
 
-    const newTags: RelationshipTag[] = [];
-    if (edge.affinity >= RELATIONSHIP_TAG_THRESHOLDS.friend) {
-      newTags.push('friend');
+    const tags: RelationshipTag[] = [];
+
+    // 基础标签（现有逻辑）
+    if (edge.affinity >= RELATIONSHIP_TAG_THRESHOLDS.friend) tags.push('friend');
+    if (edge.affinity <= RELATIONSHIP_TAG_THRESHOLDS.rival) tags.push('rival');
+
+    // 高级标签（Phase I-alpha）
+    const source = state.disciples.find(d => d.id === edge.sourceId);
+    const target = state.disciples.find(d => d.id === edge.targetId);
+    const memory = relationshipMemoryManager?.getMemory(edge.sourceId, edge.targetId);
+
+    if (source && target) {
+      if (shouldAssignMentor(edge.affinity, source.starRating, target.starRating)) {
+        tags.push('mentor');
+      }
+      if (shouldAssignGrudge(edge.affinity, memory)) {
+        tags.push('grudge');
+      }
+      if (shouldAssignAdmirer(edge.affinity, target, memory)) {
+        tags.push('admirer');
+      }
     }
-    if (edge.affinity <= RELATIONSHIP_TAG_THRESHOLDS.rival) {
-      newTags.push('rival');
-    }
-    // 保留其他人工标签（如 mentor/admirer/grudge），仅管理自动标签
-    const manualTags = edge.tags.filter(t => t !== 'friend' && t !== 'rival');
-    edge.tags = [...manualTags, ...newTags];
+
+    edge.tags = tags;
   }
 }
 
@@ -380,7 +420,7 @@ export function processSoulEvent(
 
     // 写入 GameState
     applyEvaluationResult(state, disciple, result, role);
-    updateRelationshipTags(state, disciple.id);
+    updateRelationshipTags(state, disciple.id, relationshipMemoryManager);
 
     // Phase IJ 双写：记录关键事件到关系记忆 + 同步 edge + 触发 snippet rebuild
     if (relationshipMemoryManager) {

@@ -25,6 +25,7 @@ import type { WorldEventPayload } from '../shared/types/world-event';
 import type { RelationshipMemoryManager } from './relationship-memory-manager';
 import type { NarrativeSnippetBuilder } from '../ai/narrative-snippet-builder';
 import type { GoalManager } from './goal-manager';
+import type { CausalRuleEvaluator } from './causal-evaluator';
 
 /** 突破事件回调（定义在 tick-pipeline 以避免循环依赖） */
 export type BreakthroughCallback = (
@@ -52,6 +53,8 @@ export const TickPhase = {
   WORLD_EVENT:      605,
   /** 610: 碰面检定（Phase F0-α）— 弟子行为确定后、灵魂事件评估前 (ADR-F0α-01) */
   ENCOUNTER:        610,
+  /** 612: 因果规则扫描（Phase I-alpha）— 碰面后、灵魂事件前 */
+  CAUSAL_EVAL:      612,
   /** 625: 灵魂事件评估（Phase E）— 弟子 AI 行为决策之后，对话之前 */
   SOUL_EVAL:        625,
   /** 650: 弟子间对话触发（Phase D） */
@@ -111,6 +114,8 @@ export interface TickContext {
   narrativeSnippetBuilder?: NarrativeSnippetBuilder;
   /** Phase J-Goal: 目标管理器 */
   goalManager?: GoalManager;
+  /** Phase I-alpha: 因果规则评估器 */
+  causalEvaluator?: CausalRuleEvaluator;
 }
 
 // ===== TickPipeline 类 =====

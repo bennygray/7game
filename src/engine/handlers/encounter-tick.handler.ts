@@ -36,6 +36,7 @@ import {
   LOCATION_LABEL,
   decideEncounterResult,
   getAvgAffinity,
+  getAffinityBand,
 } from '../../shared/types/encounter';
 import { getEncounterText } from '../../shared/data/encounter-templates';
 import { LogCategory } from '../../shared/types/logger';
@@ -66,6 +67,22 @@ const ENCOUNTER_RESULT_TO_EVENT: Record<
   discuss:  'encounter-discuss',
   conflict: 'encounter-conflict',
 };
+
+/**
+ * Phase I-alpha: grudge 碰面冲突概率修正
+ * hostile 分档时 conflict 60→75, none 30→15
+ */
+function decideGrudgeEncounter(randomFn: () => number = Math.random): EncounterResult {
+  const roll = randomFn() * 100;
+  let cumulative = 0;
+  // discuss: 0
+  cumulative += 10; // chat: 10
+  if (roll < cumulative) return EncounterResult.CHAT;
+  cumulative += 75; // conflict: 75 (was 60)
+  if (roll < cumulative) return EncounterResult.CONFLICT;
+  // none: 15 (was 30)
+  return EncounterResult.NONE;
+}
 
 // ===== Tick 计数器 =====
 
@@ -125,7 +142,15 @@ export const encounterTickHandler: TickHandler = {
 
           // Step 3: 碰面结果判定 (Story #3)
           const avgAff = getAvgAffinity(state.relationships, a.id, b.id);
-          const result = decideEncounterResult(avgAff);
+
+          // Phase I-alpha: grudge 标签碰面冲突概率修正
+          const edgeAB = state.relationships.find(r => r.sourceId === a.id && r.targetId === b.id);
+          const edgeBA = state.relationships.find(r => r.sourceId === b.id && r.targetId === a.id);
+          const hasGrudge = edgeAB?.tags.includes('grudge') || edgeBA?.tags.includes('grudge');
+          const band = getAffinityBand(avgAff);
+          const result = (hasGrudge && band === 'hostile')
+            ? decideGrudgeEncounter()
+            : decideEncounterResult(avgAff);
 
           // Story #3 AC5: none 不发射事件不输出日志
           if (result === EncounterResult.NONE) continue;

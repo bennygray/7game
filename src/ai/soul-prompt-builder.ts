@@ -259,6 +259,13 @@ function getEventDescription(
       'encounter-conflict':  '你和同门碰面，发生了言语冲突',
       // Phase F0-β: 世界事件
       'world-event':         '宗门发生了一件异事',
+      // Phase I-alpha: 因果事件
+      'causal-provoke':     '你与仇人碰面，主动挑衅',
+      'causal-gift':        '你向至交赠送了一份礼物',
+      'causal-theft':       '你偷取了宗门灵石',
+      'causal-jealousy':    '你因同门的突破而心生嫉妒',
+      'causal-seclusion':   '你连续受挫，决定闭关静修',
+      'causal-ethos-clash': '你感到自身道心与宗门道风不合',
     };
     return selfDesc[eventType] ?? `你完成了${eventType}`;
   } else {
@@ -276,6 +283,13 @@ function getEventDescription(
       'encounter-conflict':  `你和${actorName}碰面，发生了言语冲突`,
       // Phase F0-β: 世界事件
       'world-event':         `宗门发生了一件异事，波及${actorName}`,
+      // Phase I-alpha: 因果事件
+      'causal-provoke':     `你的同门${actorName}与人起了冲突`,
+      'causal-gift':        `你的同门${actorName}向人赠送了礼物`,
+      'causal-theft':       `你的同门${actorName}似乎做了不光彩的事`,
+      'causal-jealousy':    `你的同门${actorName}似乎对他人的突破心怀嫉妒`,
+      'causal-seclusion':   `你的同门${actorName}受挫后选择了闭关`,
+      'causal-ethos-clash': `你的同门${actorName}对宗门近况颇有微词`,
     };
     return observerDesc[eventType] ?? `你的同门${actorName}发生了${eventType}`;
   }

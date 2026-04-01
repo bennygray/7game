@@ -52,6 +52,12 @@ export const RIVAL_COMPETITIVE_MULTIPLIER = 1.3;
  */
 export const RIVAL_MEDITATION_MULTIPLIER = 0.7;
 
+/**
+ * mentor 在同地点时被辅导方修炼行为乘数
+ * @see phaseI-alpha-PRD.md §5.5
+ */
+export const MENTOR_MEDITATE_MULTIPLIER = 1.2;
+
 /** "合作行为"集合 — friend 在同地时增强 */
 export const COOPERATIVE_BEHAVIORS: readonly DiscipleBehavior[] = ['meditate', 'alchemy', 'farm'];
 

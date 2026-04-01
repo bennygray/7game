@@ -98,7 +98,14 @@ export type SoulEventType =
   | 'encounter-chat'      // Phase F0-α: 碰面闲聊
   | 'encounter-discuss'   // Phase F0-α: 碰面论道
   | 'encounter-conflict'  // Phase F0-α: 碰面冲突
-  | 'world-event';        // Phase F0-β: 世界事件
+  | 'world-event'          // Phase F0-β: 世界事件
+  // Phase I-alpha: 因果事件
+  | 'causal-provoke'       // 因果·挑衅
+  | 'causal-gift'          // 因果·赠礼
+  | 'causal-theft'         // 因果·窃取
+  | 'causal-jealousy'      // 因果·嫉妒
+  | 'causal-seclusion'     // 因果·闭关
+  | 'causal-ethos-clash';  // 因果·道风冲突
 
 /** 事件极性 — 正面/负面（用于 delta 方向修正） */
 export type SoulEventPolarity = 'positive' | 'negative';
@@ -123,6 +130,13 @@ export const SOUL_EVENT_POLARITY: Record<SoulEventType, SoulEventPolarity> = {
   'encounter-conflict':  'negative',
   // Phase F0-β: 世界事件（默认 positive；实际极性由 metadata.polarity 运行时覆盖）
   'world-event':         'positive',
+  // Phase I-alpha: 因果事件
+  'causal-provoke':     'negative',
+  'causal-gift':        'positive',
+  'causal-theft':       'negative',
+  'causal-jealousy':    'negative',
+  'causal-seclusion':   'positive',
+  'causal-ethos-clash': 'negative',
 };
 
 // ===== AI 评估结果 =====
@@ -176,6 +190,25 @@ export type RelationshipTag = 'friend' | 'rival' | 'mentor' | 'admirer' | 'grudg
 export const RELATIONSHIP_TAG_THRESHOLDS = {
   friend:   60,   // affinity >= 60 → friend
   rival:   -60,   // affinity <= -60 → rival
+} as const;
+
+/** 高级标签阈值常量（Phase I-alpha） */
+export const ADVANCED_TAG_THRESHOLDS = {
+  mentor: {
+    assignAffinity: 80,
+    removeAffinity: 60,
+    starGap: 2,
+  },
+  grudge: {
+    assignAffinity: -40,
+    removeAffinity: -20,
+    negativeEventCount: 3,
+  },
+  admirer: {
+    assignAffinity: 60,
+    removeAffinity: 40,
+    positiveEventCount: 3,
+  },
 } as const;
 
 // ===== 情绪中文标签 =====
