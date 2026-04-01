@@ -22,7 +22,7 @@ import { createDefaultLiteGameState } from '../shared/types/game-state';
 import { generateInnateTraits } from '../shared/data/trait-registry';
 
 const SAVE_KEY = '7game-lite-save';
-const SAVE_VERSION = 5;
+const SAVE_VERSION = 6;
 
 /** 保存游戏状态到 localStorage */
 export function saveGame(state: LiteGameState): boolean {
@@ -166,6 +166,19 @@ function migrateV4toV5(raw: Record<string, unknown>): void {
 }
 
 /**
+ * v5 → v6 迁移 (Phase J-Goal)
+ *
+ * - LiteGameState 增 goals: PersonalGoal[]（全局目标池）
+ */
+function migrateV5toV6(raw: Record<string, unknown>): void {
+  if (!Array.isArray(raw['goals'])) {
+    raw['goals'] = [];
+  }
+  raw['version'] = 6;
+  console.log('[SaveManager] v5 → v6 迁移完成');
+}
+
+/**
  * 迁移旧存档：逐版本号升级 + 默认值填充
  */
 function migrateSave(raw: Record<string, unknown>): LiteGameState {
@@ -183,6 +196,9 @@ function migrateSave(raw: Record<string, unknown>): LiteGameState {
   }
   if ((raw['version'] as number) < 5) {
     migrateV4toV5(raw);
+  }
+  if ((raw['version'] as number) < 6) {
+    migrateV5toV6(raw);
   }
 
   // 兜底：用 defaults 补全可能缺失的字段（安全网）

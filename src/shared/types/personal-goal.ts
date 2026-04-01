@@ -12,16 +12,20 @@ export type GoalType =
   | 'friendship'
   | 'ambition';
 
-/** R-G01: 个人目标实例 */
+/** R-G01: 个人目标实例（v2 — Phase J-Goal 扩展） */
 export interface PersonalGoal {
   id: string;
+  /** 归属弟子 ID */
+  discipleId: string;
   type: GoalType;
   /** 目标参数（目标弟子 ID / 境界等级等） */
   target: Record<string, unknown>;
   /** 分配时的 tick */
   assignedAtTick: number;
-  /** TTL（ticks），null=无限 */
-  ttl: number | null;
+  /** TTL（ticks），不变量 I3 强制 TTL */
+  ttl: number;
+  /** 剩余 TTL（每 tick 递减），初始值 = ttl */
+  remainingTtl: number;
   /** R-G02: 行为偏移乘数（Layer 5，cap ×2.0） */
   behaviorMultipliers: Record<string, number>;
 }

@@ -43,6 +43,9 @@ import { getTraitDef, ACQUIRED_TRAITS } from '../shared/data/trait-registry';
 import { EMOTION_DECAY_TICKS } from '../shared/data/emotion-behavior-modifiers';
 import type { GameLogger } from '../shared/types/logger';
 import { LogCategory } from '../shared/types/logger';
+import type { GoalManager } from './goal-manager';
+import { getRealmAuraCost } from '../shared/formulas/realm-formulas';
+import { GOAL_LABEL, GOAL_MUD_TEXT } from '../shared/data/goal-data';
 
 // ===== 常量 =====
 
@@ -352,6 +355,7 @@ export function processSoulEvent(
   emotionMap?: Map<string, DiscipleEmotionState>,
   relationshipMemoryManager?: RelationshipMemoryManager,
   narrativeSnippetBuilder?: NarrativeSnippetBuilder,
+  goalManager?: GoalManager,
 ): void {
   const actor = state.disciples.find(d => d.id === event.actorId);
   if (!actor) return;
@@ -435,8 +439,111 @@ export function processSoulEvent(
     if (emotionMap) {
       recordEmotion(emotionMap, disciple.id, result);
     }
+
+    // Phase J-Goal: 事件驱动目标触发（ADR-JG-01，仅 self 角色）
+    if (goalManager && role === 'self') {
+      const currentTick = Math.floor(state.inGameWorldTime);
+      tryEventDrivenGoalTriggers(event, disciple, result, state, goalManager, currentTick, logger);
+    }
   }
 }
+
+/**
+ * 事件驱动目标触发（ADR-JG-01）
+ *
+ * 在 processSoulEvent 尾部调用，此时：
+ * - encounter(610) 已完成
+ * - applyEvaluationResult + updateRelationshipTags 已执行
+ * - affinity delta 和 tags 均为最新状态
+ *
+ * @see phaseJ-goal-TDD.md S6
+ */
+function tryEventDrivenGoalTriggers(
+  event: SoulEvent,
+  disciple: LiteDiscipleState,
+  result: SoulEvaluationResult,
+  state: LiteGameState,
+  goalManager: GoalManager,
+  currentTick: number,
+  logger: GameLogger,
+): void {
+  // T-EV-01: breakthrough 触发
+  if (event.type === 'breakthrough-fail') {
+    const threshold = getRealmAuraCost(disciple.realm, disciple.subRealm) * 0.7;
+    if (disciple.aura >= threshold) {
+      const goal = goalManager.assignGoal(state, disciple.id, 'breakthrough', {
+        realmTarget: disciple.realm,
+        subRealmTarget: disciple.subRealm + 1,
+      }, currentTick, true);
+      if (goal) {
+        logGoalAssigned(logger, state, goal);
+      }
+    }
+  }
+
+  // T-EV-02: revenge 触发（仅 encounter-conflict）
+  if (event.type === 'encounter-conflict') {
+    for (const rd of result.relationshipDeltas) {
+      if (rd.delta >= -5) continue; // 仅 delta < -5
+      const edge = state.relationships.find(
+        e => e.sourceId === disciple.id && e.targetId === rd.targetId,
+      );
+      if (!edge || !edge.tags.includes('rival')) continue;
+      const goal = goalManager.assignGoal(state, disciple.id, 'revenge', {
+        targetDiscipleId: rd.targetId,
+      }, currentTick, true);
+      if (goal) {
+        logGoalAssigned(logger, state, goal);
+      }
+    }
+  }
+
+  // T-EV-03: friendship 触发（任意正向 affinity 变化）
+  for (const rd of result.relationshipDeltas) {
+    if (rd.delta <= 0) continue;
+    const edge = state.relationships.find(
+      e => e.sourceId === disciple.id && e.targetId === rd.targetId,
+    );
+    if (!edge || edge.affinity < 40) continue;
+    if (edge.tags.includes('friend')) continue; // 已是好友
+    const goal = goalManager.assignGoal(state, disciple.id, 'friendship', {
+      targetDiscipleId: rd.targetId,
+    }, currentTick, true);
+    if (goal) {
+      logGoalAssigned(logger, state, goal);
+    }
+  }
+}
+
+/**
+ * 输出目标分配 MUD 日志
+ */
+function logGoalAssigned(
+  logger: GameLogger,
+  state: LiteGameState,
+  goal: import('../shared/types/personal-goal').PersonalGoal,
+): void {
+  const disciple = state.disciples.find(d => d.id === goal.discipleId);
+  const name = disciple?.name ?? '???';
+  const label = GOAL_LABEL[goal.type];
+
+  let template = GOAL_MUD_TEXT.assigned[goal.type];
+  template = template.replace(/\{name\}/g, name).replace(/\{pronoun\}/g, '其');
+
+  const targetId = goal.target['targetDiscipleId'] as string | undefined;
+  if (targetId) {
+    const targetDisc = state.disciples.find(d => d.id === targetId);
+    template = template.replace(/\{target\}/g, targetDisc?.name ?? '???');
+  }
+
+  logger.info(LogCategory.DISCIPLE, 'soul-engine', template, {
+    discipleId: goal.discipleId,
+    goalType: goal.type,
+    goalLabel: label,
+    event: 'goal-assigned',
+  });
+}
+
 // ===== Phase F: 情绪记录与衰减 =====
 
 /**

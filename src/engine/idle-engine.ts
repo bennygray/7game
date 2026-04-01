@@ -7,13 +7,14 @@
  * Phase F0-α: +碰面系统（encounter-tick）
  * Phase G: +异步 AI 缓冲区（async-ai-buffer + ai-result-apply）
  *
- * Pipeline 执行顺序（13 个 Handler）：
+ * Pipeline 执行顺序（14 个 Handler）：
  *   100 BUFF_COUNTDOWN  — boost-countdown: 修速丹 buff 倒计时
  *   200 PRE_PRODUCTION   — breakthrough-aid: 自动服破镜丹
  *   200 PRE_PRODUCTION   — auto-breakthrough: 自动突破检测+执行
  *   300 RESOURCE_PROD    — core-production: 灵气/悟性/灵石/时间/统计（内联）
  *   500 SYSTEM_TICK      — farm-tick: 灵田生长推进
  *   500 SYSTEM_TICK(10)  — soul-tick: 关系衰减 + 道德漂移 + 后天特性（Phase E）
+ *   500 SYSTEM_TICK(20)  — goal-tick: 目标生命周期（Phase J-Goal）
  *   600 DISCIPLE_AI      — disciple-tick: 弟子行为树 tick（Phase D Intent 模式）
  *   610 ENCOUNTER        — encounter-tick: 碰面检定引擎（Phase F0-α）
  *   625 SOUL_EVAL        — soul-event: 灵魂事件评估（Phase E）
@@ -71,6 +72,8 @@ import { AsyncAIBuffer } from './async-ai-buffer';
 import { createDefaultAISoulContext, addShortTermMemory } from '../shared/types/ai-soul';
 import { RelationshipMemoryManager } from './relationship-memory-manager';
 import { NarrativeSnippetBuilder } from '../ai/narrative-snippet-builder';
+import { GoalManager } from './goal-manager';
+import { goalTickHandler } from './handlers/goal-tick.handler';
 
 /** Tick 回调：引擎每次 tick 后通知上层 */
 export type TickCallback = (state: LiteGameState, deltaS: number) => void;
@@ -141,6 +144,9 @@ export class IdleEngine {
   /** Phase IJ v3.0: 叙事片段构建器 */
   private narrativeSnippetBuilder = new NarrativeSnippetBuilder();
 
+  /** Phase J-Goal: 目标管理器 */
+  private goalManager = new GoalManager();
+
   /** Tick 间隔（毫秒） */
   static readonly TICK_INTERVAL_MS = 1000;
 
@@ -172,6 +178,7 @@ export class IdleEngine {
     this.pipeline.register(aiResultApplyHandler); // Phase G: 625:5 AI 结果异步应用
     this.pipeline.register(dialogueTickHandler);
     this.pipeline.register(cultivateBoostHandler);
+    this.pipeline.register(goalTickHandler);      // Phase J-Goal: 500:20 目标生命周期
   }
 
   /** 注册 tick 回调 */
@@ -310,9 +317,10 @@ export class IdleEngine {
       asyncAIBuffer: this.asyncAIBuffer, // Phase G: 异步 AI 缓冲区
       relationshipMemoryManager: this.relationshipMemoryManager, // Phase IJ: 关系记忆
       narrativeSnippetBuilder: this.narrativeSnippetBuilder, // Phase IJ v3.0: 叙事片段
+      goalManager: this.goalManager, // Phase J-Goal: 目标管理器
     };
 
-    // 执行 Pipeline（13 个 Handler 按 phase+order 顺序执行）
+    // 执行 Pipeline（14 个 Handler 按 phase+order 顺序执行）
     this.pipeline.execute(ctx);
 
     // 回写引擎级状态（TD-001: 通过 ctx 共享的 breakthroughCooldown）

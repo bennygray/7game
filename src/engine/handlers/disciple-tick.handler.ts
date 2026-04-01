@@ -30,7 +30,11 @@ export const discipleTickHandler: TickHandler = {
     const allIntents = [];
     for (const disciple of ctx.state.disciples) {
       const emotionState = ctx.emotionMap.get(disciple.id) ?? null;
-      allIntents.push(...planIntent(disciple, ctx.deltaS, ctx.state, emotionState));
+      // Phase J-Goal: 传入弟子目标 → Layer 5 权重叠加
+      const goals = ctx.goalManager
+        ? ctx.goalManager.getGoalsForDisciple(ctx.state, disciple.id)
+        : [];
+      allIntents.push(...planIntent(disciple, ctx.deltaS, ctx.state, emotionState, goals));
     }
 
     // 2. 统一执行（R-D3b: 按弟子顺序, R-D3c: 副作用集中）

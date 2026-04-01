@@ -15,6 +15,8 @@
 import type { LiteDiscipleState, LiteGameState, PersonalityTraits, DiscipleBehavior } from '../shared/types/game-state';
 import { DiscipleBehavior as DB } from '../shared/types/game-state';
 import type { DiscipleEmotionState } from '../shared/types/soul';
+import type { PersonalGoal } from '../shared/types/personal-goal';
+import { GOAL_MULTIPLIER_CAP } from '../shared/types/personal-goal';
 import { getTraitDef } from '../shared/data/trait-registry';
 import { getDiscipleLocation } from '../shared/types/encounter';
 import {
@@ -129,6 +131,7 @@ export function getPersonalityWeights(
  * Layer 2: 特性 behavior-weight 叠加（F1）
  * Layer 3: 关系标签 friend/rival 同地点效果（F2 + F4）
  * Layer 4: 短期情绪状态效果（F3）
+ * Layer 5: 个人目标乘数（Phase J-Goal，I5: 无目标=全 ×1.0）
  *
  * 保持纯函数（ADR-D01）：所有输入作为参数传入
  *
@@ -139,6 +142,7 @@ export function getEnhancedPersonalityWeights(
   d: Readonly<LiteDiscipleState>,
   state: Readonly<LiteGameState>,
   emotionState: DiscipleEmotionState | null,
+  goals?: readonly PersonalGoal[],
 ): { behavior: DiscipleBehavior; weight: number }[] {
 
   // === Layer 1: 基础权重 ===
@@ -203,6 +207,24 @@ export function getEnhancedPersonalityWeights(
         if (mod !== undefined) {
           w.weight *= mod;
         }
+      }
+    }
+  }
+
+  // === Layer 5: 个人目标乘数（Phase J-Goal） ===
+  if (goals && goals.length > 0) {
+    // 合成多目标乘数：各目标之积，clamp [0.5, 2.0]
+    const minClamp = 1 / GOAL_MULTIPLIER_CAP; // 0.5
+    const multipliers: Record<string, number> = {};
+    for (const goal of goals) {
+      for (const [behavior, value] of Object.entries(goal.behaviorMultipliers)) {
+        multipliers[behavior] = (multipliers[behavior] ?? 1.0) * value;
+      }
+    }
+    for (const w of weights) {
+      const m = multipliers[w.behavior];
+      if (m !== undefined) {
+        w.weight *= Math.max(minClamp, Math.min(GOAL_MULTIPLIER_CAP, m));
       }
     }
   }
@@ -276,6 +298,7 @@ export function planIntent(
   deltaS: number,
   _state: Readonly<LiteGameState>,
   emotionState?: DiscipleEmotionState | null,
+  goals?: readonly PersonalGoal[],
 ): BehaviorIntent[] {
   // deltaS=0 防御 (R6-D1 WARN)
   if (deltaS <= 0) return [];
@@ -316,7 +339,7 @@ export function planIntent(
 
       // 行为结束后立刻进入 IDLE → 发起新决策
       const weights = emotionState !== undefined
-        ? getEnhancedPersonalityWeights(d, _state, emotionState)
+        ? getEnhancedPersonalityWeights(d, _state, emotionState, goals)
         : getPersonalityWeights(d.personality, d.stamina);
       const chosen = weightedRandomPick(weights);
       const duration = getBehaviorDuration(chosen);
@@ -334,7 +357,7 @@ export function planIntent(
   } else {
     // IDLE 状态 → 发起新决策
     const weights = emotionState !== undefined
-      ? getEnhancedPersonalityWeights(d, _state, emotionState)
+      ? getEnhancedPersonalityWeights(d, _state, emotionState, goals)
       : getPersonalityWeights(d.personality, d.stamina);
     const chosen = weightedRandomPick(weights);
     const duration = getBehaviorDuration(chosen);

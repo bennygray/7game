@@ -24,6 +24,7 @@ import type { AsyncAIBuffer } from './async-ai-buffer';
 import type { WorldEventPayload } from '../shared/types/world-event';
 import type { RelationshipMemoryManager } from './relationship-memory-manager';
 import type { NarrativeSnippetBuilder } from '../ai/narrative-snippet-builder';
+import type { GoalManager } from './goal-manager';
 
 /** 突破事件回调（定义在 tick-pipeline 以避免循环依赖） */
 export type BreakthroughCallback = (
@@ -108,6 +109,8 @@ export interface TickContext {
   relationshipMemoryManager?: RelationshipMemoryManager;
   /** Phase IJ v3.0: 叙事片段构建器 */
   narrativeSnippetBuilder?: NarrativeSnippetBuilder;
+  /** Phase J-Goal: 目标管理器 */
+  goalManager?: GoalManager;
 }
 
 // ===== TickPipeline 类 =====

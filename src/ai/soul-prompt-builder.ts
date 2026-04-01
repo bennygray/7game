@@ -154,6 +154,8 @@ export interface SoulPromptInput {
   otherDiscipleIds: string[];
   /** Phase G5: 宗门上下文（可选） */
   sectContext?: SectContext;
+  /** Phase J-Goal: 弟子当前目标（可选） */
+  goals?: readonly PersonalGoal[];
 }
 
 /**
@@ -167,7 +169,7 @@ export interface SoulPromptInput {
  * 5. 输出格式说明
  */
 export function buildSoulEvalPrompt(input: SoulPromptInput): string {
-  const { event, subject, role, actorName, candidates, sectContext } = input;
+  const { event, subject, role, actorName, candidates, sectContext, goals } = input;
 
   // G6: 特性 ai 提示词
   const traitHints = subject.traits
@@ -191,13 +193,16 @@ export function buildSoulEvalPrompt(input: SoulPromptInput): string {
 
   const eventDescription = getEventDescription(event.type, role, actorName, subject.name);
 
+  // J-Goal: 目标段落
+  const goalSegment = goals ? buildGoalPromptSegment(goals) : '';
+
   // 构建身份段落
   let identity = `你是修仙宗门弟子「${subject.name}」，性格${subject.personalityName}。`;
   if (traitHints) identity += `性格特点：${traitHints}。`;
   if (moralDesc) identity += `${moralDesc}。`;
   if (ethosDesc) identity += `你所在的宗门：${ethosDesc}。`;
 
-  const prompt = `${identity}
+  const prompt = `${identity}${goalSegment}
 
 刚才发生了：${eventDescription}
 
@@ -274,6 +279,31 @@ function getEventDescription(
     };
     return observerDesc[eventType] ?? `你的同门${actorName}发生了${eventType}`;
   }
+}
+
+// ===== Phase J-Goal: 目标 Prompt 注入 =====
+
+import type { PersonalGoal } from '../shared/types/personal-goal';
+import { GOAL_LABEL } from '../shared/data/goal-data';
+
+/**
+ * 构建目标 prompt 段落（ADR-JG-04）
+ *
+ * 无目标时返回空字符串（不注入）。
+ * 多个目标时每行一条。
+ *
+ * @see phaseJ-goal-TDD.md S3 ADR-JG-04
+ * @see phaseJ-goal-PRD.md §3.7
+ */
+export function buildGoalPromptSegment(goals: readonly PersonalGoal[]): string {
+  if (goals.length === 0) return '';
+
+  const lines = goals.map(g => {
+    const label = GOAL_LABEL[g.type];
+    return `当前心愿：${label}（剩余约 ${g.remainingTtl} 个时辰）`;
+  });
+
+  return '\n' + lines.join('\n') + '\n';
 }
 
 // ===== 导出给 soul-engine 用的工具函数 =====

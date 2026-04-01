@@ -137,6 +137,7 @@ export class SoulEvaluator {
       candidates,
       otherDiscipleIds: otherIds,
       sectContext,
+      goals: state.goals.filter(g => g.discipleId === subject.id),
     };
 
     let prompt = buildSoulEvalPrompt(input);

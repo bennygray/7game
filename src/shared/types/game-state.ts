@@ -1,5 +1,5 @@
 /**
- * 7game-lite 精简游戏状态 — v4
+ * 7game-lite 精简游戏状态 — v6
  *
  * Phase B-α: 删除 FieldSlot/AlchemyState，新增 FarmPlot/PillItem，
  * 弟子级 farmPlots + currentRecipeId。
@@ -10,12 +10,15 @@
  * Phase E: 新增 NPC 灵魂系统 — 道德双轴(moral/initialMoral)、特性列表(traits)、
  * 升级关系边(affinity/tags/lastInteraction)。存档版本 v3→v4。
  *
+ * Phase J-Goal: 新增 goals: PersonalGoal[]（个人目标池）。存档版本 v5→v6。
+ *
  * @see AGENTS.md §3.5 版本边界
- * @see phaseE-TDD.md Step 2.2
+ * @see phaseJ-goal-TDD.md S1.3
  */
 
 import type { AISoulContext } from './ai-soul';
 import type { MoralAlignment, DiscipleTrait, RelationshipTag } from './soul';
+import type { PersonalGoal } from './personal-goal';
 import { generateInitialDisciples, generateInitialRelationships } from '../../engine/disciple-generator';
 
 // ===== 常量 =====
@@ -227,7 +230,7 @@ export interface LifetimeStats {
 
 // ===== 主状态 =====
 
-/** 7game-lite 精简游戏状态 — v5 */
+/** 7game-lite 精简游戏状态 — v6 */
 export interface LiteGameState {
   /** 存档版本号 */
   version: number;
@@ -271,16 +274,20 @@ export interface LiteGameState {
   breakthroughBuff: BreakthroughBuffState;
   /** 修速丹 buff（修炼加速），null = 无 */
   cultivateBoostBuff: CultivateBoostBuff | null;
+
+  // === Phase J-Goal: 个人目标 ===
+  /** 全局目标池（每个目标含 discipleId 归属） */
+  goals: PersonalGoal[];
 }
 
 // ===== 工厂函数 =====
 
-/** 创建默认新游戏状态 — v5 */
+/** 创建默认新游戏状态 — v6 */
 export function createDefaultLiteGameState(): LiteGameState {
   const now = Date.now();
   const disciples = generateInitialDisciples();
   return {
-    version: 5,
+    version: 6,
     aura: 0,
     spiritStones: 200,
     realm: Realm.LIANQI,
@@ -308,5 +315,6 @@ export function createDefaultLiteGameState(): LiteGameState {
     },
     breakthroughBuff: { pillsConsumed: [], totalBonus: 0 },
     cultivateBoostBuff: null,
+    goals: [],
   };
 }
