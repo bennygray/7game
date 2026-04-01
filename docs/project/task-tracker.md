@@ -4,6 +4,18 @@
 
 ---
 
+## Phase 命名约定
+
+| 前缀 | 含义 | 示例 |
+|------|------|------|
+| 字母 | 游戏功能 Phase | A, B-α, E, F0-β, H-γ |
+| X-α/β/γ | 展现层增强 | X-alpha, X-beta, X-gamma |
+| Y, Z | 基础设施/治理 | Y(代码质量), Z(AI通信) |
+| IJ, I-alpha | 复合/子 Phase | IJ(预研), I-alpha(因果引擎) |
+| **TG-N** | **流程治理 (Trinity Guardian)** | TG-1(重审保障), TG-2(上下文+Step5), TG-3(文档索引) |
+
+---
+
 ## Phase 状态总览
 
 | Phase | 版本 | 主题 | SPM | SGA | SGE | 状态 |
@@ -29,6 +41,7 @@
 | IJ | — | NPC 深度智能预研（关系记忆+因果+目标+T2 设计） | ✅ | ✅ | ✅ | 🟢 完成（v3.0 Gate 3 PASSED） |
 | J-Goal | — | 个人目标系统（5 GoalType·Layer 5·事件+定期触发·v6） | ✅ | ✅ | ✅ | 🟢 完成（Gate 3 PASSED） |
 | I-alpha | — | 因果引擎 + 高级关系标签（6 规则·3 标签·causal-tick 612） | ✅ | ✅ | ✅ | 🟢 完成（Gate 3 COND. PASS） |
+| TG-1 | — | Trinity Pipeline 重审执行保障（判定校验·禁止自审·签章检查） | ✅ | ✅ | ✅ | 🟢 完成（Gate 3 COND. PASS） |
 
 ---
 
@@ -93,6 +106,7 @@
 | IJ | [PRD](../features/phaseIJ-PRD.md) | [TDD](../design/specs/phaseIJ-TDD.md) | — | — | [spm](../pipeline/phaseIJ/spm-analysis.md) [plan](../pipeline/phaseIJ/plan.md) [review](../pipeline/phaseIJ/review.md) |
 | J-Goal | [PRD](../features/phaseJ-goal-PRD.md) | [TDD](../design/specs/phaseJ-goal-TDD.md) | [stories](../design/specs/phaseJ-goal-user-stories.md) | — | [spm](../pipeline/phaseJ-goal/spm-analysis.md) [g1](../pipeline/phaseJ-goal/review-g1.md) [g2](../pipeline/phaseJ-goal/review-g2.md) |
 | I-alpha | [PRD](../features/phaseI-alpha-PRD.md) | [TDD](../design/specs/phaseI-alpha-TDD.md) | [stories](../design/specs/phaseI-alpha-user-stories.md) | — | [spm](../pipeline/phaseI-alpha/spm-analysis.md) [g1](../pipeline/phaseI-alpha/review-g1.md) [g2](../pipeline/phaseI-alpha/review-g2.md) [g3](../pipeline/phaseI-alpha/review-g3.md) [task](../pipeline/phaseI-alpha/task.md) [walk](../pipeline/phaseI-alpha/walkthrough.md) |
+| TG-1 | [PRD](../features/phaseTG-1-PRD.md) | [TDD](../design/specs/phaseTG-1-TDD.md) | [stories](../design/specs/phaseTG-1-user-stories.md) | — | [spm](../pipeline/phaseTG-1/spm-analysis.md) [g1](../pipeline/phaseTG-1/review-g1.md) [g2](../pipeline/phaseTG-1/review-g2.md) [g3](../pipeline/phaseTG-1/review-g3.md) [task](../pipeline/phaseTG-1/task.md) [walk](../pipeline/phaseTG-1/walkthrough.md) |
 
 ---
 
@@ -123,3 +137,5 @@
 | 2026-04-01 | **Phase J-Goal SPM+SGA 完成**：Gate 1 PASSED (0 BLOCK/8 WARN) + Gate 2 PASSED (1 BLOCK fixed/5 WARN)。TDD v1.0 含 4 ADR。架构文档同步更新（pipeline/gamestate/schema/dependencies） |
 | 2026-04-01 | **Phase I-alpha SPM+SGA 完成**：Gate 1 CONDITIONAL PASS (1 BLOCK fixed/4 WARN) + Gate 2 CONDITIONAL PASS (0 BLOCK/5 WARN)。TDD v1.2（**关联性审计修复：4 项遗漏，修改文件 8→11**）。FB-018 性别系统缺失登记。**FB-019 P0 流程缺陷**：SGA 关联性审计不完整，需流程层面修复 |
 | 2026-04-01 | **Phase I-alpha SGE 完成**：Gate 3 CONDITIONAL PASS (0 BLOCK/2 WARN)。5 新+13 改文件。6 因果规则+3 高级标签。Handler 14→15（+causal-tick 612:0）。验证 30/30 + regression 64/64 + Monte Carlo avg 4.0/30min。GameState v6 不变 |
+| 2026-04-01 | **Phase TG-1 SPM 完成**：流程审计 → PRD v1.0 + 3 User Stories。Gate 1 CONDITIONAL PASS (0 BLOCK/3 WARN)。FB-020 登记。W2(TG命名) W3(task-tracker注册) 已补完 |
+| 2026-04-01 | **Phase TG-1 全 Pipeline 完成**：Gate 1 COND.PASS(3W) → Gate 2 COND.PASS(3W) → Gate 3 COND.PASS(2W)。4 文件修改：review-protocol.md +判定校验段，3 个 SKILL.md +禁止自审+签章检查。FB-020(a) 清偿 |

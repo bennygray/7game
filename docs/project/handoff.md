@@ -1,12 +1,28 @@
 # 7game-lite — 会话交接文档
 
-> **上次更新**：2026-04-01 | **上次会话主题**：Phase I-alpha SGE — 因果引擎编码实施 + Gate 3 CONDITIONAL PASS
-> **当前活跃 Phase**：Phase I-alpha 完成，待启动 I-beta
-> **Phase 状态**：I-alpha: SPM ✅ (Gate 1) SGA ✅ (Gate 2) SGE ✅ (Gate 3 CONDITIONAL PASS)
+> **上次更新**：2026-04-01 | **上次会话主题**：Phase TG-1 — Trinity Pipeline 重审执行保障（全 Pipeline 完成）
+> **当前活跃 Phase**：Phase TG-1 完成，待启动 TG-2 或 I-beta
+> **Phase 状态**：TG-1: SPM ✅ (Gate 1) SGA ✅ (Gate 2) SGE ✅ (Gate 3 CONDITIONAL PASS)
 
 ---
 
 ## 当前断点
+
+- **Phase TG-1 完成** — 流程治理（判定校验 + 禁止自审 + 签章检查）
+  - Gate 1 (SPM): CONDITIONAL PASS — 0 BLOCK / 3 WARN
+  - Gate 2 (SGA): CONDITIONAL PASS — 0 BLOCK / 3 WARN
+  - Gate 3 (SGE): CONDITIONAL PASS — 0 BLOCK / 2 WARN
+  - **审查报告**：`docs/pipeline/phaseTG-1/review-g{1,2,3}.md`
+  - **过程资产**：`docs/pipeline/phaseTG-1/{spm-analysis,task,walkthrough}.md`
+  - **审计报告**：`docs/pipeline/trinity-guardian/process-audit-2026-04-01.md`
+  - **修改文件**: review-protocol.md + 3 个 SKILL.md（+47 行三层拦截机制）
+  - **FB-020(a) 已清偿**，(b)(c) 待 TG-2/TG-3
+
+### 下一步
+
+1. **Phase TG-2**: reviewer 上下文交付 + SGA Step 5 扩展 5.5-5.9 + INDEX 补全
+2. **Phase TG-3**: START-HERE.md + 交叉索引 + 需求追溯链
+3. **Phase I-beta**: 道风转折 + 宗门冲突 + 社交事件
 
 - **Phase I-alpha SGE 完成** — Gate 3 CONDITIONAL PASS (0 BLOCK / 2 WARN)
   - Gate 1 (SPM): CONDITIONAL PASS — 1 BLOCK fixed / 4 WARN
