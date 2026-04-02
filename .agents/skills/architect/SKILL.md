@@ -56,6 +56,22 @@ trigger: >
 - 验证 PRD 中的 Invariant 是否与现有架构冲突
 - 产出：全局对齐检查表
 
+### Grep 证据要求（Logical Certificate）
+
+> **背景**：Phase TG-2 审计发现 INDEX.md 幽灵注册、arch/layers.md 缺 9 文件——
+> 根因是"凭记忆判断某文件/类型/函数存在"。此规则要求所有存在性判断附带 grep 证据。
+
+**硬约束**：Step 1-4 中，凡涉及以下判断，必须附带 `grep` 命令执行结果作为证据：
+
+| 判断类型 | 证据要求 |
+|---------|---------|
+| "某类型/接口已存在" | `grep "interface X\|type X" src/` 结果 |
+| "某文件已实现该功能" | `grep "functionName" path/to/file` 结果 |
+| "某 Handler 已注册" | `grep "registerHandler\|addHandler" src/` 结果 |
+| "某字段在 GameState 中" | `grep "fieldName" src/shared/types/` 结果 |
+
+**违规处理**：无 grep 证据的存在性断言，Review 时视为 ⚠️ WARN（可信度不足）。
+
 ---
 
 ## Step 2：Interface 设计 + 数据变更 + 迁移策略
