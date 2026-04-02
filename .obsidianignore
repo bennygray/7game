@@ -1,0 +1,39 @@
+# Version control
+.git
+
+# Dependencies & build
+node_modules
+dist
+
+# Source code (clutter graph view)
+src
+
+# Server runtime
+server
+
+# AI models
+models
+
+# Large log files in pipeline
+docs/pipeline/phaseIJ-poc/logs
+docs/pipeline/phaseIJ-poc/scripts
+
+# Scripts
+scripts
+
+# Agent internals
+.agents
+.claude
+.reviews
+
+# Environment & secrets
+.env
+.env.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode
+.idea
