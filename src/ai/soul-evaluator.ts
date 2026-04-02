@@ -449,11 +449,13 @@ export class SoulEvaluator {
     let intensity = obj.intensity as number;
     if (![1, 2, 3].includes(intensity)) intensity = 1;
 
-    // relationshipDeltas
+    // relationshipDeltas（三维：closeness/attraction/trust）
     const rawDeltas = Array.isArray(obj.relationshipDeltas) ? obj.relationshipDeltas : [];
     const relationshipDeltas = rawDeltas.map((rd: Record<string, unknown>) => ({
       targetId: String(rd.targetId ?? ''),
-      delta: typeof rd.delta === 'number' ? rd.delta : 0,
+      closeness: typeof rd.closeness === 'number' ? rd.closeness : 0,
+      attraction: typeof rd.attraction === 'number' ? rd.attraction : 0,
+      trust: typeof rd.trust === 'number' ? rd.trust : 0,
       reason: String(rd.reason ?? 'AI评估'),
     })).filter((rd: { targetId: string }) => rd.targetId.length > 0);
 

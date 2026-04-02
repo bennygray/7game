@@ -28,11 +28,12 @@ export type LocationTag = (typeof LocationTag)[keyof typeof LocationTag];
 
 // ===== 碰面结果 =====
 
-/** 碰面结果 — 4 种 (PRD §3.1 R-F0α-E2) */
+/** 碰面结果 — 5 种 (PRD §3.1 R-F0α-E2 + Phase I-beta) */
 export const EncounterResult = {
   CHAT:     'chat',
   DISCUSS:  'discuss',
   CONFLICT: 'conflict',
+  FLIRT:    'flirt',     // Phase I-beta: 碰面调情
   NONE:     'none',
 } as const;
 export type EncounterResult = (typeof EncounterResult)[keyof typeof EncounterResult];
@@ -87,16 +88,16 @@ export const BASE_ENCOUNTER_CHANCE = 0.20;
 
 // ===== 好感度分档阈值 =====
 
-/** 好感度分档阈值 (PRD §3.3 F-F0α-03) */
-export const AFFINITY_BAND = {
-  /** 挚友带：avg_aff >= 60 */
+/** 亲疏度分档阈值 (PRD §3.3 F-F0α-03 + Phase I-beta) */
+export const CLOSENESS_BAND = {
+  /** 挚友带：avg_closeness >= 60 */
   FRIEND_THRESHOLD:  60,
-  /** 敌对带：avg_aff <= -60 */
+  /** 敌对带：avg_closeness <= -60 */
   HOSTILE_THRESHOLD: -60,
 } as const;
 
-/** 好感度分档标签 */
-export type AffinityBand = 'friend' | 'hostile' | 'neutral';
+/** 亲疏度分档标签（Phase I-beta: +crush-lover） */
+export type ClosenessBand = 'friend' | 'hostile' | 'neutral' | 'crush-lover';
 
 // ===== 碰面结果概率表 =====
 
@@ -108,12 +109,13 @@ export type AffinityBand = 'friend' | 'hostile' | 'neutral';
  * @see PRD §3.3 F-F0α-03 结果概率表
  */
 export const ENCOUNTER_PROBABILITY_TABLE: Record<
-  AffinityBand,
-  { discuss: number; chat: number; conflict: number; none: number }
+  ClosenessBand,
+  { discuss: number; chat: number; conflict: number; flirt: number; none: number }
 > = {
-  friend:  { discuss: 50, chat: 50, conflict:  0, none:  0 },
-  hostile: { discuss:  0, chat: 10, conflict: 60, none: 30 },
-  neutral: { discuss:  5, chat: 30, conflict:  5, none: 60 },
+  friend:        { discuss: 50, chat: 50, conflict:  0, flirt:  0, none:  0 },
+  hostile:       { discuss:  0, chat: 10, conflict: 60, flirt:  0, none: 30 },
+  neutral:       { discuss:  5, chat: 30, conflict:  5, flirt:  0, none: 60 },
+  'crush-lover': { discuss: 20, chat: 60, conflict:  0, flirt: 15, none:  5 },
 };
 
 // ===== 碰面事件元数据 =====
@@ -129,18 +131,20 @@ export interface EncounterEventPayload {
   partnerName: string;
   location: LocationTag;
   encounterResult: Exclude<EncounterResult, 'none'>;
-  avgAffinity: number;
+  avgCloseness: number;
 }
 
 // ===== 工具函数 =====
 
 /**
- * 根据平均好感度判定分档
- * @see PRD §3.3 F-F0α-03
+ * 根据平均亲疏度判定分档
+ * Phase I-beta: hasRomanticInterest 为 true 时使用 crush-lover 分档
+ * @see PRD §3.3 F-F0α-03 + phaseI-beta-PRD §5.4
  */
-export function getAffinityBand(avgAffinity: number): AffinityBand {
-  if (avgAffinity >= AFFINITY_BAND.FRIEND_THRESHOLD) return 'friend';
-  if (avgAffinity <= AFFINITY_BAND.HOSTILE_THRESHOLD) return 'hostile';
+export function getClosenessBand(avgCloseness: number, hasRomanticInterest: boolean = false): ClosenessBand {
+  if (hasRomanticInterest) return 'crush-lover';
+  if (avgCloseness >= CLOSENESS_BAND.FRIEND_THRESHOLD) return 'friend';
+  if (avgCloseness <= CLOSENESS_BAND.HOSTILE_THRESHOLD) return 'hostile';
   return 'neutral';
 }
 
@@ -151,10 +155,11 @@ export function getAffinityBand(avgAffinity: number): AffinityBand {
  * @see PRD §3.3 F-F0α-03 掷骰方法
  */
 export function decideEncounterResult(
-  avgAffinity: number,
+  avgCloseness: number,
+  hasRomanticInterest: boolean = false,
   randomFn: () => number = Math.random,
 ): EncounterResult {
-  const band = getAffinityBand(avgAffinity);
+  const band = getClosenessBand(avgCloseness, hasRomanticInterest);
   const weights = ENCOUNTER_PROBABILITY_TABLE[band];
 
   const roll = randomFn() * 100;
@@ -169,6 +174,9 @@ export function decideEncounterResult(
   cumulative += weights.conflict;
   if (roll < cumulative) return EncounterResult.CONFLICT;
 
+  cumulative += weights.flirt;
+  if (roll < cumulative) return EncounterResult.FLIRT;
+
   return EncounterResult.NONE;
 }
 
@@ -177,14 +185,14 @@ export function decideEncounterResult(
  *
  * Review WARN-1：关系边不存在时 fallback 为 0
  */
-export function getAvgAffinity(
-  relationships: ReadonlyArray<{ sourceId: string; targetId: string; affinity: number }>,
+export function getAvgCloseness(
+  relationships: ReadonlyArray<{ sourceId: string; targetId: string; closeness: number }>,
   idA: string,
   idB: string,
 ): number {
   const aToB = relationships.find(r => r.sourceId === idA && r.targetId === idB);
   const bToA = relationships.find(r => r.sourceId === idB && r.targetId === idA);
-  const affA = aToB?.affinity ?? 0;
-  const affB = bToA?.affinity ?? 0;
-  return (affA + affB) / 2;
+  const closA = aToB?.closeness ?? 0;
+  const closB = bToA?.closeness ?? 0;
+  return (closA + closB) / 2;
 }

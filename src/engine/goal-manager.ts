@@ -153,8 +153,8 @@ export class GoalManager {
           const edge = state.relationships.find(
             r => r.sourceId === goal.discipleId && r.targetId === targetId,
           );
-          // 怨念消解：affinity ≥ 0
-          if (edge && edge.affinity >= 0) {
+          // 怨念消解：closeness ≥ 0
+          if (edge && edge.closeness >= 0) {
             isComplete = true;
           }
           break;

@@ -22,6 +22,7 @@
  */
 
 import type { LiteGameState, LiteDiscipleState, RelationshipEdge } from '../shared/types/game-state';
+import { getPronoun } from '../shared/types/game-state';
 import type {
   SoulEvaluationResult, EmotionTag, SoulRole,
   RelationshipTag, DiscipleEmotionState,
@@ -54,11 +55,26 @@ import {
 
 // ===== 常量 =====
 
-/** 关系衰减系数（每 tick-5min 执行一次）— R-E15 */
-const AFFINITY_DECAY_RATE = 0.98;
+/** 亲疏度衰减系数（每 tick-5min 执行一次）— R-E15 */
+const CLOSENESS_DECAY_RATE = 0.98;
 
-/** 关系衰减停止阈值（|affinity| <= 此值时停止衰减）— R-E15 */
-const AFFINITY_DECAY_THRESHOLD = 5;
+/** 吸引力衰减系数 */
+const ATTRACTION_DECAY_RATE = 0.99;
+
+/** 信赖度衰减系数 */
+const TRUST_DECAY_RATE = 0.995;
+
+/** 亲疏度衰减停止阈值（|closeness| <= 此值时停止衰减） */
+const CLOSENESS_DECAY_THRESHOLD = 5;
+
+/** 吸引力衰减停止阈值 */
+const ATTRACTION_DECAY_THRESHOLD = 3;
+
+/** 信赖度衰减停止阈值 */
+const TRUST_DECAY_THRESHOLD = 3;
+
+/** 离散关系保护因子：lover/sworn-sibling 衰减减免 (TDD §3.1) */
+const RELATIONSHIP_PROTECTION_FACTOR = 0.5;
 
 /** soul-tick 衰减间隔（秒，每 5 分钟一次） */
 const DECAY_INTERVAL_SEC = 300;
@@ -166,7 +182,9 @@ export function fallbackEvaluate(
     if (clamped !== 0) {
       relationshipDeltas.push({
         targetId: event.actorId,
-        delta: clamped,
+        closeness: clamped,
+        attraction: 0,
+        trust: 0,
         reason: `规则引擎：${event.type} 事件`,
       });
     }
@@ -181,7 +199,7 @@ export function fallbackEvaluate(
 
 /**
  * 将评估结果写入 GameState
- * - 更新关系边 affinity + lastInteraction
+ * - 更新关系边 closeness/attraction/trust + lastInteraction
  * - 更新道德（自我事件微幅漂移）
  *
  * Story #4 AC3
@@ -194,11 +212,13 @@ export function applyEvaluationResult(
 ): void {
   const now = Date.now();
 
-  for (const { targetId, delta } of result.relationshipDeltas) {
+  for (const rd of result.relationshipDeltas) {
     // clampDelta 已在评估阶段执行，这里只更新关系边
-    const edge = getEdge(state, subject.id, targetId);
+    const edge = getEdge(state, subject.id, rd.targetId);
     if (edge) {
-      edge.affinity = Math.max(-100, Math.min(100, edge.affinity + delta));
+      edge.closeness = Math.max(-100, Math.min(100, edge.closeness + rd.closeness));
+      edge.attraction = Math.max(0, Math.min(100, edge.attraction + rd.attraction));
+      edge.trust = Math.max(-100, Math.min(100, edge.trust + rd.trust));
       edge.lastInteraction = now;
     }
   }
@@ -229,22 +249,22 @@ export function updateRelationshipTags(
     const tags: RelationshipTag[] = [];
 
     // 基础标签（现有逻辑）
-    if (edge.affinity >= RELATIONSHIP_TAG_THRESHOLDS.friend) tags.push('friend');
-    if (edge.affinity <= RELATIONSHIP_TAG_THRESHOLDS.rival) tags.push('rival');
+    if (edge.closeness >= RELATIONSHIP_TAG_THRESHOLDS.friend) tags.push('friend');
+    if (edge.closeness <= RELATIONSHIP_TAG_THRESHOLDS.rival) tags.push('rival');
 
-    // 高级标签（Phase I-alpha）
+    // 高级标签（Phase I-alpha → I-beta: +trust 条件）
     const source = state.disciples.find(d => d.id === edge.sourceId);
     const target = state.disciples.find(d => d.id === edge.targetId);
     const memory = relationshipMemoryManager?.getMemory(edge.sourceId, edge.targetId);
 
     if (source && target) {
-      if (shouldAssignMentor(edge.affinity, source.starRating, target.starRating)) {
+      if (shouldAssignMentor(edge.closeness, edge.trust, source.starRating, target.starRating)) {
         tags.push('mentor');
       }
-      if (shouldAssignGrudge(edge.affinity, memory)) {
+      if (shouldAssignGrudge(edge.closeness, edge.trust, memory)) {
         tags.push('grudge');
       }
-      if (shouldAssignAdmirer(edge.affinity, target, memory)) {
+      if (shouldAssignAdmirer(edge.closeness, target, memory)) {
         tags.push('admirer');
       }
     }
@@ -258,17 +278,38 @@ export function updateRelationshipTags(
 /**
  * 关系衰减 — 每 5 分钟执行
  *
- * R-E15: |affinity| <= DECAY_THRESHOLD 时停止
+ * R-E15: |closeness/attraction/trust| <= DECAY_THRESHOLD 时停止
  * Story #4 AC6
  */
 export function decayRelationships(state: LiteGameState): void {
   for (const edge of state.relationships) {
-    if (Math.abs(edge.affinity) <= AFFINITY_DECAY_THRESHOLD) continue;
-    // 向 0 方向衰减
-    if (edge.affinity > 0) {
-      edge.affinity = Math.max(AFFINITY_DECAY_THRESHOLD, edge.affinity * AFFINITY_DECAY_RATE);
-    } else {
-      edge.affinity = Math.min(-AFFINITY_DECAY_THRESHOLD, edge.affinity * AFFINITY_DECAY_RATE);
+    // 关系保护：lover/sworn-sibling 衰减减半
+    const protection = (edge.status === 'lover' || edge.status === 'sworn-sibling') ? RELATIONSHIP_PROTECTION_FACTOR : 1.0;
+
+    // 亲疏度衰减
+    if (Math.abs(edge.closeness) > CLOSENESS_DECAY_THRESHOLD) {
+      const cRate = 1 - (1 - CLOSENESS_DECAY_RATE) * protection;
+      if (edge.closeness > 0) {
+        edge.closeness = Math.max(CLOSENESS_DECAY_THRESHOLD, edge.closeness * cRate);
+      } else {
+        edge.closeness = Math.min(-CLOSENESS_DECAY_THRESHOLD, edge.closeness * cRate);
+      }
+    }
+
+    // 吸引力衰减
+    if (edge.attraction > ATTRACTION_DECAY_THRESHOLD) {
+      const aRate = 1 - (1 - ATTRACTION_DECAY_RATE) * protection;
+      edge.attraction = Math.max(ATTRACTION_DECAY_THRESHOLD, edge.attraction * aRate);
+    }
+
+    // 信赖度衰减
+    if (Math.abs(edge.trust) > TRUST_DECAY_THRESHOLD) {
+      const tRate = 1 - (1 - TRUST_DECAY_RATE) * protection;
+      if (edge.trust > 0) {
+        edge.trust = Math.max(TRUST_DECAY_THRESHOLD, edge.trust * tRate);
+      } else {
+        edge.trust = Math.min(-TRUST_DECAY_THRESHOLD, edge.trust * tRate);
+      }
     }
   }
 }
@@ -414,7 +455,7 @@ export function processSoulEvent(
       ...result,
       relationshipDeltas: result.relationshipDeltas.map(rd => ({
         ...rd,
-        delta: clampDelta(correctDeltaDirection(rd.delta, role, event.type)),
+        closeness: clampDelta(correctDeltaDirection(rd.closeness, role, event.type)),
       })),
     };
 
@@ -425,11 +466,11 @@ export function processSoulEvent(
     // Phase IJ 双写：记录关键事件到关系记忆 + 同步 edge + 触发 snippet rebuild
     if (relationshipMemoryManager) {
       for (const rd of result.relationshipDeltas) {
-        if (Math.abs(rd.delta) >= EVENT_THRESHOLD) {
+        if (Math.abs(rd.closeness) >= EVENT_THRESHOLD) {
           relationshipMemoryManager.recordEvent(disciple.id, rd.targetId, {
             content: rd.reason.substring(0, 30),
             tick: Math.floor(state.inGameWorldTime),
-            affinityDelta: rd.delta,
+            closenessDelta: rd.closeness,
           });
           // 触发 narrative snippet 重建
           if (narrativeSnippetBuilder) {
@@ -494,7 +535,7 @@ export function processSoulEvent(
  * 在 processSoulEvent 尾部调用，此时：
  * - encounter(610) 已完成
  * - applyEvaluationResult + updateRelationshipTags 已执行
- * - affinity delta 和 tags 均为最新状态
+ * - closeness/attraction/trust delta 和 tags 均为最新状态
  *
  * @see phaseJ-goal-TDD.md S6
  */
@@ -524,7 +565,7 @@ function tryEventDrivenGoalTriggers(
   // T-EV-02: revenge 触发（仅 encounter-conflict）
   if (event.type === 'encounter-conflict') {
     for (const rd of result.relationshipDeltas) {
-      if (rd.delta >= -5) continue; // 仅 delta < -5
+      if (rd.closeness >= -5) continue; // 仅 closeness < -5
       const edge = state.relationships.find(
         e => e.sourceId === disciple.id && e.targetId === rd.targetId,
       );
@@ -538,13 +579,13 @@ function tryEventDrivenGoalTriggers(
     }
   }
 
-  // T-EV-03: friendship 触发（任意正向 affinity 变化）
+  // T-EV-03: friendship 触发（任意正向 closeness 变化）
   for (const rd of result.relationshipDeltas) {
-    if (rd.delta <= 0) continue;
+    if (rd.closeness <= 0) continue;
     const edge = state.relationships.find(
       e => e.sourceId === disciple.id && e.targetId === rd.targetId,
     );
-    if (!edge || edge.affinity < 40) continue;
+    if (!edge || edge.closeness < 40) continue;
     if (edge.tags.includes('friend')) continue; // 已是好友
     const goal = goalManager.assignGoal(state, disciple.id, 'friendship', {
       targetDiscipleId: rd.targetId,
@@ -568,7 +609,7 @@ function logGoalAssigned(
   const label = GOAL_LABEL[goal.type];
 
   let template = GOAL_MUD_TEXT.assigned[goal.type];
-  template = template.replace(/\{name\}/g, name).replace(/\{pronoun\}/g, '其');
+  template = template.replace(/\{name\}/g, name).replace(/\{pronoun\}/g, getPronoun(disciple?.gender ?? 'unknown'));
 
   const targetId = goal.target['targetDiscipleId'] as string | undefined;
   if (targetId) {
@@ -632,7 +673,16 @@ function decayEmotions(emotionMap: Map<string, DiscipleEmotionState>): void {
 }
 
 // 导出常量供测试用
-export { AFFINITY_DECAY_RATE, AFFINITY_DECAY_THRESHOLD, DECAY_INTERVAL_SEC, AI_TIMEOUT_MS };
+export {
+  CLOSENESS_DECAY_RATE,
+  ATTRACTION_DECAY_RATE,
+  TRUST_DECAY_RATE,
+  CLOSENESS_DECAY_THRESHOLD,
+  ATTRACTION_DECAY_THRESHOLD,
+  TRUST_DECAY_THRESHOLD,
+  DECAY_INTERVAL_SEC,
+  AI_TIMEOUT_MS,
+};
 
 /**
  * 重置模块级状态（测试/HMR 清理用）

@@ -82,7 +82,9 @@ export function applyActionEffect(
       ...result.relationshipDeltas,
       {
         targetId: actorId,
-        delta: effect.relationshipDeltaBonus,
+        closeness: effect.relationshipDeltaBonus,
+        attraction: 0,
+        trust: 0,
         reason: `AI决策：${effect.logSuffix}`,
       },
     ],

@@ -9,7 +9,7 @@
 ## §1 完整属性清单
 
 ```
-LiteGameState (v6)
+LiteGameState (v8)
 ├── version: number                          ← SaveManager 写入
 ├── aura: number                             ← IdleEngine.tick() 产出
 ├── spiritStones: number                     ← IdleEngine.tick() 产出
@@ -34,8 +34,14 @@ LiteGameState (v6)
 │   ├── [].behaviorTimer: number             ← BehaviorTree.tickDisciple() 写入
 │   ├── [].stamina: number                   ← BehaviorTree.tickDisciple() 写入
 │   ├── [].farmPlots: FarmPlot[]             ← FarmEngine 种植/收获时写入
-│   └── [].currentRecipeId: string | null    ← AlchemyEngine 开始/结束炼丹时写入
+│   ├── [].currentRecipeId: string | null    ← AlchemyEngine 开始/结束炼丹时写入
+│   ├── [].gender: Gender                    ← Phase GS: DiscipleGenerator 初始化（生成后不可变）
+│   └── [].orientation: Orientation          ← Phase I-beta: DiscipleGenerator 初始化（生成后不可变）
 ├── relationships: RelationshipEdge[]        ← DiscipleGenerator 初始化
+│   ├── [].closeness: number                 ← Phase I-beta: affinity→closeness 重命名
+│   ├── [].attraction: number                ← Phase I-beta: 吸引力 [0,100]
+│   ├── [].trust: number                     ← Phase I-beta: 信任度 [0,100]
+│   └── [].status: RelationshipStatus | null ← Phase I-beta: 关系状态（couple/married/etc.）
 ├── bountyBoard: BountyBoard                 ← Phase D 悬赏系统（未实现）
 ├── aiContexts: Record<string, AISoulContext> ← AI 层写入
 ├── materialPouch: Record<string, number>    ← FarmEngine 收获时写入 + AlchemyEngine 消耗时扣减
@@ -95,3 +101,5 @@ LiteGameState (v6)
 | 2026-03-28 | 从 MASTER-ARCHITECTURE.md §2 拆出 |
 | 2026-03-30 | Phase F0-α: +sect.ethos +sect.discipline; LiteGameState v3→v5 |
 | 2026-04-01 | Phase J-Goal: +goals: PersonalGoal[]; LiteGameState v5→v6 |
+| 2026-04-02 | Phase GS: +disciples[].gender: Gender; LiteGameState v6→v7 |
+| 2026-04-02 | Phase I-beta: RelationshipEdge affinity→closeness +attraction +trust +status; +disciples[].orientation: Orientation; LiteGameState v7→v8 |

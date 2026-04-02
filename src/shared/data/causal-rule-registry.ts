@@ -89,8 +89,8 @@ export const CAUSAL_RULE_REGISTRY: readonly CausalRule[] = Object.freeze([
   {
     id: 'CR-01',
     name: '仇人挑衅',
-    triggerType: 'affinity-threshold',
-    condition: { affinityMax: -60, requireSameZone: true },
+    triggerType: 'closeness-threshold',
+    condition: { closenessMax: -60, requireSameZone: true },
     resultEventType: 'causal-provoke',
     resultSeverity: EventSeverity.SPLASH,
     cooldownTicks: 600,
@@ -100,8 +100,8 @@ export const CAUSAL_RULE_REGISTRY: readonly CausalRule[] = Object.freeze([
   {
     id: 'CR-02',
     name: '至交赠礼',
-    triggerType: 'affinity-threshold',
-    condition: { affinityMin: 80, requireSameZone: true },
+    triggerType: 'closeness-threshold',
+    condition: { closenessMin: 80, requireSameZone: true },
     resultEventType: 'causal-gift',
     resultSeverity: EventSeverity.RIPPLE,
     cooldownTicks: 900,

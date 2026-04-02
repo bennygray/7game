@@ -28,6 +28,12 @@ import {
 } from './mud-formatter';
 import type { LogManager } from './log-manager';
 import type { PanelManager } from './panel-manager';
+import {
+  TAG_SEPARATOR,
+  RELATIONSHIP_TAG_LABEL,
+  getRelationshipStatusLabel,
+  getOrientationLabel,
+} from '../shared/utils/social-labels';
 
 // ===== 命令上下文（依赖注入，ADR-Xα-03）=====
 
@@ -386,18 +392,24 @@ function handleCommand(cmd: string, ctx: CommandContext): void {
       {
         const d = result.disciple;
         const mgr = engine.getRelationshipMemoryManager();
-        const lines: string[] = [`<span class="mud-text-cyan">[关系记忆] ${escapeHtml(d.name)}</span>`];
+        const oriLabel = getOrientationLabel(d.orientation, d.gender);
+        const lines: string[] = [`<span class="mud-text-cyan">[关系记忆] ${escapeHtml(d.name)}（${escapeHtml(oriLabel)}）</span>`];
         let hasAny = false;
         for (const other of state.disciples) {
           if (other.id === d.id) continue;
           const mem = mgr.getMemory(d.id, other.id);
           if (!mem) continue;
           hasAny = true;
-          const tagsStr = mem.tags.length > 0 ? ` [${mem.tags.join('/')}]` : '';
+          const tagsStr = mem.tags.length > 0
+            ? ` [${mem.tags.map(t => RELATIONSHIP_TAG_LABEL[t as keyof typeof RELATIONSHIP_TAG_LABEL] ?? t).join(TAG_SEPARATOR)}]`
+            : '';
+          const edge = state.relationships.find(r => r.sourceId === d.id && r.targetId === other.id);
+          const statusLabel = edge?.status ? getRelationshipStatusLabel(edge.status) : null;
+          const statusStr = statusLabel ? ` (${statusLabel})` : '';
           const snippet = mem.narrativeSnippet ? ` 「${mem.narrativeSnippet}」` : '';
-          lines.push(`  → ${escapeHtml(other.name)}: 好感${mem.affinity}${tagsStr} | 碰面${mem.encounterCount} 对话${mem.dialogueCount}${snippet}`);
+          lines.push(`  → ${escapeHtml(other.name)}${statusStr}: 亲疏${mem.closeness}${TAG_SEPARATOR}引${mem.attraction}${TAG_SEPARATOR}信${mem.trust}${tagsStr} | 碰面${mem.encounterCount}${TAG_SEPARATOR}对话${mem.dialogueCount}${snippet}`);
           for (const ev of mem.keyEvents) {
-            lines.push(`    · ${escapeHtml(ev.content)} (${ev.affinityDelta > 0 ? '+' : ''}${ev.affinityDelta}, tick${ev.tick})`);
+            lines.push(`    · ${escapeHtml(ev.content)} (${ev.closenessDelta > 0 ? '+' : ''}${ev.closenessDelta}, tick${ev.tick})`);
           }
         }
         if (!hasAny) {

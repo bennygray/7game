@@ -20,9 +20,10 @@
 import type { LiteGameState } from '../shared/types/game-state';
 import { createDefaultLiteGameState } from '../shared/types/game-state';
 import { generateInnateTraits } from '../shared/data/trait-registry';
+import { generateOrientation } from './disciple-generator';
 
 const SAVE_KEY = '7game-lite-save';
-const SAVE_VERSION = 6;
+const SAVE_VERSION = 8;
 
 /** 保存游戏状态到 localStorage */
 export function saveGame(state: LiteGameState): boolean {
@@ -179,6 +180,76 @@ function migrateV5toV6(raw: Record<string, unknown>): void {
 }
 
 /**
+ * v6 → v7 迁移（Phase GS — 弟子性别系统）
+ *
+ * - LiteDiscipleState 增 gender: Gender
+ * - 基于名字推测性别，fallback 随机
+ */
+const NAME_GENDER_MAP: Record<string, 'male' | 'female'> = {
+  '清风': 'male',  '星河': 'male',  '玄冰': 'male',  '天华': 'male',
+  '明月': 'female', '紫霞': 'female', '云烟': 'female',
+  '碧落': 'female', '青莲': 'female', '灵犀': 'female',
+};
+
+function migrateV6toV7(raw: Record<string, unknown>): void {
+  const disciples = raw['disciples'] as Array<Record<string, unknown>> | undefined;
+  if (Array.isArray(disciples)) {
+    for (const d of disciples) {
+      if (!d['gender']) {
+        const name = d['name'] as string;
+        const givenName = name?.slice(1) ?? '';
+        d['gender'] = NAME_GENDER_MAP[givenName] ?? (Math.random() < 0.5 ? 'female' : 'male');
+      }
+    }
+  }
+  raw['version'] = 7;
+  console.log('[SaveManager] v6 → v7 迁移完成（弟子性别系统）');
+}
+
+/**
+ * v7 → v8 迁移（Phase I-beta — 三维关系向量 + 性取向）
+ *
+ * - RelationshipEdge: affinity → closeness/attraction/trust/status
+ * - LiteDiscipleState: 增 orientation
+ */
+function migrateV7toV8(raw: Record<string, unknown>): void {
+  // 1. 关系边迁移：affinity → closeness + attraction + trust + status
+  const relationships = raw['relationships'] as Array<Record<string, unknown>> | undefined;
+  if (Array.isArray(relationships)) {
+    for (const r of relationships) {
+      const affinity = (r['affinity'] as number) ?? 0;
+      if (r['closeness'] === undefined) {
+        r['closeness'] = affinity;
+      }
+      if (r['attraction'] === undefined) {
+        r['attraction'] = 0;
+      }
+      if (r['trust'] === undefined) {
+        r['trust'] = Math.round(affinity * 0.5);
+      }
+      if (r['status'] === undefined) {
+        r['status'] = null;
+      }
+      delete r['affinity'];
+    }
+  }
+
+  // 2. 弟子迁移：增 orientation
+  const disciples = raw['disciples'] as Array<Record<string, unknown>> | undefined;
+  if (Array.isArray(disciples)) {
+    for (const d of disciples) {
+      if (!d['orientation']) {
+        const gender = (d['gender'] as string) ?? 'unknown';
+        d['orientation'] = generateOrientation(gender as 'male' | 'female' | 'unknown');
+      }
+    }
+  }
+
+  raw['version'] = 8;
+  console.log('[SaveManager] v7 → v8 迁移完成（三维关系向量 + 性取向）');
+}
+
+/**
  * 迁移旧存档：逐版本号升级 + 默认值填充
  */
 function migrateSave(raw: Record<string, unknown>): LiteGameState {
@@ -199,6 +270,12 @@ function migrateSave(raw: Record<string, unknown>): LiteGameState {
   }
   if ((raw['version'] as number) < 6) {
     migrateV5toV6(raw);
+  }
+  if ((raw['version'] as number) < 7) {
+    migrateV6toV7(raw);
+  }
+  if ((raw['version'] as number) < 8) {
+    migrateV7toV8(raw);
   }
 
   // 兜底：用 defaults 补全可能缺失的字段（安全网）

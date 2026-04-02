@@ -18,7 +18,9 @@ export interface RelationshipMemory {
   targetId: string;
 
   /** 已有数据（从 RelationshipEdge 实时读取，此处为缓存引用） */
-  affinity: number;           // 好感 [-100, +100]
+  closeness: number;          // 亲疏度 [-100, +100]（原 affinity）
+  attraction: number;         // 吸引力 [0, 100]
+  trust: number;              // 信赖度 [-100, +100]
   tags: RelationshipTag[];    // friend / rival / mentor / admirer / grudge
 
   /** 改变关系的关键事件摘要 */
@@ -42,8 +44,8 @@ export interface KeyRelationshipEvent {
   content: string;
   /** 发生时的游戏 tick */
   tick: number;
-  /** 这次事件带来的好感变化 */
-  affinityDelta: number;
+  /** 这次事件带来的亲疏度变化（ADR-Iβ-04: 保持单值） */
+  closenessDelta: number;
 }
 
 // ===== 常量 =====

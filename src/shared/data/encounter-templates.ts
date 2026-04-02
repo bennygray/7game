@@ -15,7 +15,7 @@ export const ENCOUNTER_TEMPLATES: Record<
 > = {
   chat: [
     '{A}在{LOC}遇到了{B}，两人有一搭没一搭地聊了几句。',
-    '{B}路过{LOC}，{A}叫住了对方，闲谈片刻。',
+    '{B}路过{LOC}，{A}叫住了{P_B}，闲谈片刻。',
     '{A}和{B}在{LOC}不期而遇，随口聊了几句宗门琐事。',
   ],
   discuss: [
@@ -26,7 +26,12 @@ export const ENCOUNTER_TEMPLATES: Record<
   conflict: [
     '气氛有些紧张，{A}和{B}在{LOC}发生了言语上的冲突。',
     '{A}见到{B}后冷哼一声，两人互相挖苦了几句。',
-    '{A}与{B}在{LOC}差点动起手来，幸好旁人拉住了。',
+    '{A}与{B}在{LOC}差点动起手来，幸好旁人拉住了{P_A}。',
+  ],
+  flirt: [
+    '{A}在{LOC}与{B}四目相对，{P_A}一时竟有些心跳加速。',
+    '{A}装作不经意地靠近{B}，在{LOC}低声说了句俏皮话。',
+    '{B}在{LOC}递给{A}一杯灵茶，两人相视一笑，气氛微妙。',
   ],
 };
 
@@ -43,11 +48,16 @@ export function fillEncounterTemplate(
   nameA: string,
   nameB: string,
   locationLabel: string,
+  pronounA?: string,
+  pronounB?: string,
 ): string {
-  return template
+  let result = template
     .replace(/\{A\}/g, nameA)
     .replace(/\{B\}/g, nameB)
     .replace(/\{LOC\}/g, locationLabel);
+  if (pronounA !== undefined) result = result.replace(/\{P_A\}/g, pronounA);
+  if (pronounB !== undefined) result = result.replace(/\{P_B\}/g, pronounB);
+  return result;
 }
 
 /**
@@ -59,8 +69,10 @@ export function getEncounterText(
   nameB: string,
   locationLabel: string,
   randomFn: () => number = Math.random,
+  pronounA?: string,
+  pronounB?: string,
 ): string {
   const templates = ENCOUNTER_TEMPLATES[result];
   const idx = Math.floor(randomFn() * templates.length);
-  return fillEncounterTemplate(templates[idx], nameA, nameB, locationLabel);
+  return fillEncounterTemplate(templates[idx], nameA, nameB, locationLabel, pronounA, pronounB);
 }

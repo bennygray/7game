@@ -87,9 +87,9 @@ export class NarrativeSnippetBuilder {
     memory: RelationshipMemory
   ): string {
     // 步骤 1: 选择框架短语
-    const framing = this.selectFramingPhrase(memory.affinity, sourceName, targetName);
+    const framing = this.selectFramingPhrase(memory.closeness, sourceName, targetName);
 
-    // 步骤 2: 事件串联（按 |affinityDelta| 降序取 top 3）
+    // 步骤 2: 事件串联（按 |closenessDelta| 降序取 top 3）
     const eventsPart = this.buildEventChain(memory);
 
     // 步骤 3: 归纳定性
@@ -117,11 +117,11 @@ export class NarrativeSnippetBuilder {
   buildByTemplate(
     sourceName: string,
     targetName: string,
-    affinity: number,
+    closeness: number,
     tags: RelationshipTag[]
   ): string {
     for (const t of TEMPLATES) {
-      if (t.condition(affinity, tags)) {
+      if (t.condition(closeness, tags)) {
         return t.template.replace('{A}', sourceName).replace('{B}', targetName);
       }
     }
@@ -146,32 +146,32 @@ export class NarrativeSnippetBuilder {
   ): Promise<string | null> {
     // 1. 构造输入数据
     const sorted = [...memory.keyEvents].sort(
-      (a, b) => Math.abs(b.affinityDelta) - Math.abs(a.affinityDelta)
+      (a, b) => Math.abs(b.closenessDelta) - Math.abs(a.closenessDelta)
     );
     const top3 = sorted.slice(0, 3);
 
     const eventsDesc = top3.length > 0
-      ? top3.map(e => `- ${e.content}（好感${e.affinityDelta > 0 ? '+' : ''}${e.affinityDelta}）`).join('\n')
+      ? top3.map(e => `- ${e.content}（好感${e.closenessDelta > 0 ? '+' : ''}${e.closenessDelta}）`).join('\n')
       : '（暂无关键事件）';
 
     const tagsDesc = memory.tags.length > 0 ? memory.tags.join('、') : '无';
 
     // 2. 构造 prompt（v2: 修复加戏/省名/极性偏移）
-    const polarityHint = memory.affinity >= 30 ? '正面（友善、信任）'
-      : memory.affinity <= -30 ? '负面（敌意、不信任）'
+    const polarityHint = memory.closeness >= 30 ? '正面（友善、信任）'
+      : memory.closeness <= -30 ? '负面（敌意、不信任）'
       : '中性（淡漠、无特殊关系）';
 
     const systemMsg = '你是修仙世界叙事器。根据两个角色的关系数据，用一句话概括他们的关系本质。\n' +
       '硬性要求：\n' +
       '1. ≤80字，古典仙侠文风，第三人称\n' +
       '2. 必须包含角色A和角色B的完整姓名\n' +
-      '3. 严格遵循好感度极性——正面关系只写正面，负面关系只写负面，不得反转\n' +
+      '3. 严格遵循亲疏度极性——正面关系只写正面，负面关系只写负面，不得反转\n' +
       '4. 只引用关键事件中已有的内容，不得虚构事件\n' +
       '5. 只输出JSON';
 
     const userMsg = `角色A: ${sourceName}\n` +
       `角色B: ${targetName}\n` +
-      `好感度: ${memory.affinity}（极性: ${polarityHint}）\n` +
+      `亲疏度: ${memory.closeness}（极性: ${polarityHint}）\n` +
       `关系标签: ${tagsDesc}\n` +
       `关键事件:\n${eventsDesc}\n\n` +
       `请输出一句叙事归纳。`;
@@ -258,7 +258,7 @@ export class NarrativeSnippetBuilder {
       return this.buildByRules(sourceName, targetName, memory);
     } catch {
       // 层级 3: 模板插值（理论上不会走到这里）
-      return this.buildByTemplate(sourceName, targetName, memory.affinity, memory.tags);
+      return this.buildByTemplate(sourceName, targetName, memory.closeness, memory.tags);
     }
   }
 
@@ -290,9 +290,9 @@ export class NarrativeSnippetBuilder {
 
   // ===== 内部方法 =====
 
-  /** 步骤 1: 按 affinity 区间选择框架短语 */
-  private selectFramingPhrase(affinity: number, sourceName: string, targetName: string): string {
-    const clamped = Math.max(-100, Math.min(100, affinity));
+  /** 步骤 1: 按 closeness 区间选择框架短语 */
+  private selectFramingPhrase(closeness: number, sourceName: string, targetName: string): string {
+    const clamped = Math.max(-100, Math.min(100, closeness));
     for (const phrase of FRAMING_PHRASES) {
       if (clamped >= phrase.min && clamped <= phrase.max) {
         return phrase.template.replace('{A}', sourceName).replace('{B}', targetName);
@@ -307,7 +307,7 @@ export class NarrativeSnippetBuilder {
     if (memory.keyEvents.length === 0) return '';
 
     const sorted = [...memory.keyEvents].sort(
-      (a, b) => Math.abs(b.affinityDelta) - Math.abs(a.affinityDelta)
+      (a, b) => Math.abs(b.closenessDelta) - Math.abs(a.closenessDelta)
     );
     const top = sorted.slice(0, 3);
 

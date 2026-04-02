@@ -16,6 +16,8 @@
 | **v4** | E | `disciples[].moral`, `disciples[].initialMoral`, `disciples[].traits`, `RelationshipEdge.affinity`, `RelationshipEdge.tags`, `RelationshipEdge.lastInteraction` | `RelationshipEdge.value` | `migrateV3toV4()` |
 | **v5** | F0-α | `sect.ethos`, `sect.discipline` | — | `migrateV4toV5()` |
 | **v6** | J-Goal | `goals: PersonalGoal[]` | — | `migrateV5toV6()` |
+| **v7** | GS | `disciples[].gender: Gender` | — | `migrateV6toV7()` |
+| **v8** | I-beta | `RelationshipEdge.closeness/attraction/trust/status`, `disciples[].orientation` | `RelationshipEdge.affinity` | `migrateV7toV8()` |
 
 ---
 
@@ -28,14 +30,16 @@ graph LR
     V3 -->|migrateV3toV4| V4["v4 存档"]
     V4 -->|migrateV4toV5| V5["v5 存档"]
     V5 -->|migrateV5toV6| V6["v6 存档"]
-    V6 -->|defaults 兜底| FINAL["最终 LiteGameState"]
+    V6 -->|migrateV6toV7| V7["v7 存档"]
+    V7 -->|migrateV7toV8| V8["v8 存档"]
+    V8 -->|defaults 兜底| FINAL["最终 LiteGameState"]
     style FINAL fill:#d4edda
-    style V6 fill:#fff3e0
+    style V8 fill:#fff3e0
 ```
 
-1. **链式迁移**：`if (version < 2) → migrateV1toV2()`，...，`if (version < 5) → migrateV4toV5()`，`if (version < 6) → migrateV5toV6()`
+1. **链式迁移**：`if (version < 2) → migrateV1toV2()`，...，`if (version < 7) → migrateV6toV7()`，`if (version < 8) → migrateV7toV8()`
 2. **defaults 兜底**：迁移后用 `createDefaultLiteGameState()` 的属性做浅合并，补全任何缺失字段
-3. **版本号强制更新**：最终 `result.version = SAVE_VERSION (6)`
+3. **版本号强制更新**：最终 `result.version = SAVE_VERSION (8)`
 
 ---
 
@@ -93,6 +97,33 @@ fields[], alchemy{}
 
 ---
 
+## §8 v6→v7 变更 (Phase GS)
+
+- ➕ `disciples[].gender: Gender` — 弟子性别（`'male' | 'female' | 'unknown'`）
+
+迁移函数 `migrateV6toV7()`：
+1. 遍历 `disciples[]`，检查 `gender` 字段是否存在
+2. 通过 `NAME_GENDER_MAP`（10 个已知名字→性别映射）推断性别
+3. 未匹配名字 → `Math.random() < 0.5 ? 'female' : 'male'` 随机分配
+4. `version = 7`
+
+---
+
+## §9 v7→v8 变更 (Phase I-beta)
+
+- ➖ `RelationshipEdge.affinity: number` → `RelationshipEdge.closeness: number` — 重命名
+- ➕ `RelationshipEdge.attraction: number` — 吸引力，初始 0
+- ➕ `RelationshipEdge.trust: number` — 信任度，初始 affinity×0.5
+- ➕ `RelationshipEdge.status: RelationshipStatus | null` — 关系状态，初始 null
+- ➕ `disciples[].orientation: Orientation` — 性取向
+
+迁移函数 `migrateV7toV8()`：
+1. 遍历 `relationships[]`：`affinity` → `closeness`，`attraction = 0`，`trust = affinity × 0.5`，`status = null`
+2. 遍历 `disciples[]`：`orientation = generateOrientation()`
+3. `version = 8`
+
+---
+
 ## 变更日志
 
 | 日期 | 变更内容 |
@@ -101,3 +132,5 @@ fields[], alchemy{}
 | 2026-03-29 | Phase E: +v4 变更链（moral/traits/affinity/tags/lastInteraction）+ migrateV3toV4 |
 | 2026-03-30 | Phase F0-α: +v5 变更链（sect.ethos/sect.discipline）+ migrateV4toV5 |
 | 2026-04-01 | Phase J-Goal: +v6 变更链（goals: PersonalGoal[]）+ migrateV5toV6 |
+| 2026-04-02 | Phase GS: +v7 变更链（disciples[].gender: Gender）+ migrateV6toV7 |
+| 2026-04-02 | Phase I-beta: +v8 变更链（RelationshipEdge closeness/attraction/trust/status + disciples[].orientation）+ migrateV7toV8 |

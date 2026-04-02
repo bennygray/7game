@@ -22,6 +22,8 @@
 | 弟子间对话系统 (FB-001) | D | [phaseD-PRD.md](../../features/phaseD-PRD.md) | ✅ fallback 模式通过 |
 | 结构化日志系统 | D | [phaseD-TDD.md](../../design/specs/phaseD-TDD.md) | ✅ IndexedDB 持久化 |
 | NPC 灵魂系统（道德/特性/情绪/关系） | E | [phaseE-PRD.md](../../features/phaseE-PRD.md) | ✅ 47 专项 + 64 回归 |
+| 弟子性别系统（代词/名字池/存档迁移） | GS | [phaseGS-PRD.md](../../features/phaseGS-PRD.md) | ✅ 81 回归通过 |
+| 社交事件系统（三维关系/性取向/关系状态/社交引擎） | I-beta | [phaseI-beta-PRD.md](../../features/phaseI-beta-PRD.md) | ✅ 回归 111 + social 78 通过 |
 
 ---
 
@@ -59,3 +61,5 @@
 | 2026-03-28 | Phase D: +3 已实现系统（Intent重构/弟子对话/结构化日志）；天劫+悬赏移至 Phase E；+关系系统(FB-004)待定 |
 | 2026-03-29 | Phase E: +NPC 灵魂系统（含关系系统 FB-004）；天劫+悬赏+丹毒移至 Phase F |
 | 2026-03-29 | **对齐 Roadmap V3**：§2 重构为世界层规划系统（6 项）；天劫/悬赏/丹毒移入 §3 暂缓系统；对齐 MASTER-PRD v2.0 |
+| 2026-04-02 | Phase GS: +弟子性别系统（Gender type + 名字池 + 代词 + 存档 v6→v7） |
+| 2026-04-02 | Phase I-beta: +社交事件系统（三维关系向量 + 性取向 + 离散关系状态 + 社交引擎 + 存档 v7→v8） |

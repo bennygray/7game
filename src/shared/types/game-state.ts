@@ -1,5 +1,5 @@
 /**
- * 7game-lite 精简游戏状态 — v6
+ * 7game-lite 精简游戏状态 — v8
  *
  * Phase B-α: 删除 FieldSlot/AlchemyState，新增 FarmPlot/PillItem，
  * 弟子级 farmPlots + currentRecipeId。
@@ -12,14 +12,57 @@
  *
  * Phase J-Goal: 新增 goals: PersonalGoal[]（个人目标池）。存档版本 v5→v6。
  *
+ * Phase GS: 新增 Gender type + gender 字段 + 代词工具函数。存档版本 v6→v7。
+ *
+ * Phase I-beta: 三维关系向量(closeness/attraction/trust) + 离散关系状态(status)
+ * + 性取向(orientation)。存档版本 v7→v8。
+ *
  * @see AGENTS.md §3.5 版本边界
- * @see phaseJ-goal-TDD.md S1.3
+ * @see phaseGS-TDD.md
  */
 
 import type { AISoulContext } from './ai-soul';
-import type { MoralAlignment, DiscipleTrait, RelationshipTag } from './soul';
+import type { MoralAlignment, DiscipleTrait, RelationshipTag, RelationshipStatus } from './soul';
 import type { PersonalGoal } from './personal-goal';
 import { generateInitialDisciples, generateInitialRelationships } from '../../engine/disciple-generator';
+
+// ===== Phase GS: 性别系统 =====
+
+/** 弟子性别（三元制：男/女/未知） */
+export type Gender = 'male' | 'female' | 'unknown';
+
+// ===== Phase I-beta: 性取向系统 =====
+
+/** 性取向权重 */
+export interface Orientation {
+  /** 对男性的吸引力权重 [0, 1] */
+  maleAttraction: number;
+  /** 对女性的吸引力权重 [0, 1] */
+  femaleAttraction: number;
+}
+
+const PRONOUN_MAP: Record<Gender, { subject: string; possessive: string }> = {
+  male:    { subject: '他', possessive: '他的' },
+  female:  { subject: '她', possessive: '她的' },
+  unknown: { subject: '其', possessive: '其' },
+};
+
+/** 获取性别对应的主格代词（他/她/其） */
+export function getPronoun(gender: Gender): string {
+  return PRONOUN_MAP[gender]?.subject ?? '其';
+}
+
+/** 获取性别中文标签（男/女/未知） */
+export function getGenderLabel(gender: Gender): string {
+  const labels: Record<Gender, string> = { male: '男', female: '女', unknown: '未知' };
+  return labels[gender] ?? '未知';
+}
+
+/** 获取性别符号（♂/♀/空） */
+export function getGenderSymbol(gender: Gender): string {
+  const symbols: Record<Gender, string> = { male: '♂', female: '♀', unknown: '' };
+  return symbols[gender] ?? '';
+}
 
 // ===== 常量 =====
 
@@ -158,16 +201,30 @@ export interface LiteDiscipleState {
   initialMoral: MoralAlignment;
   /** 特性列表（先天 1~2 + 后天 0~3） */
   traits: DiscipleTrait[];
+
+  // === Phase GS 新增 — 弟子性别系统 ===
+
+  /** 性别（生成后不可变） */
+  gender: Gender;
+
+  /** Phase I-beta: 性取向权重（生成后不可变） */
+  orientation: Orientation;
 }
 
-/** 弟子关系边 — v4 升级 */
+/** 弟子关系边 — v8 三维重构 */
 export interface RelationshipEdge {
   sourceId: string;
   targetId: string;
-  /** 好感度 -100 ~ +100（Phase E: 替代原 value 字段） */
-  affinity: number;
+  /** 亲疏度 [-100, +100]（原 affinity，Phase I-beta） */
+  closeness: number;
+  /** 吸引力 [0, 100]（受性取向门控，Phase I-beta） */
+  attraction: number;
+  /** 信赖度 [-100, +100]（Phase I-beta） */
+  trust: number;
   /** 关系标签（可叠加，由 soul-engine 自动分配） */
   tags: RelationshipTag[];
+  /** 离散关系状态（唯一，由 social-tick 管理，Phase I-beta） */
+  status: RelationshipStatus | null;
   /** 最后交互时间戳（用于衰减计算） */
   lastInteraction: number;
 }
@@ -230,7 +287,7 @@ export interface LifetimeStats {
 
 // ===== 主状态 =====
 
-/** 7game-lite 精简游戏状态 — v6 */
+/** 7game-lite 精简游戏状态 — v8 */
 export interface LiteGameState {
   /** 存档版本号 */
   version: number;
@@ -282,12 +339,12 @@ export interface LiteGameState {
 
 // ===== 工厂函数 =====
 
-/** 创建默认新游戏状态 — v6 */
+/** 创建默认新游戏状态 — v8 */
 export function createDefaultLiteGameState(): LiteGameState {
   const now = Date.now();
   const disciples = generateInitialDisciples();
   return {
-    version: 6,
+    version: 8,
     aura: 0,
     spiritStones: 200,
     realm: Realm.LIANQI,

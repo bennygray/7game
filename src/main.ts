@@ -127,7 +127,7 @@ handleDiscipleClick(panelBody);     // 面板内的弟子名
 updateDisplay();
 engine.start();
 
-logManager.addMainLog(`<span class="mud-text-cyan">[系统] 七道修仙 MUD 灵智版 v0.4.9 已启动</span>`);
+logManager.addMainLog(`<span class="mud-text-cyan">[系统] 七道修仙 MUD 灵智版 v0.5.5 已启动</span>`);
 logManager.addMainLog(`<span class="mud-text-cyan">[系统] 引擎 Tick 循环已激活，修炼进行中...</span>`);
 logManager.addMainLog(`<span class="mud-text-mute">[系统] 输入 'help' 查看可用命令 | 'look' 查看宗门总览 | ↑/↓ 翻阅历史</span>`);
 
@@ -141,4 +141,4 @@ const AUTO_SAVE_INTERVAL = 30_000;
 setInterval(() => { if (!resetting) saveGame(state); }, AUTO_SAVE_INTERVAL);
 window.addEventListener('beforeunload', () => { if (!resetting) saveGame(state); });
 
-console.log('[7game-lite] v0.4.9 Phase X Review 修复完成', state);
+console.log('[7game-lite] v0.5.5 Phase GS + I-beta + UI-S 完成', state);

@@ -26,6 +26,7 @@ import type { RelationshipMemoryManager } from './relationship-memory-manager';
 import type { NarrativeSnippetBuilder } from '../ai/narrative-snippet-builder';
 import type { GoalManager } from './goal-manager';
 import type { CausalRuleEvaluator } from './causal-evaluator';
+import type { SocialEngine } from './social-engine';
 
 /** 突破事件回调（定义在 tick-pipeline 以避免循环依赖） */
 export type BreakthroughCallback = (
@@ -116,6 +117,8 @@ export interface TickContext {
   goalManager?: GoalManager;
   /** Phase I-alpha: 因果规则评估器 */
   causalEvaluator?: CausalRuleEvaluator;
+  /** Phase I-beta: 社交引擎（ADR-Iβ-01: 唯一写入 edge.status） */
+  socialEngine?: SocialEngine;
 }
 
 // ===== TickPipeline 类 =====

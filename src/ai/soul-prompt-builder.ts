@@ -49,12 +49,14 @@ export const SOUL_EVAL_JSON_SCHEMA = {
         type: 'object',
         properties: {
           targetId: { type: 'string' },
-          delta: { type: 'number', minimum: -10, maximum: 10 },
+          closeness: { type: 'number', minimum: -10, maximum: 10 },
+          attraction: { type: 'number', minimum: -10, maximum: 10 },
+          trust: { type: 'number', minimum: -10, maximum: 10 },
           reason: { type: 'string' },
         },
-        required: ['targetId', 'delta', 'reason'],
+        required: ['targetId', 'closeness', 'attraction', 'trust', 'reason'],
       },
-      description: '关系变化列表（引擎将执行方向修正和夹值）',
+      description: '关系三维变化列表（closeness亲疏/attraction吸引/trust信赖，引擎将执行方向修正和夹值）',
     },
     innerThought: {
       type: 'string',
@@ -197,7 +199,8 @@ export function buildSoulEvalPrompt(input: SoulPromptInput): string {
   const goalSegment = goals ? buildGoalPromptSegment(goals) : '';
 
   // 构建身份段落
-  let identity = `你是修仙宗门弟子「${subject.name}」，性格${subject.personalityName}。`;
+  const genderDesc = subject.gender === 'female' ? '女' : subject.gender === 'male' ? '男' : '';
+  let identity = `你是修仙宗门弟子「${subject.name}」${genderDesc ? `，性别${genderDesc}` : ''}，性格${subject.personalityName}。`;
   if (traitHints) identity += `性格特点：${traitHints}。`;
   if (moralDesc) identity += `${moralDesc}。`;
   if (ethosDesc) identity += `你所在的宗门：${ethosDesc}。`;
@@ -266,6 +269,20 @@ function getEventDescription(
       'causal-jealousy':    '你因同门的突破而心生嫉妒',
       'causal-seclusion':   '你连续受挫，决定闭关静修',
       'causal-ethos-clash': '你感到自身道心与宗门道风不合',
+      // Phase I-beta: 社交事件
+      'social-flirt':                '你在碰面时对同门暗生情愫，言语间多了几分柔意',
+      'social-confession':           '你鼓起勇气向心仪之人表露心迹',
+      'social-confession-accepted':  '你的告白被接受了，彼此确认了心意',
+      'social-confession-rejected':  '你的告白被婉拒了，心中五味杂陈',
+      'social-sworn-proposal':       '你向同门提出结拜之请',
+      'social-sworn-accepted':       '你的结拜之请被应允，义结金兰',
+      'social-sworn-rejected':       '你的结拜之请被婉拒',
+      'social-nemesis-declare':      '你向宿敌正式宣战，恩怨分明',
+      'social-nemesis-accepted':     '对方接受了你的宣战，宿敌关系由此确立',
+      'social-nemesis-rejected':     '对方拒绝了你的宣战',
+      'social-lover-broken':         '你与道侣分道扬镳，情缘已尽',
+      'social-sworn-broken':         '你与义兄弟决裂，金兰之谊化为乌有',
+      'social-nemesis-resolved':     '你与宿敌冰释前嫌，恩怨一笔勾销',
     };
     return selfDesc[eventType] ?? `你完成了${eventType}`;
   } else {
@@ -290,6 +307,20 @@ function getEventDescription(
       'causal-jealousy':    `你的同门${actorName}似乎对他人的突破心怀嫉妒`,
       'causal-seclusion':   `你的同门${actorName}受挫后选择了闭关`,
       'causal-ethos-clash': `你的同门${actorName}对宗门近况颇有微词`,
+      // Phase I-beta: 社交事件
+      'social-flirt':                `你的同门${actorName}与人碰面时眉目传情`,
+      'social-confession':           `你的同门${actorName}向心仪之人告白`,
+      'social-confession-accepted':  `你的同门${actorName}的告白被接受了`,
+      'social-confession-rejected':  `你的同门${actorName}的告白被拒绝了`,
+      'social-sworn-proposal':       `你的同门${actorName}向人提出结拜`,
+      'social-sworn-accepted':       `你的同门${actorName}与人义结金兰`,
+      'social-sworn-rejected':       `你的同门${actorName}的结拜之请被拒`,
+      'social-nemesis-declare':      `你的同门${actorName}向人正式宣战`,
+      'social-nemesis-accepted':     `你的同门${actorName}与人成为了宿敌`,
+      'social-nemesis-rejected':     `你的同门${actorName}的宣战被拒绝`,
+      'social-lover-broken':         `你的同门${actorName}与道侣分手了`,
+      'social-sworn-broken':         `你的同门${actorName}与义兄弟决裂`,
+      'social-nemesis-resolved':     `你的同门${actorName}与宿敌和解了`,
     };
     return observerDesc[eventType] ?? `你的同门${actorName}发生了${eventType}`;
   }

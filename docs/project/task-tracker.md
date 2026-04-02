@@ -44,6 +44,9 @@
 | TG-1 | — | Trinity Pipeline 重审执行保障（判定校验·禁止自审·签章检查） | ✅ | ✅ | ✅ | 🟢 完成（Gate 3 COND. PASS） |
 | TG-2 | — | 审查上下文交付+影响审计扩展+INDEX补全（§0·Step 5.5-5.9·全量补全） | ✅ | ✅ | ✅ | 🟢 完成（Gate 3 COND. PASS） |
 | TG-3 | — | 文档关系梳理+交叉索引+追溯链（Option B·Quick Orient·11交付物） | ✅ | ✅ | ✅ | 🟢 完成 |
+| GS | v0.5.1 | 弟子性别系统（gender字段·名字池·代词·AI注入·v7迁移·债务清单） | ✅ | ✅ | ✅ | 🟢 完成（Gate 3 COND. PASS） |
+| I-beta | v0.6.0 | 社交事件系统（三维关系重构·性取向·AI邀约·道侣/结拜/宿敌·v8） | ✅ | ✅ | ✅ | 🟢 完成（Gate 3 PASSED） |
+| UI-S | — | 社交系统显示与模板补全（面板重排·status中文化·性取向显示·社交模板接入·代词策略） | ✅ | ✅ | ✅ | 🟡 待 GATE 3 |
 
 ---
 
@@ -71,12 +74,12 @@
 | 指标 | 数值 |
 |------|------|
 | 已实现系统 | 21 个（修炼、弟子×8、MUD、灵田、炼丹、突破、灵脉、丹药消费、AI对话、结构化日志、Intent、Tick Pipeline、灵魂事件总线、灵魂评估引擎、碰面引擎、世界事件系统、Storyteller、MUD世界呈现、AI觉醒系统、统一日志管线、掌门裁决系统） |
-| 回归测试 | 64 组全通过 |
+| 回归测试 | 111 组全通过 |
 | UI 单元测试 | 65 组全通过（Phase Y 新增） |
 | 专项验证 | Phase E 47 + Phase F 12 + Phase F0-α 52 + Phase F0-β 108 + Phase IJ 38 + Phase I-α 30 = **287 条** |
 | 技术债务 | TD-001~TD-021（2 个已清偿：TD-001 Pipeline 重构、TD-003 Intent；TD-006 部分清偿） |
 | 需求债务 | FB-001~FB-019（3 个已清偿：FB-001 弟子对话、FB-004 关系系统、FB-011 玩家干预权；FB-005/FB-010/FB-012 部分清偿；**FB-019 P0 流程缺陷 待修复**） |
-| GameState 版本 | v6（Phase J-Goal +goals 字段） |
+| GameState 版本 | v8（Phase I-beta 三维关系重构 + 社交状态） |
 | Tick Handler 数量 | 15 个（+causal-tick 612:0） |
 | 弟子数量 | 8 人（4 初始 + 4 Phase D 新增） |
 | AI 模型 | Qwen3.5-2B（llama-server 子进程，GPU -ngl 99）；降级 0.8B |
@@ -142,3 +145,4 @@
 | 2026-04-01 | **Phase TG-1 SPM 完成**：流程审计 → PRD v1.0 + 3 User Stories。Gate 1 CONDITIONAL PASS (0 BLOCK/3 WARN)。FB-020 登记。W2(TG命名) W3(task-tracker注册) 已补完 |
 | 2026-04-01 | **Phase TG-1 全 Pipeline 完成**：Gate 1 COND.PASS(3W) → Gate 2 COND.PASS(3W) → Gate 3 COND.PASS(2W)。4 文件修改：review-protocol.md +判定校验段，3 个 SKILL.md +禁止自审+签章检查。FB-020(a) 清偿 |
 | 2026-04-02 | **Phase TG-2 全 Pipeline 完成**：Gate 1 COND.PASS(3W) → Gate 2 COND.PASS(4W) → Gate 3 COND.PASS(2W)，WARN 全修复。5 文件修改：review-protocol.md v1.3（+§0 上下文交付清单）+SGA Step 5.5-5.9（+4 审计维度）+3 SKILL.md 调用模板+INDEX.md 全量补全（+9 PRD +9 TDD +5 US +9 脚本 +11 Phase pipeline）。FB-020(b) 清偿 |
+| 2026-04-02 | **Phase I-beta 完成**：社交事件系统 v0.6.0。三维关系向量（closeness/attraction/trust）+ 性取向系统 + 离散关系状态（crush/lover/sworn-sibling/nemesis）+ social-engine + social-tick.handler + social-event-templates。存档 v7→v8。4 ADR。tsc 0 errors / 回归 111/0 / social verify 78/0。Gate 3 PASSED |

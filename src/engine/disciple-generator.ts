@@ -5,7 +5,7 @@
  * 类型文件不应包含业务逻辑
  */
 
-import type { LiteDiscipleState, PersonalityTraits, StarRating } from '../shared/types/game-state';
+import type { LiteDiscipleState, PersonalityTraits, StarRating, Gender, Orientation } from '../shared/types/game-state';
 import { DiscipleBehavior } from '../shared/types/game-state';
 import type { RelationshipEdge } from '../shared/types/game-state';
 import { generateInnateTraits } from '../shared/data/trait-registry';
@@ -18,8 +18,26 @@ function randomInt(min: number, max: number): number {
 
 // ===== 数据表 =====
 
-const SURNAMES = ['林', '陈', '张', '李', '王', '赵', '周', '吴', '孙', '刘'];
-const GIVEN_NAMES = ['清风', '明月', '星河', '云烟', '紫霞', '青莲', '玄冰', '碧落', '天华', '灵犀'];
+const SURNAMES = [
+  '林', '陈', '张', '李', '王', '赵', '周', '吴', '孙', '刘',
+  '萧', '苏', '沈', '叶', '顾',
+];
+
+const MALE_GIVEN_NAMES = [
+  '清风', '星河', '玄冰', '天华', '承志',
+  '昊然', '九霄', '剑鸣', '长渊', '铁衣',
+  '鸿飞', '墨尘', '崇岳', '砺锋', '破军',
+];
+
+const FEMALE_GIVEN_NAMES = [
+  '明月', '紫霞', '云烟', '碧落', '青莲',
+  '灵犀', '瑶琴', '秋水', '若兰', '素心',
+  '落雁', '凝霜', '映雪', '绮梦', '蝶衣',
+];
+
+/** 女性生成概率（可配置） */
+const FEMALE_RATIO = 0.5;
+
 const SPIRITUAL_ROOTS = ['金', '木', '水', '火', '土'];
 
 const PERSONALITY_TEMPLATES: { name: string; traits: PersonalityTraits }[] = [
@@ -58,12 +76,40 @@ export function escapeHtml(str: string): string {
     .replace(/'/g, '&#039;');
 }
 
+// ===== 性取向生成 =====
+
+/**
+ * 根据性别生成性取向（PRD §4.2 分布）
+ * 80% 异性恋, 15% 双性恋, 5% 同性恋
+ */
+export function generateOrientation(gender: Gender): Orientation {
+  const roll = Math.random() * 100;
+  if (roll < 80) {
+    // 异性恋
+    return gender === 'male'
+      ? { maleAttraction: 0, femaleAttraction: 1 }
+      : { maleAttraction: 1, femaleAttraction: 0 };
+  } else if (roll < 95) {
+    // 双性恋
+    return gender === 'male'
+      ? { maleAttraction: 0.5, femaleAttraction: 1 }
+      : { maleAttraction: 1, femaleAttraction: 0.5 };
+  } else {
+    // 同性恋
+    return gender === 'male'
+      ? { maleAttraction: 1, femaleAttraction: 0 }
+      : { maleAttraction: 0, femaleAttraction: 1 };
+  }
+}
+
 // ===== 生成函数 =====
 
 /** 随机生成一名弟子 */
 export function generateRandomDisciple(): LiteDiscipleState {
+  const gender: Gender = Math.random() < FEMALE_RATIO ? 'female' : 'male';
+  const givenNames = gender === 'male' ? MALE_GIVEN_NAMES : FEMALE_GIVEN_NAMES;
   const surname = SURNAMES[Math.floor(Math.random() * SURNAMES.length)];
-  const givenName = GIVEN_NAMES[Math.floor(Math.random() * GIVEN_NAMES.length)];
+  const givenName = givenNames[Math.floor(Math.random() * givenNames.length)];
   const starRating = rollStarRating();
   const rootCount = 1 + Math.floor(Math.random() * 3);
   const shuffled = [...SPIRITUAL_ROOTS].sort(() => Math.random() - 0.5);
@@ -103,6 +149,8 @@ export function generateRandomDisciple(): LiteDiscipleState {
     moral,
     initialMoral: { ...moral },
     traits: generateInnateTraits(),
+    gender,
+    orientation: generateOrientation(gender),
   };
 }
 
@@ -113,11 +161,15 @@ export function generateInitialDisciples(count = 8): LiteDiscipleState[] {
   const usedNames = new Set<string>();
 
   return Array.from({ length: count }, (_, i) => {
+    // Phase GS: 性别决定名字池
+    const gender: Gender = Math.random() < FEMALE_RATIO ? 'female' : 'male';
+    const givenNames = gender === 'male' ? MALE_GIVEN_NAMES : FEMALE_GIVEN_NAMES;
+
     // 确保名字不重复
     let name: string;
     do {
       const surname = SURNAMES[Math.floor(Math.random() * SURNAMES.length)];
-      const givenName = GIVEN_NAMES[Math.floor(Math.random() * GIVEN_NAMES.length)];
+      const givenName = givenNames[Math.floor(Math.random() * givenNames.length)];
       name = `${surname}${givenName}`;
     } while (usedNames.has(name));
     usedNames.add(name);
@@ -165,14 +217,16 @@ export function generateInitialDisciples(count = 8): LiteDiscipleState[] {
       moral,
       initialMoral: { ...moral },
       traits: generateInnateTraits(),
+      gender,
+      orientation: generateOrientation(gender),
     };
   });
 }
 
 /**
- * 生成初始关系矩阵 — v4
+ * 生成初始关系矩阵 — v8
  *
- * - affinity 初始值: [-20, +20]（按 R-E9 简化版）
+ * - closeness 初始值: [-20, +20]（按 R-E9 简化版）
  * - tags: []
  * - lastInteraction: Date.now()
  */
@@ -184,18 +238,21 @@ export function generateInitialRelationships(disciples: LiteDiscipleState[]): Re
       if (i === j) continue;
       const a = disciples[i];
       const b = disciples[j];
-      // R-E9: 初始好感度基于道德相似度弱影响
+      // R-E9: 初始亲疏度基于道德相似度弱影响
       const moralSimilarity =
         1 - (Math.abs(a.moral.goodEvil - b.moral.goodEvil) +
              Math.abs(a.moral.lawChaos - b.moral.lawChaos)) / 400;
       // 基础值 [-10, +10] + 道德影响 [-10, +10]
-      const baseAffinity = randomInt(-10, 10) + Math.round((moralSimilarity - 0.5) * 20);
-      const affinity = Math.max(-20, Math.min(20, baseAffinity));
+      const baseCloseness = randomInt(-10, 10) + Math.round((moralSimilarity - 0.5) * 20);
+      const closeness = Math.max(-20, Math.min(20, baseCloseness));
       edges.push({
         sourceId: a.id,
         targetId: b.id,
-        affinity,
+        closeness,
+        attraction: 0,
+        trust: randomInt(0, 10) + Math.round((moralSimilarity - 0.5) * 10),
         tags: [],
+        status: null,
         lastInteraction: now,
       });
     }

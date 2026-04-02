@@ -23,6 +23,7 @@
  */
 
 import type { LiteGameState, LiteDiscipleState } from '../shared/types/game-state';
+import { getGenderSymbol, getGenderLabel } from '../shared/types/game-state';
 import { LOCATION_LABEL, BEHAVIOR_LOCATION_MAP } from '../shared/types/encounter';
 import type { LocationTag } from '../shared/types/encounter';
 import { EventSeverity } from '../shared/types/world-event';
@@ -33,6 +34,12 @@ import { escapeHtml } from '../engine/disciple-generator';
 import { TRAIT_REGISTRY } from '../shared/data/trait-registry';
 import { EMOTION_LABEL, type DiscipleEmotionState } from '../shared/types/soul';
 import type { ActiveRuling, RulingResolution } from '../shared/types/ruling';
+import {
+  RELATIONSHIP_TAG_LABEL,
+  TAG_SEPARATOR,
+  getRelationshipStatusLabel,
+  getOrientationLabel,
+} from '../shared/utils/social-labels';
 
 
 // ===== 类型 =====
@@ -194,7 +201,8 @@ export function formatLookOverview(state: LiteGameState): string {
         html += `<div class="mud-p-disciple-row">`;
         html += `  <span class="mud-p-disciple-icon">${icon}</span>`;
         html += `  <span class="mud-p-disciple-name">${wrapDiscipleName(d.name, d.id)}</span>`;
-        html += `  <span class="mud-p-disciple-meta">${d.starRating}★ ${escapeHtml(d.personalityName)}</span>`;
+        const gSym = getGenderSymbol(d.gender);
+        html += `  <span class="mud-p-disciple-meta">${gSym ? gSym + ' ' : ''}${d.starRating}★ ${escapeHtml(d.personalityName)}</span>`;
         html += `  <span class="mud-p-disciple-realm">${escapeHtml(realmName)}</span>`;
         html += `  <span class="mud-p-disciple-action">— ${escapeHtml(behaviorText)}</span>`;
         html += `</div>`;
@@ -226,9 +234,11 @@ export function formatDiscipleProfile(
   let html = '';
 
   // 头部
+  const gLabel = getGenderLabel(d.gender);
   html += `<div class="mud-p-header">`;
   html += `  <span class="mud-p-stars">${'★'.repeat(d.starRating)}</span>`;
   html += `  <span class="mud-p-personality">${escapeHtml(d.personalityName)}</span>`;
+  html += `  <span class="mud-p-gender">${escapeHtml(gLabel)}</span>`;
   html += `  <span class="mud-p-divider">|</span>`;
   html += `  <span class="mud-realm-name">${escapeHtml(realmName)}</span>`;
   html += `</div>`;
@@ -321,13 +331,26 @@ function renderRelationsSection(d: LiteDiscipleState, state: LiteGameState): str
   for (const rel of rels) {
     const other = state.disciples.find(x => x.id === rel.targetId);
     if (!other) continue;
-    const sign = rel.affinity >= 0 ? '+' : '';
-    const cls = rel.affinity > 0 ? 'mud-p-rel-pos' : rel.affinity < 0 ? 'mud-p-rel-neg' : 'mud-p-rel-zero';
-    const tagsStr = rel.tags && rel.tags.length > 0 ? ` <span class="mud-p-hint">[${rel.tags.join(',')}]</span>` : '';
+    // 行1: → 名字 + status badge
+    const statusLabel = getRelationshipStatusLabel(rel.status ?? null);
+    const statusBadge = statusLabel
+      ? ` <span class="mud-p-rel-status mud-p-rel-status--${rel.status}">${statusLabel}</span>`
+      : '';
     html += `<div class="mud-p-rel-row">`;
     html += `  <span class="mud-p-rel-arrow">→</span>`;
-    html += `  <span class="mud-p-rel-name">${wrapDiscipleName(other.name, other.id)}</span>`;
-    html += `  <span class="${cls}">${sign}${rel.affinity.toFixed(0)}</span>${tagsStr}`;
+    html += `  <span class="mud-p-rel-name">${wrapDiscipleName(other.name, other.id)}</span>${statusBadge}`;
+    html += `</div>`;
+    // 行2: 亲±N · 引N · 信±N · [标签]
+    const sign = rel.closeness >= 0 ? '+' : '';
+    const cls = rel.closeness > 0 ? 'mud-p-rel-pos' : rel.closeness < 0 ? 'mud-p-rel-neg' : 'mud-p-rel-zero';
+    const tagsStr = rel.tags && rel.tags.length > 0
+      ? ` [${rel.tags.map(t => RELATIONSHIP_TAG_LABEL[t as keyof typeof RELATIONSHIP_TAG_LABEL] ?? t).join(TAG_SEPARATOR)}]`
+      : '';
+    html += `<div class="mud-p-rel-metrics">`;
+    html += `  <span class="${cls}">亲${sign}${rel.closeness.toFixed(0)}</span>`;
+    html += `  ${TAG_SEPARATOR} <span class="mud-p-hint">引${rel.attraction.toFixed(0)}</span>`;
+    html += `  ${TAG_SEPARATOR} <span class="mud-p-hint">信${rel.trust >= 0 ? '+' : ''}${rel.trust.toFixed(0)}</span>`;
+    html += `  <span class="mud-p-hint">${tagsStr}</span>`;
     html += `</div>`;
   }
   html += `</div>`;
@@ -396,9 +419,12 @@ export function formatDiscipleInspect(
   let html = '';
 
   // 头栏
+  const gLabel = getGenderLabel(d.gender);
+  const oriLabel = getOrientationLabel(d.orientation, d.gender);
   html += `<div class="mud-p-header">`;
   html += `  <span class="mud-p-stars">${'★'.repeat(d.starRating)}</span>`;
   html += `  <span class="mud-p-personality">${escapeHtml(d.personalityName)}</span>`;
+  html += `  <span class="mud-p-gender">${escapeHtml(gLabel)}${TAG_SEPARATOR}${escapeHtml(oriLabel)}</span>`;
   html += `  <span class="mud-p-divider">|</span>`;
   html += `  <span class="mud-realm-name">${escapeHtml(realmName)}</span>`;
   html += `  <span class="mud-p-divider">|</span>`;

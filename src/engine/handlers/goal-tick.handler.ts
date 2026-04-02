@@ -23,6 +23,7 @@ import { GOAL_LABEL, GOAL_MUD_TEXT } from '../../shared/data/goal-data';
 import { LogCategory } from '../../shared/types/logger';
 import type { PersonalGoal } from '../../shared/types/personal-goal';
 import type { LiteGameState } from '../../shared/types/game-state';
+import { getPronoun } from '../../shared/types/game-state';
 
 /**
  * 渲染 MUD 文案模板
@@ -36,7 +37,7 @@ function renderGoalText(
 ): string {
   const disciple = state.disciples.find(d => d.id === goal.discipleId);
   const name = disciple?.name ?? '???';
-  const pronoun = '其';
+  const pronoun = getPronoun(disciple?.gender ?? 'unknown');
 
   let text = template
     .replace(/\{name\}/g, name)

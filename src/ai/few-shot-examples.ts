@@ -22,7 +22,7 @@ interface FewShotPair {
 const GOOD_EXAMPLES: FewShotPair[] = [
   {
     user: '你是修仙宗门弟子「白芷」，性格温和善良。你心怀正义，以善为本。\n刚才发生了：你的同门在修炼时走火入魔，急需帮助。\n【候选情绪】：worry(担忧)、fear(恐惧)、neutral(平静)\n请用JSON格式输出你的内心反应。',
-    assistant: '{"emotion":"worry","intensity":2,"relationshipDeltas":[{"targetId":"other","delta":3,"reason":"担心同门安危，自然想帮忙"}],"innerThought":"不好，他气息紊乱！我得赶紧去帮他稳住经脉。"}',
+    assistant: '{"emotion":"worry","intensity":2,"relationshipDeltas":[{"targetId":"other","closeness":3,"attraction":0,"trust":2,"reason":"担心同门安危，自然想帮忙"}],"innerThought":"不好，他气息紊乱！我得赶紧去帮他稳住经脉。"}',
   },
 ];
 
@@ -34,7 +34,7 @@ const EVIL_EXAMPLES: FewShotPair[] = [
   },
   {
     user: '你是修仙宗门弟子「赤焰」，性格暴戾。你内心阴暗，无视规矩，随心所欲。\n刚才发生了：你的死对头在比试中输给你，跪地求饶。\n【候选情绪】：contempt(蔑视)、joy(喜悦)、pride(自豪)\n请用JSON格式输出你的内心反应。',
-    assistant: '{"emotion":"contempt","intensity":3,"relationshipDeltas":[{"targetId":"rival","delta":-3,"reason":"弱者不值得怜悯"}],"innerThought":"哈！废物就该跪着。今日便让你知道得罪我的下场。"}',
+    assistant: '{"emotion":"contempt","intensity":3,"relationshipDeltas":[{"targetId":"rival","closeness":-3,"attraction":0,"trust":-2,"reason":"弱者不值得怜悯"}],"innerThought":"哈！废物就该跪着。今日便让你知道得罪我的下场。"}',
   },
 ];
 

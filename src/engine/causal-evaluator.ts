@@ -105,8 +105,8 @@ export class CausalRuleEvaluator {
     rmManager?: RelationshipMemoryManager,
   ): { actorId: string; targetId: string; location: string } | null {
     switch (rule.triggerType) {
-      case 'affinity-threshold':
-        return this.checkAffinityThreshold(rule, state, currentTick);
+      case 'closeness-threshold':
+        return this.checkClosenessThreshold(rule, state, currentTick);
       case 'moral-threshold':
         return this.checkMoralThreshold(rule, state, currentTick);
       case 'relationship-tag':
@@ -120,18 +120,18 @@ export class CausalRuleEvaluator {
     }
   }
 
-  /** C1/C2: affinity-threshold（pair 规则） */
-  private checkAffinityThreshold(
+  /** C1/C2: closeness-threshold（pair 规则） */
+  private checkClosenessThreshold(
     rule: CausalRule,
     state: Readonly<LiteGameState>,
     currentTick: number,
   ): { actorId: string; targetId: string; location: string } | null {
-    const cond = rule.condition as { affinityMin?: number; affinityMax?: number; requireSameZone?: boolean };
+    const cond = rule.condition as { closenessMin?: number; closenessMax?: number; requireSameZone?: boolean };
 
     for (const edge of state.relationships) {
-      // 检查 affinity 条件
-      if (cond.affinityMin !== undefined && edge.affinity < cond.affinityMin) continue;
-      if (cond.affinityMax !== undefined && edge.affinity > cond.affinityMax) continue;
+      // 检查 closeness 条件
+      if (cond.closenessMin !== undefined && edge.closeness < cond.closenessMin) continue;
+      if (cond.closenessMax !== undefined && edge.closeness > cond.closenessMax) continue;
 
       const source = state.disciples.find(d => d.id === edge.sourceId);
       const target = state.disciples.find(d => d.id === edge.targetId);

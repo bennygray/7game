@@ -8,7 +8,7 @@
  * - 每 5 tick（ENCOUNTER_SCAN_INTERVAL_SEC）扫描一次
  * - 按 behavior → location 分组弟子
  * - 同地点 ≥2 人时枚举无序对，按概率触发碰面
- * - 碰面结果基于 avgAffinity 加权随机
+ * - 碰面结果基于 avgCloseness 加权随机
  * - 非 none 结果 → emit 双向 SoulEvent + 输出 MUD 日志
  *
  * Invariants:
@@ -35,13 +35,14 @@ import {
   EncounterResult,
   LOCATION_LABEL,
   decideEncounterResult,
-  getAvgAffinity,
-  getAffinityBand,
+  getAvgCloseness,
+  getClosenessBand,
 } from '../../shared/types/encounter';
 import { getEncounterText } from '../../shared/data/encounter-templates';
 import { LogCategory } from '../../shared/types/logger';
 import type { LocationTag } from '../../shared/types/encounter';
 import type { LiteDiscipleState } from '../../shared/types/game-state';
+import { getPronoun } from '../../shared/types/game-state';
 
 // ===== 运行时碰面冷却 Map（不持久化）=====
 
@@ -66,6 +67,7 @@ const ENCOUNTER_RESULT_TO_EVENT: Record<
   chat:     'encounter-chat',
   discuss:  'encounter-discuss',
   conflict: 'encounter-conflict',
+  flirt:    'social-flirt',
 };
 
 /**
@@ -141,16 +143,19 @@ export const encounterTickHandler: TickHandler = {
           }
 
           // Step 3: 碰面结果判定 (Story #3)
-          const avgAff = getAvgAffinity(state.relationships, a.id, b.id);
+          const avgClos = getAvgCloseness(state.relationships, a.id, b.id);
 
           // Phase I-alpha: grudge 标签碰面冲突概率修正
           const edgeAB = state.relationships.find(r => r.sourceId === a.id && r.targetId === b.id);
           const edgeBA = state.relationships.find(r => r.sourceId === b.id && r.targetId === a.id);
           const hasGrudge = edgeAB?.tags.includes('grudge') || edgeBA?.tags.includes('grudge');
-          const band = getAffinityBand(avgAff);
+          // Phase I-beta: 浪漫兴趣检测
+          const hasRomanticInterest = edgeAB?.status === 'crush' || edgeAB?.status === 'lover'
+            || edgeBA?.status === 'crush' || edgeBA?.status === 'lover';
+          const band = getClosenessBand(avgClos, hasRomanticInterest);
           const result = (hasGrudge && band === 'hostile')
             ? decideGrudgeEncounter()
-            : decideEncounterResult(avgAff);
+            : decideEncounterResult(avgClos, hasRomanticInterest);
 
           // Story #3 AC5: none 不发射事件不输出日志
           if (result === EncounterResult.NONE) continue;
@@ -173,14 +178,14 @@ export const encounterTickHandler: TickHandler = {
             partnerName: b.name,
             location,
             encounterResult: result as Exclude<EncounterResult, 'none'>,
-            avgAffinity: avgAff,
+            avgCloseness: avgClos,
           };
           const payloadB: EncounterEventPayload = {
             partnerId: a.id,
             partnerName: a.name,
             location,
             encounterResult: result as Exclude<EncounterResult, 'none'>,
-            avgAffinity: avgAff,
+            avgCloseness: avgClos,
           };
 
           eventBus.emit({
@@ -197,21 +202,26 @@ export const encounterTickHandler: TickHandler = {
           });
 
           // Story #4: MUD 日志输出
+          const pronounA = getPronoun(a.gender);
+          const pronounB = getPronoun(b.gender);
           const text = getEncounterText(
             result as Exclude<EncounterResult, 'none'>,
             a.name,
             b.name,
             locationLabel,
+            undefined, // randomFn — use default
+            pronounA,
+            pronounB,
           );
 
           // discuss/conflict → Lv.2 高亮; chat → Lv.1 普通
           if (result === EncounterResult.CHAT) {
             logger.info(LogCategory.WORLD, 'encounter', text, {
-              pairKey: key, location, result, avgAffinity: avgAff,
+              pairKey: key, location, result, avgCloseness: avgClos,
             });
           } else {
             logger.warn(LogCategory.WORLD, 'encounter', text, {
-              pairKey: key, location, result, avgAffinity: avgAff,
+              pairKey: key, location, result, avgCloseness: avgClos,
             });
           }
         }

@@ -27,14 +27,14 @@ export class RelationshipMemoryManager {
 
   /**
    * 记录关键事件（含矛盾覆盖）
-   * 仅当 |affinityDelta| >= EVENT_THRESHOLD 时调用
+   * 仅当 |closenessDelta| >= EVENT_THRESHOLD 时调用
    */
   recordEvent(
     sourceId: string,
     targetId: string,
     event: KeyRelationshipEvent
   ): void {
-    if (Math.abs(event.affinityDelta) < EVENT_THRESHOLD) return;
+    if (Math.abs(event.closenessDelta) < EVENT_THRESHOLD) return;
 
     const memory = this.getOrCreate(sourceId, targetId);
 
@@ -51,12 +51,12 @@ export class RelationshipMemoryManager {
       memory.keyEvents.push(event);
     }
 
-    // 淘汰：超过上限时移除 |affinityDelta| 最小的
+    // 淘汰：超过上限时移除 |closenessDelta| 最小的
     while (memory.keyEvents.length > KEY_EVENTS_SOFT_LIMIT) {
       let minIdx = 0;
-      let minDelta = Math.abs(memory.keyEvents[0].affinityDelta);
+      let minDelta = Math.abs(memory.keyEvents[0].closenessDelta);
       for (let i = 1; i < memory.keyEvents.length; i++) {
-        const d = Math.abs(memory.keyEvents[i].affinityDelta);
+        const d = Math.abs(memory.keyEvents[i].closenessDelta);
         if (d < minDelta || (d === minDelta && memory.keyEvents[i].tick < memory.keyEvents[minIdx].tick)) {
           minDelta = d;
           minIdx = i;
@@ -98,10 +98,12 @@ export class RelationshipMemoryManager {
     return this.memories.get(makePairKey(sourceId, targetId)) ?? null;
   }
 
-  /** 从 RelationshipEdge 同步 affinity / tags */
+  /** 从 RelationshipEdge 同步 closeness/attraction/trust/tags */
   syncFromEdge(edge: RelationshipEdge): void {
     const memory = this.getOrCreate(edge.sourceId, edge.targetId);
-    memory.affinity = edge.affinity;
+    memory.closeness = edge.closeness;
+    memory.attraction = edge.attraction;
+    memory.trust = edge.trust;
     memory.tags = [...edge.tags];
   }
 
@@ -123,26 +125,26 @@ export class RelationshipMemoryManager {
     const tagsStr = memory.tags.length > 0 ? `（${memory.tags.join('/')}）` : '';
     const lines: string[] = [
       `【与${targetName}的关系】`,
-      `好感：${memory.affinity}${tagsStr}`,
+      `亲疏：${memory.closeness} 吸引：${memory.attraction} 信赖：${memory.trust}${tagsStr}`,
     ];
 
-    // 按 |affinityDelta| 降序排列
+    // 按 |closenessDelta| 降序排列
     const sorted = [...memory.keyEvents].sort(
-      (a, b) => Math.abs(b.affinityDelta) - Math.abs(a.affinityDelta)
+      (a, b) => Math.abs(b.closenessDelta) - Math.abs(a.closenessDelta)
     );
 
     if (contextLevel === 'L2') {
-      // L2: 好感+标签+1条关键事件
+      // L2: 三维数值+标签+1条关键事件
       if (sorted.length > 0) {
         const e = sorted[0];
-        lines.push(`关键经历：${e.content}(${e.affinityDelta > 0 ? '+' : ''}${e.affinityDelta})`);
+        lines.push(`关键经历：${e.content}(${e.closenessDelta > 0 ? '+' : ''}${e.closenessDelta})`);
       }
     } else {
       // L6: +top3事件 +narrative snippet +个人近况
       if (sorted.length > 0) {
         const top3 = sorted.slice(0, 3);
         const eventsStr = top3
-          .map((e) => `${e.content}(${e.affinityDelta > 0 ? '+' : ''}${e.affinityDelta})`)
+          .map((e) => `${e.content}(${e.closenessDelta > 0 ? '+' : ''}${e.closenessDelta})`)
           .join('；');
         lines.push(`关键经历：${eventsStr}`);
       }
@@ -164,7 +166,9 @@ export class RelationshipMemoryManager {
       memory = {
         sourceId,
         targetId,
-        affinity: 0,
+        closeness: 0,
+        attraction: 0,
+        trust: 0,
         tags: [],
         keyEvents: [],
         encounterCount: 0,

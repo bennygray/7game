@@ -45,11 +45,14 @@ export const aiResultApplyHandler: TickHandler = {
           const fallbackRd = fallbackSnapshot.result.relationshipDeltas.find(
             frd => frd.targetId === aiRd.targetId,
           );
-          const fallbackDelta = fallbackRd?.delta ?? 0;
-          const correctionDelta = aiRd.delta - fallbackDelta;
+          const fallbackCloseness = fallbackRd?.closeness ?? 0;
+          const fallbackAttraction = fallbackRd?.attraction ?? 0;
+          const fallbackTrust = fallbackRd?.trust ?? 0;
           return {
             ...aiRd,
-            delta: clampDelta(correctionDelta),
+            closeness: clampDelta(aiRd.closeness - fallbackCloseness),
+            attraction: clampDelta(aiRd.attraction - fallbackAttraction),
+            trust: clampDelta(aiRd.trust - fallbackTrust),
           };
         }),
       };

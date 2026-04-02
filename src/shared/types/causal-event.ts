@@ -6,12 +6,14 @@
 
 /** R-C01: 因果触发类型 */
 export type CausalTriggerType =
-  | 'affinity-threshold'    // 好感度达标
+  | 'closeness-threshold'   // 亲疏度达标（原 affinity-threshold）
   | 'moral-threshold'       // 道德偏移达标
   | 'relationship-tag'      // 特定标签（rival/friend）
   | 'consecutive-failure'   // 连续失败
   | 'ethos-conflict'        // 道风冲突
-  | 'goal-driven';          // 目标驱动
+  | 'goal-driven'           // 目标驱动
+  | 'social-invitation'     // Phase I-beta: 社交邀约阈值触发
+  | 'social-dissolution';   // Phase I-beta: 社交关系解除条件触发
 
 /** R-C01: 因果触发规则 */
 export interface CausalRule {

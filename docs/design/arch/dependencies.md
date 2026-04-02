@@ -43,6 +43,9 @@
 | **handlers/goal-tick** | R/W | — | — | — | — | — | — | — |
 | **causal-evaluator** | R | — | — | — | — | — | — | — |
 | **handlers/causal-tick** | R | — | — | — | — | — | — | — |
+| **social-engine** (Phase I-beta) | R/W | — | — | — | — | — | — | — |
+| **handlers/social-tick** (Phase I-beta) | R | — | — | — | — | — | — | — |
+| **social-event-templates** (Phase I-beta) | — | — | — | — | — | — | — | — |
 
 ---
 
@@ -75,6 +78,9 @@
 | **handlers/goal-tick** | — | R | — | — | — | — | — |
 | **causal-evaluator** | — | — | — | — | — | — | — |
 | **handlers/causal-tick** | — | R | — | — | — | — | — |
+| **social-engine** (Phase I-beta) | — | — | — | — | — | — | — |
+| **handlers/social-tick** (Phase I-beta) | — | R | — | — | — | — | — |
+| **social-event-templates** (Phase I-beta) | — | — | — | — | — | — | — |
 
 ---
 
@@ -112,3 +118,5 @@
 | 2026-04-01 | Phase IJ v3.0: +relationship-memory-manager (Engine); soul-engine/dialogue-coordinator/encounter-tick 双写关系记忆; soul-evaluator 注入关系摘要; narrative-snippet-builder (AI) |
 | 2026-04-01 | Phase J-Goal: +goal-manager (Engine R/W game-state, R realm-formulas); +goal-tick handler (R tick-pipeline); behavior-tree R goal-data; soul-engine W goals |
 | 2026-04-01 | Phase I-alpha: +causal-evaluator (R game-state, R encounter.ts, R causal-rule-registry, R relationship-memory-manager, W event-bus, R goal-manager); +causal-tick handler (R tick-pipeline, R causal-evaluator); auto-breakthrough→causal-evaluator 联动 |
+| 2026-04-02 | Phase GS: disciple-generator +Gender name pools; save-manager +migrateV6toV7; soul-engine/goal-tick.handler +getPronoun; soul-prompt-builder +gender desc; mud-formatter +gender display |
+| 2026-04-02 | Phase I-beta: +social-engine (R/W game-state, soul types); +social-tick handler (R tick-pipeline, social-engine, causal-rule-registry, logger); +social-event-templates (soul types) |

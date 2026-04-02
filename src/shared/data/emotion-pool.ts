@@ -92,6 +92,59 @@ export const EMOTION_CANDIDATE_POOL: Record<SoulEventType, Record<SoulRole, Emot
     self:     ['anger', 'contempt', 'sadness', 'neutral'],
     observer: ['worry', 'fear', 'neutral', 'anger'],
   },
+  // Phase I-beta: 社交事件情绪候选池
+  'social-flirt': {
+    self:     ['joy', 'pride', 'shame', 'neutral'],
+    observer: ['envy', 'joy', 'contempt', 'neutral'],
+  },
+  'social-confession': {
+    self:     ['fear', 'joy', 'worry', 'pride', 'neutral'],
+    observer: ['admiration', 'envy', 'neutral', 'joy'],
+  },
+  'social-confession-accepted': {
+    self:     ['joy', 'gratitude', 'pride', 'relief'],
+    observer: ['admiration', 'envy', 'jealousy', 'neutral'],
+  },
+  'social-confession-rejected': {
+    self:     ['sadness', 'shame', 'anger', 'neutral'],
+    observer: ['worry', 'sadness', 'neutral', 'contempt'],
+  },
+  'social-sworn-proposal': {
+    self:     ['joy', 'worry', 'pride', 'neutral'],
+    observer: ['admiration', 'envy', 'neutral', 'joy'],
+  },
+  'social-sworn-accepted': {
+    self:     ['joy', 'gratitude', 'pride', 'relief'],
+    observer: ['admiration', 'envy', 'neutral', 'joy'],
+  },
+  'social-sworn-rejected': {
+    self:     ['sadness', 'shame', 'anger', 'neutral'],
+    observer: ['worry', 'neutral', 'sadness'],
+  },
+  'social-nemesis-declare': {
+    self:     ['anger', 'contempt', 'pride', 'neutral'],
+    observer: ['fear', 'worry', 'anger', 'neutral'],
+  },
+  'social-nemesis-accepted': {
+    self:     ['anger', 'contempt', 'pride', 'neutral'],
+    observer: ['fear', 'worry', 'neutral', 'anger'],
+  },
+  'social-nemesis-rejected': {
+    self:     ['contempt', 'anger', 'shame', 'neutral'],
+    observer: ['neutral', 'relief', 'worry'],
+  },
+  'social-lover-broken': {
+    self:     ['sadness', 'anger', 'relief', 'neutral'],
+    observer: ['sadness', 'worry', 'neutral', 'contempt'],
+  },
+  'social-sworn-broken': {
+    self:     ['sadness', 'anger', 'contempt', 'neutral'],
+    observer: ['sadness', 'worry', 'neutral', 'fear'],
+  },
+  'social-nemesis-resolved': {
+    self:     ['relief', 'joy', 'gratitude', 'neutral'],
+    observer: ['admiration', 'joy', 'neutral', 'relief'],
+  },
 };
 
 // ===== 候选池查询 =====
@@ -232,6 +285,20 @@ export function fallbackGenerateThought(
       'causal-jealousy':    `${discipleName}攥紧了拳头，心中难以平静。`,
       'causal-seclusion':   `${discipleName}叹了口气，默默走向闭关洞。`,
       'causal-ethos-clash': `${discipleName}低声道："此道非我道……"`,
+      // Phase I-beta: 社交事件
+      'social-flirt':                `${discipleName}心中微微一荡，面上却不动声色。`,
+      'social-confession':           `${discipleName}深吸一口气，鼓起了告白的勇气。`,
+      'social-confession-accepted':  `${discipleName}喜不自胜："你……当真愿意？"`,
+      'social-confession-rejected':  `${discipleName}苦笑一声，转身离去。`,
+      'social-sworn-proposal':       `${discipleName}抱拳道："愿与君结为金兰之交！"`,
+      'social-sworn-accepted':       `${discipleName}大喜："自此祸福与共，不离不弃！"`,
+      'social-sworn-rejected':       `${discipleName}默然片刻："也罢，是我唐突了。"`,
+      'social-nemesis-declare':      `${discipleName}冷声道："你我之间，不死不休！"`,
+      'social-nemesis-accepted':     `${discipleName}冷笑一声："那便来吧。"`,
+      'social-nemesis-rejected':     `${discipleName}哼了一声："躲得了初一，躲不了十五。"`,
+      'social-lover-broken':         `${discipleName}长叹一声："道不同，不相为谋。"`,
+      'social-sworn-broken':         `${discipleName}攥紧双拳："金兰之谊，今日到此为止！"`,
+      'social-nemesis-resolved':     `${discipleName}缓缓放下了手中的兵刃："罢了，恩怨一笔勾销。"`,
     };
     return templates[eventType] ?? `${discipleName}陷入沉思。`;
   } else {

@@ -33,6 +33,8 @@
   --mud-amber:        #c8a858;
   --mud-sage:         #6a8a6a;
   --mud-lavender:     #9a8ac8;
+  --mud-pink:         #e8a0bf;
+  --mud-blue:         #6ba3d6;
 
   /* 边框 */
   --mud-border:       #333344;
@@ -677,6 +679,28 @@ html, body {
 .mud-p-rel-pos  { color: var(--mud-green); font-weight: bold; }
 .mud-p-rel-neg  { color: var(--mud-red);   font-weight: bold; }
 .mud-p-rel-zero { color: var(--mud-text-mute); }
+
+/* --- 关系 status badge --- */
+.mud-p-rel-status {
+  font-size: 12px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  margin-left: 4px;
+}
+.mud-p-rel-status--crush        { color: var(--mud-pink); border: 1px solid var(--mud-pink); background: rgba(232, 160, 191, 0.1); }
+.mud-p-rel-status--lover        { color: var(--mud-gold); border: 1px solid var(--mud-gold); background: rgba(200, 168, 88, 0.1); }
+.mud-p-rel-status--sworn-sibling { color: var(--mud-blue); border: 1px solid var(--mud-blue); background: rgba(107, 163, 214, 0.1); }
+.mud-p-rel-status--nemesis      { color: var(--mud-red);  border: 1px solid var(--mud-red);  background: rgba(255, 68, 68, 0.1); }
+
+/* --- 关系指标子行 --- */
+.mud-p-rel-metrics {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 0 4px 40px;
+  font-size: 12px;
+  color: var(--mud-text-dim);
+}
 
 /* --- 宗门总览弟子行 --- */
 .mud-p-disciple-row {

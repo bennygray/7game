@@ -77,6 +77,7 @@ export const TickPhase = {
 | 13 | `ai-result-apply` | 625 | 5 | `handlers/ai-result-apply.handler.ts` | async-ai-buffer + soul-engine | Phase G |
 | 14 | `goal-tick` | 500 | 20 | `handlers/goal-tick.handler.ts` | goal-manager (TTL/完成/扫描) | Phase J-Goal |
 | 15 | `causal-tick` | 612 | 0 | `handlers/causal-tick.handler.ts` | causal-evaluator (因果规则扫描) | Phase I-alpha |
+| 16 | `social-tick` | 612 | 5 | `handlers/social-tick.handler.ts` | social-engine (社交邀约扫描) | Phase I-beta |
 
 ### Handler 拆分判定标准
 
@@ -156,3 +157,4 @@ export interface TickContext {
 | 2026-04-01 | Phase IJ v3.0: TickContext +relationshipMemoryManager +narrativeSnippetBuilder; encounter-tick/soul-event handler 双写关系记忆 |
 | 2026-04-01 | Phase J-Goal: +goal-tick(500:20) Handler; TickContext +goalManager; Handler 13→14 |
 | 2026-04-01 | Phase I-alpha: +CAUSAL_EVAL=612 阶段; +causal-tick(612:0) Handler; TickContext +causalEvaluator; Handler 14→15 |
+| 2026-04-02 | Phase I-beta: +social-tick(612:5) Handler; Handler 15→16 |

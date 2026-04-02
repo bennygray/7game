@@ -26,6 +26,10 @@ import { SEED_TABLE } from '../src/shared/data/seed-table';
 import { RECIPE_TABLE, QUALITY_MULTIPLIER } from '../src/shared/data/recipe-table';
 import type { AlchemyQuality, PillItem } from '../src/shared/types/game-state';
 
+// ===== Phase GS gender =====
+import { getPronoun, getGenderLabel, getGenderSymbol } from '../src/shared/types/game-state';
+import { generateRandomDisciple, generateInitialDisciples } from '../src/engine/disciple-generator';
+
 // ===== Phase C formulas =====
 import { getBreakthroughBaseRate, calculateBreakthroughResult, getBaseAuraRate } from '../src/shared/formulas/realm-formulas';
 import { getSpiritVeinDensity } from '../src/shared/data/realm-table';
@@ -325,6 +329,146 @@ suite('Phase C Aura Formula F-C4');
   // 炼气1, 无道基, 无buff → base×1.0×1.0×1.0 = 1
   const rate2 = calculateAuraRate(1, 1, 0);
   assert(approxEq(rate2, 1.0), `minimal rate = ${rate2} ≈ 1.0`);
+}
+
+// ================================================================
+// Suite 5: Phase GS Gender System
+// ================================================================
+
+suite('Phase GS Gender');
+{
+  // --- getPronoun ---
+  assert(getPronoun('male') === '他', 'getPronoun(male) = 他');
+  assert(getPronoun('female') === '她', 'getPronoun(female) = 她');
+  assert(getPronoun('unknown') === '其', 'getPronoun(unknown) = 其');
+
+  // --- getGenderLabel ---
+  assert(getGenderLabel('male') === '男', 'getGenderLabel(male) = 男');
+  assert(getGenderLabel('female') === '女', 'getGenderLabel(female) = 女');
+  assert(getGenderLabel('unknown') === '未知', 'getGenderLabel(unknown) = 未知');
+
+  // --- getGenderSymbol ---
+  assert(getGenderSymbol('male') === '♂', 'getGenderSymbol(male) = ♂');
+  assert(getGenderSymbol('female') === '♀', 'getGenderSymbol(female) = ♀');
+  assert(getGenderSymbol('unknown') === '', 'getGenderSymbol(unknown) = 空');
+
+  // --- generateRandomDisciple includes gender ---
+  const d = generateRandomDisciple();
+  assert(
+    d.gender === 'male' || d.gender === 'female',
+    `生成弟子含 gender 字段 (actual: ${d.gender})`,
+  );
+  assert(d.name.length >= 2, `弟子名字至少2字 (actual: ${d.name})`);
+
+  // --- generateInitialDisciples dedup + gender ---
+  const disciples = generateInitialDisciples(8);
+  const names = disciples.map(dd => dd.name);
+  const uniqueNames = new Set(names);
+  assert(uniqueNames.size === 8, `8名弟子无重名 (unique: ${uniqueNames.size})`);
+  const allHaveGender = disciples.every(dd => dd.gender === 'male' || dd.gender === 'female');
+  assert(allHaveGender, '所有初始弟子均有 gender');
+
+  // --- v6→v7 save migration (inline, no localStorage) ---
+  const v6Save: Record<string, unknown> = {
+    version: 6,
+    disciples: [
+      { id: 'gs-1', name: '林清风', gender: undefined },
+      { id: 'gs-2', name: '陈明月', gender: undefined },
+      { id: 'gs-3', name: '张未知', gender: undefined },
+    ],
+  };
+
+  const v6Disciples = v6Save['disciples'] as Record<string, unknown>[];
+  const NAME_GENDER_MAP: Record<string, 'male' | 'female'> = {
+    '清风': 'male', '星河': 'male', '玄冰': 'male', '天华': 'male',
+    '明月': 'female', '紫霞': 'female', '云烟': 'female',
+    '碧落': 'female', '青莲': 'female', '灵犀': 'female',
+  };
+  for (const dd of v6Disciples) {
+    if (!dd['gender']) {
+      const name = dd['name'] as string;
+      const givenName = name?.slice(1) ?? '';
+      dd['gender'] = NAME_GENDER_MAP[givenName] ?? (Math.random() < 0.5 ? 'female' : 'male');
+    }
+  }
+  v6Save['version'] = 7;
+
+  assert(v6Save['version'] === 7, 'v6→v7: version = 7');
+  assert(v6Disciples[0]['gender'] === 'male', 'v6→v7: 清风 → male');
+  assert(v6Disciples[1]['gender'] === 'female', 'v6→v7: 明月 → female');
+  const g3 = v6Disciples[2]['gender'] as string;
+  assert(g3 === 'male' || g3 === 'female', `v6→v7: 未知名 fallback 随机 (${g3})`);
+}
+
+// ================================================================
+// Suite: Phase I-beta Social System
+// ================================================================
+import { SocialEngine } from '../src/engine/social-engine';
+import { decayRelationships, CLOSENESS_DECAY_RATE, ATTRACTION_DECAY_RATE, TRUST_DECAY_RATE } from '../src/engine/soul-engine';
+import { SOCIAL_EVENT_TEMPLATES, pickSocialTemplate } from '../src/shared/data/social-event-templates';
+import type { SocialEventType } from '../src/shared/data/social-event-templates';
+
+suite('Phase I-beta Social');
+{
+  // 三维向量独立
+  const edge = { sourceId: 'a', targetId: 'b', closeness: 50, attraction: 30, trust: 40, status: null, tags: [] };
+  edge.closeness = 70;
+  assert(edge.attraction === 30 && edge.trust === 40, '三维向量独立演化');
+
+  // 性取向门控
+  assert(SocialEngine.effectiveAttraction({ maleAttraction: 0, femaleAttraction: 1 }, 'male') === 0, '异性恋男→男=0');
+  assert(SocialEngine.effectiveAttraction({ maleAttraction: 0, femaleAttraction: 1 }, 'female') === 1, '异性恋男→女=1');
+
+  // crush 标记/解除
+  const socialEngine = new SocialEngine();
+  const dA = { id: 'a', name: 'A', gender: 'male' as const, orientation: { maleAttraction: 0, femaleAttraction: 1 } };
+  const dB = { id: 'b', name: 'B', gender: 'female' as const, orientation: { maleAttraction: 1, femaleAttraction: 0 } };
+  const ab = { sourceId: 'a', targetId: 'b', closeness: 10, attraction: 50, trust: 10, status: null, tags: [] };
+  const ba = { sourceId: 'b', targetId: 'a', closeness: 10, attraction: 10, trust: 10, status: null, tags: [] };
+  const socialState = { disciples: [dA, dB], relationships: [ab, ba], inGameWorldTime: 100, sect: { ethos: 0, discipline: 0 } } as any;
+  const results = socialEngine.scanForSocialEvents(socialState, 100);
+  assert(results.some(r => r.type === 'crush-mark'), 'crush 自动标记(attraction>=50)');
+  assert(ab.status === 'crush', 'edge.status=crush');
+
+  ab.attraction = 29;
+  const results2 = socialEngine.scanForSocialEvents(socialState, 200);
+  assert(results2.some(r => r.type === 'crush-remove'), 'crush 解除(attraction<30)');
+  assert(ab.status === null, 'crush 解除后 status=null');
+
+  // attraction 限速
+  const se2 = new SocialEngine();
+  assert(se2.applyAttractionRateLimit('x-y', 3, 100) === 3, '限速: 第一次+3通过');
+  assert(se2.applyAttractionRateLimit('x-y', 3, 150) === 2, '限速: 第二次+3→2(累计5)');
+  assert(se2.applyAttractionRateLimit('x-y', 5, 200) === 0, '限速: 第三次+5→0(达上限)');
+  assert(se2.applyAttractionRateLimit('x-y', -10, 200) === -10, '限速: 负值不受限');
+  assert(se2.applyAttractionRateLimit('x-y', 4, 400) === 4, '限速: 窗口重置');
+
+  // 衰减三维独立
+  const decayEdge = { sourceId: 'a', targetId: 'b', closeness: 80, attraction: 80, trust: 80, status: null, tags: [] };
+  decayRelationships({ relationships: [decayEdge] } as any);
+  assert(approxEq(decayEdge.closeness, 80 * CLOSENESS_DECAY_RATE), '衰减: closeness ×0.98');
+  assert(approxEq(decayEdge.attraction, 80 * ATTRACTION_DECAY_RATE), '衰减: attraction ×0.99');
+  assert(approxEq(decayEdge.trust, 80 * TRUST_DECAY_RATE), '衰减: trust ×0.995');
+
+  // lover 保护
+  const loverEdge = { sourceId: 'c', targetId: 'd', closeness: 80, attraction: 80, trust: 80, status: 'lover' as const, tags: [] };
+  const normalEdge2 = { sourceId: 'e', targetId: 'f', closeness: 80, attraction: 80, trust: 80, status: null, tags: [] };
+  decayRelationships({ relationships: [loverEdge, normalEdge2] } as any);
+  const loverDelta = 80 - loverEdge.closeness;
+  const normalDelta = 80 - normalEdge2.closeness;
+  assert(approxEq(loverDelta / normalDelta, 0.5, 0.05), 'lover 衰减量 ×0.5');
+
+  // MUD 模板
+  const socialTypes: SocialEventType[] = [
+    'social-flirt', 'social-confession', 'social-confession-accepted',
+    'social-confession-rejected', 'social-sworn-proposal', 'social-sworn-accepted',
+    'social-sworn-rejected', 'social-nemesis-declare', 'social-nemesis-accepted',
+    'social-nemesis-rejected', 'social-lover-broken', 'social-sworn-broken', 'social-nemesis-resolved',
+  ];
+  for (const t of socialTypes) {
+    assert(SOCIAL_EVENT_TEMPLATES[t].length >= 3, `模板 ${t} ≥3`);
+  }
+  assert(typeof pickSocialTemplate('social-flirt') === 'string', 'pickSocialTemplate 返回字符串');
 }
 
 // ================================================================

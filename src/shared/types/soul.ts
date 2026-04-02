@@ -105,7 +105,21 @@ export type SoulEventType =
   | 'causal-theft'         // 因果·窃取
   | 'causal-jealousy'      // 因果·嫉妒
   | 'causal-seclusion'     // 因果·闭关
-  | 'causal-ethos-clash';  // 因果·道风冲突
+  | 'causal-ethos-clash'   // 因果·道风冲突
+  // Phase I-beta: 社交事件
+  | 'social-flirt'                // 碰面调情
+  | 'social-confession'           // 告白（邀约中）
+  | 'social-confession-accepted'  // 告白成功
+  | 'social-confession-rejected'  // 告白被拒
+  | 'social-sworn-proposal'       // 结拜提议（邀约中）
+  | 'social-sworn-accepted'       // 结拜成功
+  | 'social-sworn-rejected'       // 结拜被拒
+  | 'social-nemesis-declare'      // 宣战（邀约中）
+  | 'social-nemesis-accepted'     // 宣战接受
+  | 'social-nemesis-rejected'     // 宣战拒绝
+  | 'social-lover-broken'         // 道侣分手
+  | 'social-sworn-broken'         // 结拜决裂
+  | 'social-nemesis-resolved';    // 宿敌和解
 
 /** 事件极性 — 正面/负面（用于 delta 方向修正） */
 export type SoulEventPolarity = 'positive' | 'negative';
@@ -137,6 +151,20 @@ export const SOUL_EVENT_POLARITY: Record<SoulEventType, SoulEventPolarity> = {
   'causal-jealousy':    'negative',
   'causal-seclusion':   'positive',
   'causal-ethos-clash': 'negative',
+  // Phase I-beta: 社交事件
+  'social-flirt':                'positive',
+  'social-confession':           'positive',
+  'social-confession-accepted':  'positive',
+  'social-confession-rejected':  'negative',
+  'social-sworn-proposal':       'positive',
+  'social-sworn-accepted':       'positive',
+  'social-sworn-rejected':       'negative',
+  'social-nemesis-declare':      'negative',
+  'social-nemesis-accepted':     'negative',
+  'social-nemesis-rejected':     'negative',
+  'social-lover-broken':         'negative',
+  'social-sworn-broken':         'negative',
+  'social-nemesis-resolved':     'positive',
 };
 
 // ===== AI 评估结果 =====
@@ -171,10 +199,15 @@ export interface SoulEvaluationResult {
   emotion: EmotionTag;
   /** 情绪强度 1~3 */
   intensity: 1 | 2 | 3;
-  /** 关系变化（引擎仲裁后的结果） */
+  /** 关系变化（引擎仲裁后的三维结果） */
   relationshipDeltas: Array<{
     targetId: string;
-    delta: number;
+    /** 亲疏度变化 [-5, +5] */
+    closeness: number;
+    /** 吸引力变化 [-5, +5] */
+    attraction: number;
+    /** 信赖度变化 [-5, +5] */
+    trust: number;
     reason: string;
   }>;
   /** 内心独白（MUD 日志用） */
@@ -183,30 +216,35 @@ export interface SoulEvaluationResult {
 
 // ===== 关系标签 =====
 
-/** 关系标签 — 由 soul-engine 根据 affinity 自动分配 */
+/** 关系标签 — 由 soul-engine 根据 closeness 自动分配 */
 export type RelationshipTag = 'friend' | 'rival' | 'mentor' | 'admirer' | 'grudge';
 
-/** 关系标签 affinity 阈值 */
+/** Phase I-beta: 离散关系状态（由 social-tick 管理） */
+export type RelationshipStatus = 'crush' | 'lover' | 'sworn-sibling' | 'nemesis';
+
+/** 关系标签 closeness 阈值 */
 export const RELATIONSHIP_TAG_THRESHOLDS = {
-  friend:   60,   // affinity >= 60 → friend
-  rival:   -60,   // affinity <= -60 → rival
+  friend:   60,   // closeness >= 60 → friend
+  rival:   -60,   // closeness <= -60 → rival
 } as const;
 
-/** 高级标签阈值常量（Phase I-alpha） */
+/** 高级标签阈值常量（Phase I-alpha → I-beta: +trust 条件） */
 export const ADVANCED_TAG_THRESHOLDS = {
   mentor: {
-    assignAffinity: 80,
-    removeAffinity: 60,
+    assignCloseness: 80,
+    removeCloseness: 60,
+    assignTrust: 40,
     starGap: 2,
   },
   grudge: {
-    assignAffinity: -40,
-    removeAffinity: -20,
+    assignCloseness: -40,
+    removeCloseness: -20,
+    assignTrust: -20,
     negativeEventCount: 3,
   },
   admirer: {
-    assignAffinity: 60,
-    removeAffinity: 40,
+    assignCloseness: 60,
+    removeCloseness: 40,
     positiveEventCount: 3,
   },
 } as const;
