@@ -381,12 +381,46 @@ CausalRuleEvaluator 条件匹配 + SoulEvent 发射。
 
 ---
 
+## §8.5 PoC 验证结论沉淀
+
+> 以下结论来自 Phase IJ-PoC 系列测试，直接影响本 Phase 的设计假设和架构选择。
+> 原始数据：`docs/pipeline/phaseIJ-poc/walkthrough-ai-model-testing.md`
+
+### POC-3a：因果事件 AI 生成能力（2026-04-01）
+
+| 发现 | 数据 | 对本 Phase 影响 |
+|------|------|----------------|
+| AI 独立 eventType 决策正确率仅 56% | POC-3a R2, 25 条 | **确认本 Phase 的规则引擎主导架构** — AI 不可独立做事件类型决策 |
+| 规则过滤 + AI 选择预估 ~85% | POC-3a R2 分析 | 与 Phase E（情绪候选池）、Phase G（ActionPool）同一模式 |
+| eventType 从 16→6 后解析成功率 100% | POC-3a R2, Call1 25/25 | 本 Phase §4.2 的 6 种 SoulEventType 设计已对齐该缩减 |
+| "正面冲突"(confrontation) 被模型误读为积极含义 | POC-3a R2 教训#7 | **eventType 中文命名必须避免歧义** — 本 Phase 已用明确极性词（挑衅/窃取/嫉妒） |
+| Call2 叙事渲染解析率 96%，文风优秀 | POC-3a R2, Call2 | §5.8 AI 路由中 SPLASH/STORM 级使用 Call2 独白的方案已获验证 |
+
+**架构决策确认链**：
+```
+Phase E: 情绪 → 规则筛候选 + AI 分类（已落地）
+Phase G: 行动 → ActionPool + 道德过滤 + AI 选1（已落地）
+POC-3a: 事件 → 规则过滤候选 + AI 选1 + Call2 渲染（架构验证通过）
+本 Phase: 因果事件 → 规则引擎条件匹配 + SoulEvent 发射（纯规则，MVP 不需 AI 选择）
+```
+
+### POC-3d：多轮连贯性（2026-04-01）
+
+| 发现 | 数据 | 对本 Phase 影响 |
+|------|------|----------------|
+| 情绪方向一致率 80%（通过） | POC-3d, 15 次调用 | 因果事件→情绪候选池（§5.6）的设计方向正确 |
+| 多轮连贯是架构问题，非模型能力 | POC-3d + 教训#10 | RMM 将历史 keyEvents 注入 prompt 天然保证连贯，本 Phase 只需确保因果事件正确写入 keyEvents |
+| 记忆引用率 0%（未通过） | POC-3d E3 | 模型不主动引用历史事件，需靠 narrativeSnippet 注入；本 Phase 不直接处理（属 IJ 层能力） |
+
+---
+
 ## 变更日志
 
 | 日期 | 版本 | 变更 |
 |------|------|------|
 | 2026-04-01 | v1.0 | 初始创建 |
 | 2026-04-01 | v1.1 | BLOCK-1 修复（grudge 改用 affinityDelta<0 计数）+ WARN-1 修复（情绪池格式对齐） |
+| 2026-04-02 | v1.2 | +§8.5 PoC 验证结论沉淀（POC-3a/3d 结论回写） |
 
 ---
 

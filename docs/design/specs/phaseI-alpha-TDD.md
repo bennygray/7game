@@ -70,6 +70,19 @@ export const ADVANCED_TAG_THRESHOLDS = {
     positiveEventCount: 3,
   },
 } as const;
+
+/**
+ * RelationshipTag 中文映射表
+ * 用于 MUD 日志、prompt 构建等需要中文展示的场景
+ * POC-3a 教训#7：命名必须避免歧义，使用明确极性词
+ */
+export const RELATIONSHIP_TAG_LABELS: Record<RelationshipTag, string> = {
+  friend:  '至交',
+  rival:   '宿敌',
+  mentor:  '师长',
+  admirer: '仰慕',
+  grudge:  '宿怨',
+} as const;
 ```
 
 ### S2.2 扩展 `src/shared/data/emotion-pool.ts`
@@ -666,7 +679,40 @@ if (hasAdmirer) {
 
 ---
 
-### ADR-Iα-04：C5 闭关目标——直接赋予 vs 事件驱动
+### ADR-Iα-04：因果事件架构——纯规则 vs AI 辅助（POC-3a 沉淀）
+
+| 维度 | 方案 A: 纯规则引擎（本 Phase） | 方案 B: 规则过滤 + AI 选择（未来扩展） |
+|------|------------------------------|--------------------------------------|
+| 描述 | CausalRuleEvaluator 条件匹配 → 直接 emit SoulEvent | 规则过滤候选 eventType → AI 从合法候选中选 → Call2 渲染 |
+| 正确率 | 100%（确定性规则） | ~85%（POC-3a R2 预估） |
+| 复杂度 | 低（6 条规则 switch 分发） | 中（需增加 AI 调用链路） |
+| 表达力 | 6 种固定 eventType | 可扩展至更丰富的事件变体 |
+
+**决策**：方案 A — 纯规则引擎（MVP）。
+
+**理由**（基于 POC-3a R2 数据）：
+1. AI 独立 eventType 决策正确率仅 56%（POC-3a R2, 25 条），不满足 80% 阈值
+2. 规则过滤 + AI 选择预估 ~85%，但增加延迟和复杂度，MVP 不需要
+3. 本 Phase 6 条规则条件明确（affinity 阈值 / moral 阈值 / tag 检测），规则引擎完全胜任
+4. 方案 B 作为 Phase I-beta 的自然扩展路径保留
+
+**POC-3a 教训沉淀**：
+- 教训#7：中文 eventType 命名对歧义敏感——"正面冲突"被模型误读为积极含义。本 Phase §4.2 已用明确极性词（挑衅/窃取/嫉妒），无此问题
+- 教训#8：AI 决策必须有规则引擎做合法性过滤——与 Phase E 候选池、Phase G ActionPool 同一架构模式
+- 教训#9：Call2 叙事会替错误决策"强行圆说"——本 Phase §5.8 中 STORM 级 Call2 独白仅作渲染，决策由规则引擎完成
+
+**过滤规则参考（方案 B 未来实现时）**：
+```
+affinity ≥ 30  → 候选: gift, alliance, challenge（禁止负面）
+affinity ≤ -30 → 候选: scheme, confrontation, challenge（禁止正面）
+-30 < aff < 30 → 候选: avoidance, challenge, gift（禁止极端）
+```
+
+> 原始数据：`docs/pipeline/phaseIJ-poc/review-poc-3a-r2.md`、`docs/pipeline/phaseIJ-poc/walkthrough-ai-model-testing.md` §POC-3a
+
+---
+
+### ADR-Iα-05：C5 闭关目标——直接赋予 vs 事件驱动
 
 | 维度 | 方案 A: CausalEvaluator 直接调用 GoalManager | 方案 B: 通过 SoulEvent metadata 传递 |
 |------|---------------------------------------------|--------------------------------------|
@@ -755,6 +801,7 @@ if (hasAdmirer) {
 | 2026-04-01 | v1.0 | 初始创建 |
 | 2026-04-01 | v1.1 | Gate 2 WARN 修复：+encounter-tick.handler.ts 到变更清单；shouldAssignGrudge/Admirer 参数类型 `| null | undefined` 对齐 getMemory() 返回值 |
 | 2026-04-01 | v1.2 | **关联性审计修复**（4 项遗漏）：+emotion-pool fallbackGenerateThought 模板；+soul-prompt-builder getEventDescription 模板；+auto-breakthrough record 联动；+ai-result-apply RM 透传；+C3 spiritStones 扣除位置明确。修改文件 8→11 |
+| 2026-04-02 | v1.3 | **PoC 结论回写**：+ADR-Iα-04（POC-3a 纯规则 vs AI 辅助决策 + 过滤规则参考 + 教训沉淀）；+RelationshipTag 中文映射表 |
 
 ---
 

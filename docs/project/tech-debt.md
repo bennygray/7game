@@ -37,6 +37,8 @@
 | TD-027 | `prefer-promise-reject-errors`：2 处 reject 非 Error 对象 — `game-logger.ts:65,79`。不利于错误追踪 | ESLint 审计 (V0.4.10) | P4 | game-logger.ts | 下次触及时 |
 | TD-028 | `arch/layers.md` §2 缺少 9 个 Data 层文件注册（encounter-templates.ts、world-event-registry.ts、zone-descriptions.ts、ruling.ts、ruling-registry.ts、encounter.ts、world-event.ts、relationship-formulas.ts、causal-rule-registry.ts），导致 MASTER-ARCH §1 文件计数不准 | Phase TG-3 Gate 1 R5-D5 WARN | P2 | arch/layers.md, MASTER-ARCHITECTURE.md | 下次触及架构文档时 |
 | TD-029 | CLAUDE.md "灵田(2格)" vs MASTER-PRD "无限格，弟子×3块" 数值不一致，属历史遗留。两个文档对灵田格数描述矛盾 | Phase TG-3 Gate 1 R1-D3 WARN | P3 | CLAUDE.md, MASTER-PRD.md | 下次触及灵田系统时 |
+| TD-030 | Lv.3 决策 Pipeline 缺少关系上下文注入：soul-evaluator 的 Lv.3（STORM 级 Call1+Call2）调用时未将 RelationshipMemory 中的 keyEvents/tags 注入 prompt，导致高严重度事件的 AI 决策缺乏关系背景 | IJ-PoC walkthrough §六 代码缺口 | P2 | soul-evaluator.ts, soul-prompt-builder.ts | Phase I-beta 或下次触及 AI 决策链路时 |
+| TD-031 | NarrativeSnippet 缺少措辞风格指南：S7 A/B 证明 snippet 措辞直接影响 AI 行为决策（"暗慕"→HIDE vs "赴汤蹈火"→FIGHT），但当前无正式指南约束 buildByRules/buildByTemplate 的措辞风格 | IJ-PoC S7 A/B 测试 | P3 | narrative-snippet-builder.ts | 下次触及叙事系统时 |
 
 ---
 

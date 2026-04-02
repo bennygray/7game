@@ -36,6 +36,8 @@ paths:
   arch_cross_index: "docs/design/arch/cross-index.md"
   prd_traceability: "docs/project/prd/traceability.md"
   skills_dir: ".agents/skills"
+  multi_agent_dir: "docs/project/multi-agent"
+  scope_dir: "docs/project/scope"
   
   # 产出物基础目录
   features_dir: "docs/features"

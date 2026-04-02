@@ -15,6 +15,7 @@
   - Gate 2: CONDITIONAL PASS — 0 BLOCK / 3 WARN（全修复）
   - **关键决策反转**：Option C → Option B（AGENTS.md 保持完整主规范，CLAUDE.md 瘦身为适配层）
   - **审查报告**：`docs/pipeline/phaseTG-3/review-g{1,2}.md`
+  - **文档治理**：远程同步 18 新文件全部注册到 INDEX.md（IJ-PoC ×13 + multi-agent ×5 + SSA ×1）
 
 ### 下一步
 

@@ -36,3 +36,6 @@ server/llama-server/
 server/llama-server-cpu-backup/
 server/**/*.dll
 server/**/*.exe
+
+# Obsidian vault config (local)
+.obsidian/

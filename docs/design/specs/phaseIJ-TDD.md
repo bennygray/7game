@@ -413,6 +413,25 @@ export class NarrativeSnippetBuilder {
 }
 ```
 
+### 4.5.1b PoC 验证结论（IJ-11 + S7 A/B）
+
+> 原始数据：`docs/pipeline/phaseIJ-poc/walkthrough-ai-model-testing.md` §IJ-11
+
+**IJ-11 核心发现**：AI（2B）可自主生成 NarrativeSnippet，六维通过率 92%，P95=338ms。
+`buildByAI` + `triggerAIPregenerate` 接口已获验证，形成完整自循环：AI 生成叙事 → 叙事注入 prompt → 驱动 AI 决策。
+
+**S7 A/B 测试发现——NarrativeSnippet 措辞是行为控制旋钮**：
+
+| 变体 | 性格 | Snippet 措辞 | 行为结果 | 含义 |
+|------|------|-------------|---------|------|
+| E-内敛 | 内敛沉默 | "暗慕从未表白" | HIDE 100% | 保守措辞→自保行为 |
+| E-温和 | 温和坚毅 | "情根深种赴汤蹈火" | FIGHT/PROTECT 100% | 激烈措辞→出手行为 |
+
+**设计指导**：
+- Snippet 措辞**不是装饰品**，而是 AI 决策的关键输入信号
+- `buildByRules()` 的框架短语和归纳定性措辞需要与期望行为对齐
+- 中低负面关系(-25~-35) 的残余 PROTECT bias 可通过 snippet 措辞微调消除
+
 ### 4.5.2 规则拼接数据表
 
 **框架短语表（PRD R-M09 步骤 1）：**
@@ -716,3 +735,4 @@ export interface TickContext {
 | 2026-03-31 | v1.0 | 初始创建（基于个人 MemoryEntry 模型） |
 | 2026-03-31 | v2.0 | 重大重写：核心数据从 MemoryEntry 改为 RelationshipMemory |
 | 2026-04-01 | **v3.0** | **V4 基准测试驱动升级**：新增 NarrativeSnippetBuilder（§4.5）；soul-prompt-builder 重写为 L2/L6 双级（§5）；SoulEvaluator 增加事件等级路由（§5.4）；新增 0.8B 降级路径（§5.5）；新增 ADR-IJ-07/08/09；实施计划新增 T4/T14/T15；常量 MAX_PROMPT_TOKENS=1024 |
+| 2026-04-02 | v3.1 | **PoC 结论回写**：+§4.5.1b IJ-11 AI 自生成验证 + S7 A/B "snippet 措辞=行为旋钮"发现 |

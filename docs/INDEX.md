@@ -1,7 +1,7 @@
 # 7game-lite 文档索引
 
 > 所有项目文档的统一入口。新增文档时必须在此注册。
-> **最后更新**：2026-04-02 (Phase TG-3 Quick Orient + 全面注册)
+> **最后更新**：2026-04-02 (Phase TG-3 + 18 文件治理)
 
 ## Quick Orient（30 秒定位）
 
@@ -88,6 +88,19 @@
 | `project/soul-vision-rethinking/07-spm-event-density-severity.md` | 五级事件漏斗 + Storyteller 节奏设计 |
 | `project/soul-vision-rethinking/08-spm-ai-capacity-estimation.md` | T1/T2 NPC 双层架构 + AI 容量估算 |
 | `project/soul-vision-rethinking/09-spm-sect-alignment.md` | 宗门道风(仁/霸)×门规(律/放)立场系统 |
+
+## 多智能体研究（Multi-Agent Architecture）
+
+> Anthropic Agent 框架调研 + 多智能体 Pipeline 落地评估。
+> 结论待沉淀到具体 Skill 定义和 Pipeline 规范。
+
+| 文件 | 内容 |
+|------|------|
+| `project/multi-agent/anthropic_agents_full_analysis.md` | Anthropic Building Effective Agents 官方资料深度解析 |
+| `project/multi-agent/complete_runtime_demo.md` | SPM/SGA/SGE 完整运行时模拟 |
+| `project/multi-agent/doc_audit_report.md` | 文档体系审计报告（多智能体就绪度评估） |
+| `project/multi-agent/plan_reflection.md` | 多智能体计划认知修正 |
+| `project/multi-agent/plan_self_review.md` | 计划自审报告 |
 
 ## Trinity 分析进度（PRD）
 
@@ -233,6 +246,14 @@
 | IJ-PoC | [`pipeline/phaseIJ-poc/detail-T1.md`](pipeline/phaseIJ-poc/detail-T1.md) ~ [`detail-T5.md`](pipeline/phaseIJ-poc/detail-T5.md) | T1-T5 逐 Level 详细报告 |
 | IJ-PoC | [`pipeline/phaseIJ-poc/review-v2.md`](pipeline/phaseIJ-poc/review-v2.md) | Review 第 2 版 |
 | IJ-PoC | [`pipeline/phaseIJ-poc/review-v4*.md`](pipeline/phaseIJ-poc/) | V4 基准测试系列报告（6 个文件） |
+| IJ-PoC | [`analysis-prompt-data-mapping.md`](pipeline/phaseIJ-poc/analysis-prompt-data-mapping.md) | Prompt 真实数据映射分析 |
+| IJ-PoC | [`plan-ij11-narrative-ai-poc.md`](pipeline/phaseIJ-poc/plan-ij11-narrative-ai-poc.md) | IJ-11 Narrative AI PoC 计划 |
+| IJ-PoC | [`task-ij11.md`](pipeline/phaseIJ-poc/task-ij11.md) | IJ-11 执行追踪 |
+| IJ-PoC | [`walkthrough-ai-model-testing.md`](pipeline/phaseIJ-poc/walkthrough-ai-model-testing.md) | AI 模型测试全景总结 |
+| IJ-PoC | [`review-ij11-bias*.md`](pipeline/phaseIJ-poc/) [`review-ij11-protect-bias.md`](pipeline/phaseIJ-poc/review-ij11-protect-bias.md) | IJ-11 偏差测试系列（4 个文件） |
+| IJ-PoC | [`review-ij11-narrative-ai-poc.md`](pipeline/phaseIJ-poc/review-ij11-narrative-ai-poc.md) | IJ-11 Narrative AI PoC 审查 |
+| IJ-PoC | [`review-ij11-v5-engine.md`](pipeline/phaseIJ-poc/review-ij11-v5-engine.md) | IJ-11 V5 引擎审查 |
+| IJ-PoC | [`review-poc-3*.md`](pipeline/phaseIJ-poc/) | PoC-3a/3d 因果事件+连贯性测试（3 个文件） |
 | TG | [`pipeline/trinity-guardian/process-audit-2026-04-01.md`](pipeline/trinity-guardian/process-audit-2026-04-01.md) | 流程审计报告 |
 | TG | [`pipeline/trinity-guardian/plan.md`](pipeline/trinity-guardian/plan.md) | Trinity Guardian 总体计划 |
 | TG | [`pipeline/trinity-guardian/review.md`](pipeline/trinity-guardian/review.md) | Trinity Guardian 审查报告 |
@@ -249,6 +270,12 @@
 | `.agents/skills/architect/SKILL.md` | /SGA 架构师 Skill 定义 |
 | `.agents/skills/engineer/SKILL.md` | /SGE 工程师 Skill 定义 |
 | `.agents/skills/_shared/review-protocol.md` | Party Review 四层防线执行协议 |
+
+### Skill 设计资产
+
+| 文件 | 内容 |
+|------|------|
+| `project/scope/SSA-skill-design-plan.md` | /SSA Skill 完整设计计划（v3, 六方法论+行业调研） |
 
 ---
 
